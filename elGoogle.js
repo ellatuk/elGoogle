@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name              elGoogle
-// @name:ru-RU        эльГугал
-// @namespace         https://github.com/ellatuk/elGoogle
+// @name:ru-RU        elГугал
+// @namespace         https://github.com/ellatuk/elGoogle/releases
 // @icon              https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elGoogleLogo.ico
 // @version           1.1
-// @description       Better "Гугл поиск"
+// @description       Makes the Google Search home page better. Better "Гугал поиск"
 // @author            ellatuk
+// @homepageURL   https://github.com/ellatuk/elGoogle
 // @match             https://www.google.com/*
 // @match             https://www.google.ru/*
 // @grant             GM.getValue
