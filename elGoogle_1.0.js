@@ -18,10 +18,10 @@
 (function() {
     'use strict';
     
-    // Получаем версию из метаданных скрипта
+    // Получаем версию скрипта из метаданных скрипта (круто блин!)
     const SCRIPT_VERSION = GM_info?.script?.version || '1.1';
     
-    // Конфигурация по умолчанию
+    // Конфигурация скрипта по умолчанию
     const DEFAULT_CONFIG = {
         darkMode: true,
         panelTop: '20px',
@@ -30,7 +30,9 @@
         removeAI: true,
         removeIcons: true,
         customLogo: true,
-        styledSearch: true
+        styledSearch: true,
+        removeImages: false,
+        removeMail: false
     };
     
     // Переменные состояния
@@ -52,11 +54,11 @@
         applySearchStyles();
         applyPanelStyles();
         
-        // Создаем панель управления
+        // Создаем панель управления скриптом (f2)
         createControlPanel();
         
-        // Удаляем ненужные элементы
-        if (CONFIG.removeAI || CONFIG.removeIcons) {
+        // Удаляем ненужные элементы (в топку их)
+        if (CONFIG.removeAI || CONFIG.removeIcons || CONFIG.removeImages || CONFIG.removeMail) {
             cleanGooglePage();
             setupMutationObserver();
         }
@@ -514,6 +516,32 @@
                         </label>
                     </div>
                 </div>
+                
+                <div class="panel-section">
+                    <div class="panel-section-title">Верхняя панель</div>
+                    
+                    <div class="panel-control">
+                        <div>
+                            <div class="control-label ${!CONFIG.removeImages ? 'hidden-element' : ''}">Удалить "Картинки"</div>
+                            <div class="control-description">Скрыть ссылку на поиск по картинкам</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="imagesToggle" ${CONFIG.removeImages ? 'checked' : ''}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="panel-control">
+                        <div>
+                            <div class="control-label ${!CONFIG.removeMail ? 'hidden-element' : ''}">Удалить "Почта"</div>
+                            <div class="control-description">Скрыть ссылку на Gmail</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="mailToggle" ${CONFIG.removeMail ? 'checked' : ''}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
             </div>
             
             <div class="status-bar">
@@ -576,7 +604,27 @@
             saveConfig();
         });
         
-        // Закрытие по Esc
+        // Переключатель "Картинки"
+        panel.querySelector('#imagesToggle').addEventListener('change', function(e) {
+            CONFIG.removeImages = e.target.checked;
+            if (CONFIG.removeImages) {
+                cleanGooglePage();
+            }
+            saveConfig();
+            updatePanelLabels();
+        });
+        
+        // Переключатель "Почта"
+        panel.querySelector('#mailToggle').addEventListener('change', function(e) {
+            CONFIG.removeMail = e.target.checked;
+            if (CONFIG.removeMail) {
+                cleanGooglePage();
+            }
+            saveConfig();
+            updatePanelLabels();
+        });
+        
+        // Закрытие по Esc (для удобства и прозапас)
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && !panel.classList.contains('hidden')) {
                 togglePanel();
@@ -587,9 +635,13 @@
     function updatePanelLabels() {
         const aiLabel = panel.querySelector('#aiToggle').closest('.panel-control').querySelector('.control-label');
         const iconsLabel = panel.querySelector('#iconsToggle').closest('.panel-control').querySelector('.control-label');
+        const imagesLabel = panel.querySelector('#imagesToggle').closest('.panel-control').querySelector('.control-label');
+        const mailLabel = panel.querySelector('#mailToggle').closest('.panel-control').querySelector('.control-label');
         
         aiLabel.classList.toggle('hidden-element', !CONFIG.removeAI);
         iconsLabel.classList.toggle('hidden-element', !CONFIG.removeIcons);
+        imagesLabel.classList.toggle('hidden-element', !CONFIG.removeImages);
+        mailLabel.classList.toggle('hidden-element', !CONFIG.removeMail);
     }
     
     // ================== ПЕРЕТАСКИВАНИЕ ==================
@@ -649,6 +701,7 @@
     // ================== УПРАВЛЕНИЕ ЭЛЕМЕНТАМИ ==================
     
     function cleanGooglePage() {
+        // 1. Удаляем кнопку "Режим ИИ" (очень важная функция!!!)
         if (CONFIG.removeAI) {
             const aiButton = document.querySelector('button[jsname="B6rgad"]');
             if (aiButton) {
@@ -657,12 +710,71 @@
             }
         }
         
+        // 2. Удаляем контейнеры с иконками
         if (CONFIG.removeIcons) {
             const iconContainers = document.querySelectorAll('div[jsname="UdfVXc"].WC2Die');
             if (iconContainers.length > 0) {
                 iconContainers.forEach(container => container.remove());
                 console.log(`[elGoogle] Удалено контейнеров: ${iconContainers.length}`);
             }
+        }
+        
+        // 3. Удаляем кнопку "Картинки" (поиск по картинкам)
+        if (CONFIG.removeImages) {
+            // Ищем ссылку с атрибутом data-pid="2" (обычно это картинки)
+            const imagesLink = document.querySelector('a.gb_Z[data-pid="2"], a[aria-label*="картинк" i], a[href*="imghp"]');
+            if (imagesLink) {
+                // Находим родительский элемент div и удаляем его
+                const parentDiv = imagesLink.closest('div.gb_0');
+                if (parentDiv) {
+                    parentDiv.remove();
+                    console.log('[elGoogle] Кнопка "Картинки" удалена.');
+                } else {
+                    imagesLink.remove();
+                    console.log('[elGoogle] Ссылка "Картинки" удалена.');
+                }
+            }
+            
+            // Дополнительный поиск по тексту для надёжности
+            const imagesLinksByText = document.querySelectorAll('a.gb_Z');
+            imagesLinksByText.forEach(link => {
+                if (link.textContent.includes('Картинки') || link.textContent.includes('Images')) {
+                    const parent = link.closest('div.gb_0');
+                    if (parent) {
+                        parent.remove();
+                        console.log('[elGoogle] Кнопка "Картинки" удалена (по тексту).');
+                    }
+                }
+            });
+        }
+        
+        // 4. Удаляем кнопку "Почта" (Gmail/Жимэил)
+        if (CONFIG.removeMail) {
+            // Ищем ссылку с атрибутом data-pid="23" (обычно это почта)
+            const mailLink = document.querySelector('a.gb_Z[data-pid="23"], a[aria-label*="почт" i], a[href*="mail.google.com"]');
+            if (mailLink) {
+                // Находим родительский элемент div и удаляем его
+                const parentDiv = mailLink.closest('div.gb_0');
+                if (parentDiv) {
+                    parentDiv.remove();
+                    console.log('[elGoogle] Кнопка "Почта" удалена.');
+                } else {
+                    mailLink.remove();
+                    console.log('[elGoogle] Ссылка "Почта" удалена.');
+                }
+            }
+            
+            // Дополнительный поиск по тексту для надёжности
+            const mailLinksByText = document.querySelectorAll('a.gb_Z');
+            mailLinksByText.forEach(link => {
+                if (link.textContent.includes('Почта') || link.textContent.includes('Gmail') || link.textContent.includes('Mail')) {
+                    const parent = link.closest('div.gb_0');
+                    if (parent) {
+                        parent.remove();
+                        console.log('[elGoogle] Кнопка "Почта" удалена (по тексту).');
+                    }
+                }
+            });
         }
     }
     
