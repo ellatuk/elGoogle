@@ -19,7 +19,7 @@
     'use strict';
     
     // Получаем версию из метаданных скрипта
-    const SCRIPT_VERSION = GM_info?.script?.version || '1.3';
+    const SCRIPT_VERSION = GM_info?.script?.version || '1.1';
     
     // Конфигурация по умолчанию
     const DEFAULT_CONFIG = {
@@ -29,8 +29,8 @@
         panelVisible: false,
         removeAI: true,
         removeIcons: true,
-        customLogo: true,       // Новая опция
-        styledSearch: true      // Новая опция
+        customLogo: true,
+        styledSearch: true
     };
     
     // Переменные состояния
@@ -121,12 +121,68 @@
             logoStyle.id = 'elgoogle-logo-style';
             logoStyle.textContent = `
                 .lnXdpd {
-                    content: url('https://i7.imageban.ru/out/2024/07/20/eac25e8f5b8d656a7336d1fb7767b21c.png') !important;
-                    width: auto !important;
-                    height: auto !important;
+                    /* Скрываем оригинальный SVG */
+                    display: none !important;
+                }
+                
+                /* Создаем псевдоэлемент для кастомного логотипа */
+                .lnXdpd::before {
+                    content: '' !important;
+                    display: inline-block !important;
+                    width: 272px !important;
+                    height: 92px !important;
+                    background-image: url('https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elgygal_logo.png') !important;
+                    background-size: contain !important;
+                    background-repeat: no-repeat !important;
+                    background-position: center !important;
+                    vertical-align: middle !important;
+                }
+                
+                /* Альтернативный способ: создаем отдельный элемент после логотипа */
+                .elgoogle-custom-logo {
+                    display: inline-block !important;
+                    width: 272px !important;
+                    height: 92px !important;
+                    background-image: url('https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elgygal_logo.png') !important;
+                    background-size: contain !important;
+                    background-repeat: no-repeat !important;
+                    background-position: center !important;
+                    vertical-align: middle !important;
                 }
             `;
             document.head.appendChild(logoStyle);
+            
+            // Также добавляем обработку для элемента
+            setTimeout(() => {
+                const logoElement = document.querySelector('.lnXdpd');
+                if (logoElement && !logoElement.parentNode.querySelector('.elgoogle-custom-logo')) {
+                    const customLogo = document.createElement('div');
+                    customLogo.className = 'elgoogle-custom-logo';
+                    customLogo.setAttribute('aria-label', 'Google');
+                    customLogo.setAttribute('role', 'img');
+                    logoElement.parentNode.insertBefore(customLogo, logoElement);
+                }
+            }, 100);
+        } else {
+            // Удаляем кастомный логотип если есть
+            const customLogos = document.querySelectorAll('.elgoogle-custom-logo');
+            customLogos.forEach(logo => logo.remove());
+            
+            // Показываем оригинальный логотип
+            const originalStyle = document.createElement('style');
+            originalStyle.id = 'elgoogle-original-logo';
+            originalStyle.textContent = `
+                .lnXdpd {
+                    display: inline-block !important;
+                }
+                .lnXdpd::before {
+                    content: none !important;
+                }
+            `;
+            document.head.appendChild(originalStyle);
+            setTimeout(() => {
+                if (originalStyle.parentNode) originalStyle.remove();
+            }, 1000);
         }
     }
     
@@ -156,6 +212,21 @@
                 }
             `;
             document.head.appendChild(searchStyle);
+        } else {
+            // Восстанавливаем стандартные стили
+            const resetStyle = document.createElement('style');
+            resetStyle.id = 'elgoogle-reset-search';
+            resetStyle.textContent = `
+                .RNNXgb {
+                    border-radius: 24px !important;
+                    background-color: transparent !important;
+                    border: 1px solid #5f6368 !important;
+                }
+            `;
+            document.head.appendChild(resetStyle);
+            setTimeout(() => {
+                if (resetStyle.parentNode) resetStyle.remove();
+            }, 1000);
         }
     }
     
@@ -599,7 +670,13 @@
         let timeoutId;
         const observer = new MutationObserver(() => {
             clearTimeout(timeoutId);
-            timeoutId = setTimeout(cleanGooglePage, 100);
+            timeoutId = setTimeout(() => {
+                cleanGooglePage();
+                // Также проверяем логотип
+                if (CONFIG.customLogo) {
+                    applyLogo();
+                }
+            }, 100);
         });
         
         observer.observe(document.body, {
