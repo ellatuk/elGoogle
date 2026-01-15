@@ -11,12 +11,16 @@
 // @grant             GM.getValue
 // @grant             GM.setValue
 // @grant             GM.registerMenuCommand
+// @grant             GM_info
 // @license           MIT
 // ==/UserScript==
 
 (function() {
     'use strict';
-
+    
+    // Получаем версию из метаданных скрипта
+    const SCRIPT_VERSION = GM_info?.script?.version || '1.3';
+    
     // Конфигурация по умолчанию
     const DEFAULT_CONFIG = {
         darkMode: true,
@@ -24,41 +28,47 @@
         panelLeft: '20px',
         panelVisible: false,
         removeAI: true,
-        removeIcons: true
+        removeIcons: true,
+        customLogo: true,       // Новая опция
+        styledSearch: true      // Новая опция
     };
-
+    
     // Переменные состояния
     let CONFIG = { ...DEFAULT_CONFIG };
     let panel = null;
     let darkThemeStyle = null;
-
+    let logoStyle = null;
+    let searchStyle = null;
+    
     // ================== ИНИЦИАЛИЗАЦИЯ ==================
-
+    
     async function init() {
         // Загружаем конфиг
         await loadConfig();
-
+        
         // Применяем настройки
         applyDarkTheme();
-        applyStyles();
-
+        applyLogo();
+        applySearchStyles();
+        applyPanelStyles();
+        
         // Создаем панель управления
         createControlPanel();
-
+        
         // Удаляем ненужные элементы
         if (CONFIG.removeAI || CONFIG.removeIcons) {
             cleanGooglePage();
             setupMutationObserver();
         }
-
+        
         // Настраиваем горячие клавиши
         setupHotkeys();
-
-        console.log('[elGoogle] Скрипт инициализирован');
+        
+        console.log(`[elGoogle v${SCRIPT_VERSION}] Скрипт инициализирован`);
     }
-
+    
     // ================== КОНФИГУРАЦИЯ ==================
-
+    
     async function loadConfig() {
         try {
             const saved = await GM.getValue('elGoogle_config');
@@ -68,7 +78,7 @@
             CONFIG = { ...DEFAULT_CONFIG };
         }
     }
-
+    
     async function saveConfig() {
         try {
             await GM.setValue('elGoogle_config', CONFIG);
@@ -76,15 +86,15 @@
             console.warn('[elGoogle] Ошибка сохранения настроек:', e);
         }
     }
-
-    // ================== СТИЛИ И ТЕМА ==================
-
+    
+    // ================== ПРИМЕНЕНИЕ СТИЛЕЙ ==================
+    
     function applyDarkTheme() {
         // Удаляем старый стиль, если есть
         if (darkThemeStyle && darkThemeStyle.parentNode) {
             darkThemeStyle.remove();
         }
-
+        
         if (CONFIG.darkMode) {
             darkThemeStyle = document.createElement('style');
             darkThemeStyle.id = 'elgoogle-dark-theme';
@@ -99,26 +109,61 @@
             document.head.appendChild(darkThemeStyle);
         }
     }
-
-    function applyStyles() {
-        // Основные стили (всегда применяются)
+    
+    function applyLogo() {
+        // Удаляем старый стиль логотипа, если есть
+        if (logoStyle && logoStyle.parentNode) {
+            logoStyle.remove();
+        }
+        
+        if (CONFIG.customLogo) {
+            logoStyle = document.createElement('style');
+            logoStyle.id = 'elgoogle-logo-style';
+            logoStyle.textContent = `
+                .lnXdpd {
+                    content: url('https://i7.imageban.ru/out/2024/07/20/eac25e8f5b8d656a7336d1fb7767b21c.png') !important;
+                    width: auto !important;
+                    height: auto !important;
+                }
+            `;
+            document.head.appendChild(logoStyle);
+        }
+    }
+    
+    function applySearchStyles() {
+        // Удаляем старый стиль поиска, если есть
+        if (searchStyle && searchStyle.parentNode) {
+            searchStyle.remove();
+        }
+        
+        if (CONFIG.styledSearch) {
+            searchStyle = document.createElement('style');
+            searchStyle.id = 'elgoogle-search-style';
+            searchStyle.textContent = `
+                .RNNXgb {
+                    border-radius: 34px 14px !important;
+                    background-color: #121212 !important;
+                    border: 3px solid #1c1d1d !important;
+                }
+                .Umvnrc {
+                    display: none !important;
+                }
+                .Ne6nSd {
+                    display: flex !important;
+                    align-items: center !important;
+                    padding: 1px !important;
+                    color: #121212 !important;
+                }
+            `;
+            document.head.appendChild(searchStyle);
+        }
+    }
+    
+    function applyPanelStyles() {
+        // Стили панели управления (всегда применяются)
         const style = document.createElement('style');
-        style.id = 'elgoogle-styles';
+        style.id = 'elgoogle-panel-styles';
         style.textContent = `
-            /* Логотип */
-            .lnXdpd {
-                content: url('https://i7.imageban.ru/out/2024/07/20/eac25e8f5b8d656a7336d1fb7767b21c.png') !important;
-                width: auto !important;
-                height: auto !important;
-            }
-
-            /* Поисковая строка */
-            .RNNXgb {
-                border-radius: 34px 14px !important;
-                background-color: #121212 !important;
-                border: 3px solid #1c1d1d !important;
-            }
-
             /* Панель управления */
             .elgoogle-panel {
                 position: fixed;
@@ -137,13 +182,13 @@
                 overflow: hidden;
                 transition: opacity 0.3s ease, transform 0.3s ease;
             }
-
+            
             .elgoogle-panel.hidden {
                 opacity: 0;
                 transform: translateY(-10px);
                 pointer-events: none;
             }
-
+            
             .panel-header {
                 display: flex;
                 justify-content: space-between;
@@ -154,7 +199,7 @@
                 cursor: move;
                 user-select: none;
             }
-
+            
             .panel-title {
                 font-size: 16px;
                 font-weight: 600;
@@ -162,7 +207,7 @@
                 align-items: center;
                 gap: 10px;
             }
-
+            
             .panel-close {
                 background: none;
                 border: none;
@@ -178,22 +223,22 @@
                 border-radius: 50%;
                 transition: background-color 0.2s;
             }
-
+            
             .panel-close:hover {
                 background-color: rgba(255, 255, 255, 0.1);
                 color: #fff;
             }
-
+            
             .panel-content {
                 padding: 20px;
                 max-height: 60vh;
                 overflow-y: auto;
             }
-
+            
             .panel-section {
                 margin-bottom: 20px;
             }
-
+            
             .panel-section-title {
                 font-size: 14px;
                 font-weight: 600;
@@ -202,7 +247,7 @@
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
             }
-
+            
             .panel-control {
                 display: flex;
                 justify-content: space-between;
@@ -210,22 +255,22 @@
                 padding: 10px 0;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             }
-
+            
             .panel-control:last-child {
                 border-bottom: none;
             }
-
+            
             .control-label {
                 font-size: 14px;
                 color: #fff;
             }
-
+            
             .control-description {
                 font-size: 12px;
                 color: #888;
                 margin-top: 4px;
             }
-
+            
             /* Переключатель */
             .switch {
                 position: relative;
@@ -233,13 +278,13 @@
                 width: 52px;
                 height: 26px;
             }
-
+            
             .switch input {
                 opacity: 0;
                 width: 0;
                 height: 0;
             }
-
+            
             .slider {
                 position: absolute;
                 cursor: pointer;
@@ -251,7 +296,7 @@
                 transition: .4s;
                 border-radius: 34px;
             }
-
+            
             .slider:before {
                 position: absolute;
                 content: "";
@@ -263,15 +308,15 @@
                 transition: .4s;
                 border-radius: 50%;
             }
-
+            
             input:checked + .slider {
                 background-color: #1a73e8;
             }
-
+            
             input:checked + .slider:before {
                 transform: translateX(26px);
             }
-
+            
             /* Статус бар */
             .status-bar {
                 display: flex;
@@ -283,58 +328,58 @@
                 font-size: 12px;
                 color: #888;
             }
-
+            
             .hotkey-hint {
                 background: rgba(255, 255, 255, 0.1);
                 padding: 2px 6px;
                 border-radius: 4px;
                 font-family: monospace;
             }
-
+            
             /* Дополнительные элементы */
             .hidden-element {
                 opacity: 0.5;
                 text-decoration: line-through;
             }
-
+            
             .drag-handle {
                 margin-right: 10px;
                 opacity: 0.5;
                 cursor: move;
             }
         `;
-
+        
         // Удаляем старый стиль, если есть
-        const oldStyle = document.getElementById('elgoogle-styles');
+        const oldStyle = document.getElementById('elgoogle-panel-styles');
         if (oldStyle) oldStyle.remove();
-
+        
         document.head.appendChild(style);
     }
-
+    
     // ================== ПАНЕЛЬ УПРАВЛЕНИЯ ==================
-
+    
     function createControlPanel() {
         // Удаляем старую панель, если есть
         if (panel) panel.remove();
-
+        
         panel = document.createElement('div');
         panel.className = `elgoogle-panel ${CONFIG.panelVisible ? '' : 'hidden'}`;
         panel.style.top = CONFIG.panelTop || '20px';
         panel.style.left = CONFIG.panelLeft || '20px';
-
+        
         panel.innerHTML = `
             <div class="panel-header" id="elgoogle-drag-handle">
                 <div class="panel-title">
                     <span class="drag-handle">☰</span>
-                    🎨 elGoogle
+                    🎨 elGoogle v${SCRIPT_VERSION}
                 </div>
                 <button class="panel-close" title="Закрыть (Esc)">×</button>
             </div>
-
+            
             <div class="panel-content">
                 <div class="panel-section">
                     <div class="panel-section-title">Внешний вид</div>
-
+                    
                     <div class="panel-control">
                         <div>
                             <div class="control-label">Тёмная тема</div>
@@ -345,22 +390,22 @@
                             <span class="slider"></span>
                         </label>
                     </div>
-
+                    
                     <div class="panel-control">
                         <div>
                             <div class="control-label">Кастомный логотип</div>
                             <div class="control-description">Заменить логотип Google</div>
                         </div>
                         <label class="switch">
-                            <input type="checkbox" id="logoToggle" checked disabled>
+                            <input type="checkbox" id="logoToggle" ${CONFIG.customLogo ? 'checked' : ''}>
                             <span class="slider"></span>
                         </label>
                     </div>
                 </div>
-
+                
                 <div class="panel-section">
                     <div class="panel-section-title">Очистка интерфейса</div>
-
+                    
                     <div class="panel-control">
                         <div>
                             <div class="control-label ${!CONFIG.removeAI ? 'hidden-element' : ''}">Удалить "Режим ИИ"</div>
@@ -371,7 +416,7 @@
                             <span class="slider"></span>
                         </label>
                     </div>
-
+                    
                     <div class="panel-control">
                         <div>
                             <div class="control-label ${!CONFIG.removeIcons ? 'hidden-element' : ''}">Удалить иконки поиска</div>
@@ -383,49 +428,57 @@
                         </label>
                     </div>
                 </div>
-
+                
                 <div class="panel-section">
                     <div class="panel-section-title">Настройки поиска</div>
-
+                    
                     <div class="panel-control">
                         <div>
                             <div class="control-label">Стиль строки поиска</div>
                             <div class="control-description">Скруглённые углы и тёмный фон</div>
                         </div>
                         <label class="switch">
-                            <input type="checkbox" id="searchToggle" checked disabled>
+                            <input type="checkbox" id="searchToggle" ${CONFIG.styledSearch ? 'checked' : ''}>
                             <span class="slider"></span>
                         </label>
                     </div>
                 </div>
             </div>
-
+            
             <div class="status-bar">
-                <div>v1.2 • F2 для показа/скрытия</div>
+                <div>v${SCRIPT_VERSION} • F2 для показа/скрытия</div>
                 <div class="hotkey-hint">Esc</div>
             </div>
         `;
-
+        
         document.body.appendChild(panel);
-
+        
         // Настраиваем обработчики событий
         setupPanelEvents();
-
+        
         // Делаем панель перетаскиваемой
         makePanelDraggable();
     }
-
+    
     function setupPanelEvents() {
         // Кнопка закрытия
         panel.querySelector('.panel-close').addEventListener('click', togglePanel);
-
-        // Переключатели
+        
+        // Переключатель темной темы
         panel.querySelector('#darkToggle').addEventListener('change', function(e) {
             CONFIG.darkMode = e.target.checked;
             applyDarkTheme();
             saveConfig();
         });
-
+        
+        // Переключатель логотипа
+        panel.querySelector('#logoToggle').addEventListener('change', function(e) {
+            CONFIG.customLogo = e.target.checked;
+            applyLogo();
+            saveConfig();
+        });
+        
+        // Переключатель AI
         panel.querySelector('#aiToggle').addEventListener('change', function(e) {
             CONFIG.removeAI = e.target.checked;
             if (CONFIG.removeAI) {
@@ -434,7 +487,8 @@
             saveConfig();
             updatePanelLabels();
         });
-
+        
+        // Переключатель иконок
         panel.querySelector('#iconsToggle').addEventListener('change', function(e) {
             CONFIG.removeIcons = e.target.checked;
             if (CONFIG.removeIcons) {
@@ -443,7 +497,14 @@
             saveConfig();
             updatePanelLabels();
         });
-
+        
+        // Переключатель стиля поиска
+        panel.querySelector('#searchToggle').addEventListener('change', function(e) {
+            CONFIG.styledSearch = e.target.checked;
+            applySearchStyles();
+            saveConfig();
+        });
+        
         // Закрытие по Esc
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && !panel.classList.contains('hidden')) {
@@ -451,71 +512,71 @@
             }
         });
     }
-
+    
     function updatePanelLabels() {
         const aiLabel = panel.querySelector('#aiToggle').closest('.panel-control').querySelector('.control-label');
         const iconsLabel = panel.querySelector('#iconsToggle').closest('.panel-control').querySelector('.control-label');
-
+        
         aiLabel.classList.toggle('hidden-element', !CONFIG.removeAI);
         iconsLabel.classList.toggle('hidden-element', !CONFIG.removeIcons);
     }
-
+    
     // ================== ПЕРЕТАСКИВАНИЕ ==================
-
+    
     function makePanelDraggable() {
         const dragHandle = panel.querySelector('#elgoogle-drag-handle');
         let isDragging = false;
         let offsetX, offsetY;
-
+        
         dragHandle.addEventListener('mousedown', startDrag);
-
+        
         function startDrag(e) {
             if (e.target.classList.contains('panel-close')) return;
-
+            
             isDragging = true;
             const rect = panel.getBoundingClientRect();
             offsetX = e.clientX - rect.left;
             offsetY = e.clientY - rect.top;
-
+            
             document.addEventListener('mousemove', onDrag);
             document.addEventListener('mouseup', stopDrag);
-
+            
             panel.style.transition = 'none';
             e.preventDefault();
         }
-
+        
         function onDrag(e) {
             if (!isDragging) return;
-
+            
             const x = e.clientX - offsetX;
             const y = e.clientY - offsetY;
-
+            
             // Ограничиваем перемещение в пределах окна
             const maxX = window.innerWidth - panel.offsetWidth;
             const maxY = window.innerHeight - panel.offsetHeight;
-
+            
             panel.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
             panel.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
         }
-
+        
         function stopDrag() {
             if (!isDragging) return;
-
+            
             isDragging = false;
             panel.style.transition = '';
-
+            
             // Сохраняем позицию
             CONFIG.panelTop = panel.style.top;
             CONFIG.panelLeft = panel.style.left;
             saveConfig();
-
+            
             document.removeEventListener('mousemove', onDrag);
             document.removeEventListener('mouseup', stopDrag);
         }
     }
-
+    
     // ================== УПРАВЛЕНИЕ ЭЛЕМЕНТАМИ ==================
-
+    
     function cleanGooglePage() {
         if (CONFIG.removeAI) {
             const aiButton = document.querySelector('button[jsname="B6rgad"]');
@@ -524,7 +585,7 @@
                 console.log('[elGoogle] Кнопка "Режим ИИ" удалена.');
             }
         }
-
+        
         if (CONFIG.removeIcons) {
             const iconContainers = document.querySelectorAll('div[jsname="UdfVXc"].WC2Die');
             if (iconContainers.length > 0) {
@@ -533,24 +594,24 @@
             }
         }
     }
-
+    
     function setupMutationObserver() {
         let timeoutId;
         const observer = new MutationObserver(() => {
             clearTimeout(timeoutId);
             timeoutId = setTimeout(cleanGooglePage, 100);
         });
-
+        
         observer.observe(document.body, {
             childList: true,
             subtree: true
         });
-
+        
         setTimeout(cleanGooglePage, 2000);
     }
-
+    
     // ================== ГОРЯЧИЕ КЛАВИШИ ==================
-
+    
     function setupHotkeys() {
         document.addEventListener('keydown', function(e) {
             // F2 для показа/скрытия панели
@@ -558,26 +619,26 @@
                 e.preventDefault();
                 togglePanel();
             }
-
-            // Ctrl+Alt+G для принудительного обновления
-            if (e.ctrlKey && e.altKey && e.key === 'g') {
+            
+            // Ctrl+Alt+R для принудительного обновления
+            if (e.ctrlKey && e.altKey && e.key === 'r') {
                 e.preventDefault();
                 location.reload();
             }
         });
-
+        
         // Добавляем меню в Tampermonkey
         if (typeof GM_registerMenuCommand !== 'undefined') {
             GM_registerMenuCommand('Открыть панель elGoogle', togglePanel, 'F2');
             GM_registerMenuCommand('Сбросить настройки', resetSettings);
         }
     }
-
+    
     function togglePanel() {
         if (!panel) return;
-
+        
         const isHidden = panel.classList.contains('hidden');
-
+        
         if (isHidden) {
             panel.classList.remove('hidden');
             CONFIG.panelVisible = true;
@@ -587,10 +648,10 @@
             panel.classList.add('hidden');
             CONFIG.panelVisible = false;
         }
-
+        
         saveConfig();
     }
-
+    
     async function resetSettings() {
         if (confirm('Сбросить все настройки elGoogle?')) {
             CONFIG = { ...DEFAULT_CONFIG };
@@ -598,9 +659,9 @@
             location.reload();
         }
     }
-
+    
     // ================== ЗАПУСК ==================
-
+    
     // Ждём полной загрузки DOM
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
