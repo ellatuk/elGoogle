@@ -18,10 +18,8 @@
 (function() {
     'use strict';
     
-    // Получаем версию скрипта из метаданных скрипта (круто блин!)
     const SCRIPT_VERSION = GM_info?.script?.version || '1.1';
     
-    // Конфигурация скрипта по умолчанию
     const DEFAULT_CONFIG = {
         darkMode: true,
         panelTop: '20px',
@@ -54,10 +52,8 @@
         applySearchStyles();
         applyPanelStyles();
         
-        // Создаем панель управления скриптом (f2)
         createControlPanel();
         
-        // Удаляем ненужные элементы (в топку их)
         if (CONFIG.removeAI || CONFIG.removeIcons || CONFIG.removeImages || CONFIG.removeMail) {
             cleanGooglePage();
             setupMutationObserver();
