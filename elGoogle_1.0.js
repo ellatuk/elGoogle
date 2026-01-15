@@ -66,7 +66,11 @@
         // Настраиваем горячие клавиши
         setupHotkeys();
         
+        // Добавляем меню управления
+        setupUserScriptMenu();
+        
         console.log(`[elGoogle v${SCRIPT_VERSION}] Скрипт инициализирован`);
+        detectScriptManager();
     }
     
     // ================== КОНФИГУРАЦИЯ ==================
@@ -420,6 +424,17 @@
                 opacity: 0.5;
                 cursor: move;
             }
+            
+            /* Менеджер скриптов индикатор */
+            .manager-indicator {
+                background: rgba(26, 115, 232, 0.2);
+                border: 1px solid rgba(26, 115, 232, 0.3);
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-size: 10px;
+                font-family: monospace;
+                margin-left: 8px;
+            }
         `;
         
         // Удаляем старый стиль, если есть
@@ -435,6 +450,8 @@
         // Удаляем старую панель, если есть
         if (panel) panel.remove();
         
+        const scriptManager = detectScriptManager();
+        
         panel = document.createElement('div');
         panel.className = `elgoogle-panel ${CONFIG.panelVisible ? '' : 'hidden'}`;
         panel.style.top = CONFIG.panelTop || '20px';
@@ -445,6 +462,7 @@
                 <div class="panel-title">
                     <span class="drag-handle">☰</span>
                     🎨 elGoogle v${SCRIPT_VERSION}
+                    <span class="manager-indicator" title="Менеджер скриптов">${scriptManager.short}</span>
                 </div>
                 <button class="panel-close" title="Закрыть (Esc)">×</button>
             </div>
@@ -542,10 +560,30 @@
                         </label>
                     </div>
                 </div>
+                
+                <div class="panel-section">
+                    <div class="panel-section-title">Управление</div>
+                    
+                    <div class="panel-control">
+                        <div>
+                            <div class="control-label">Быстрое меню</div>
+                            <div class="control-description">Кликните правой кнопкой по иконке менеджера скриптов</div>
+                        </div>
+                        <button class="panel-btn" id="openMenuBtn" style="background:#1a73e8;color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;">Открыть меню</button>
+                    </div>
+                    
+                    <div class="panel-control">
+                        <div>
+                            <div class="control-label">Экспорт настроек</div>
+                            <div class="control-description">Скопировать все настройки в буфер</div>
+                        </div>
+                        <button class="panel-btn" id="exportBtn" style="background:#34a853;color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;">Экспорт</button>
+                    </div>
+                </div>
             </div>
             
             <div class="status-bar">
-                <div>v${SCRIPT_VERSION} • F2 для показа/скрытия</div>
+                <div>v${SCRIPT_VERSION} • F2 для показа/скрытия • ${scriptManager.name}</div>
                 <div class="hotkey-hint">Esc</div>
             </div>
         `;
@@ -624,7 +662,15 @@
             updatePanelLabels();
         });
         
-        // Закрытие по Esc (для удобства и прозапас)
+        // Кнопка открытия меню
+        panel.querySelector('#openMenuBtn').addEventListener('click', function() {
+            showScriptManagerMenu();
+        });
+        
+        // Кнопка экспорта
+        panel.querySelector('#exportBtn').addEventListener('click', exportSettings);
+        
+        // Закрытие по Esc
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && !panel.classList.contains('hidden')) {
                 togglePanel();
@@ -701,7 +747,7 @@
     // ================== УПРАВЛЕНИЕ ЭЛЕМЕНТАМИ ==================
     
     function cleanGooglePage() {
-        // 1. Удаляем кнопку "Режим ИИ" (очень важная функция!!!)
+        // 1. Удаляем кнопку "Режим ИИ"
         if (CONFIG.removeAI) {
             const aiButton = document.querySelector('button[jsname="B6rgad"]');
             if (aiButton) {
@@ -748,7 +794,7 @@
             });
         }
         
-        // 4. Удаляем кнопку "Почта" (Gmail/Жимэил)
+        // 4. Удаляем кнопку "Почта" (Gmail)
         if (CONFIG.removeMail) {
             // Ищем ссылку с атрибутом data-pid="23" (обычно это почта)
             const mailLink = document.querySelector('a.gb_Z[data-pid="23"], a[aria-label*="почт" i], a[href*="mail.google.com"]');
@@ -804,9 +850,15 @@
     function setupHotkeys() {
         document.addEventListener('keydown', function(e) {
             // F2 для показа/скрытия панели
-            if (e.key === 'F2') {
+            if (e.key === 'F2' && !e.ctrlKey && !e.altKey && !e.metaKey) {
                 e.preventDefault();
                 togglePanel();
+            }
+            
+            // Ctrl+Alt+G для открытия GitHub
+            if (e.ctrlKey && e.altKey && e.key === 'g') {
+                e.preventDefault();
+                window.open('https://github.com/ellatuk/elGoogle', '_blank');
             }
             
             // Ctrl+Alt+R для принудительного обновления
@@ -815,13 +867,117 @@
                 location.reload();
             }
         });
+    }
+    
+    // ================== МЕНЕДЖЕР СКРИПТОВ ==================
+    
+    function detectScriptManager() {
+        const managerInfo = {
+            name: 'Неизвестно',
+            short: '???',
+            version: '?',
+            hasMenu: false
+        };
         
-        // Добавляем меню в Tampermonkey
-        if (typeof GM_registerMenuCommand !== 'undefined') {
-            GM_registerMenuCommand('Открыть панель elGoogle', togglePanel, 'F2');
-            GM_registerMenuCommand('Сбросить настройки', resetSettings);
+        try {
+            if (typeof GM_info !== 'undefined') {
+                const info = GM_info;
+                managerInfo.version = info.version || '?';
+                
+                if (info.scriptHandler) {
+                    managerInfo.name = info.scriptHandler;
+                    managerInfo.short = info.scriptHandler.substring(0, 3).toUpperCase();
+                } else if (typeof GM !== 'undefined') {
+                    managerInfo.name = 'Greasemonkey';
+                    managerInfo.short = 'GM';
+                }
+                
+                // Проверяем возможности
+                managerInfo.hasMenu = typeof GM_registerMenuCommand !== 'undefined';
+            }
+        } catch (e) {
+            console.log('[elGoogle] Не удалось определить менеджер скриптов');
+        }
+        
+        console.log(`[elGoogle] Менеджер: ${managerInfo.name} v${managerInfo.version}`);
+        return managerInfo;
+    }
+    
+    // ================== МЕНЮ УПРАВЛЕНИЯ ==================
+    
+    function setupUserScriptMenu() {
+        // Проверяем, доступна ли функция
+        if (typeof GM_registerMenuCommand === 'undefined') {
+            console.log('[elGoogle] GM_registerMenuCommand не поддерживается');
+            return;
+        }
+        
+        try {
+            // Основные команды
+            GM_registerMenuCommand('🎨 Открыть панель elGoogle', function() {
+                console.log('[elGoogle] Меню: открыть панель');
+                togglePanel();
+            }, 'f2');
+            
+            GM_registerMenuCommand('🔄 Обновить страницу', function() {
+                console.log('[elGoogle] Меню: обновить страницу');
+                location.reload();
+            });
+            
+            // Настройки
+            GM_registerMenuCommand('⚙️  Быстрые настройки', function() {
+                console.log('[elGoogle] Меню: быстрые настройки');
+                quickSettings();
+            });
+            
+            GM_registerMenuCommand('📋 Экспорт настроек', function() {
+                console.log('[elGoogle] Меню: экспорт настроек');
+                exportSettings();
+            });
+            
+            GM_registerMenuCommand('🗑️  Сбросить все настройки', function() {
+                console.log('[elGoogle] Меню: сброс настроек');
+                resetSettings();
+            });
+            
+            // Информация
+            GM_registerMenuCommand('📊 Информация о скрипте', function() {
+                console.log('[elGoogle] Меню: информация о скрипте');
+                showScriptInfo();
+            });
+            
+            // Ссылки
+            GM_registerMenuCommand('🌐 GitHub репозиторий', function() {
+                console.log('[elGoogle] Меню: открыть GitHub');
+                window.open('https://github.com/ellatuk/elGoogle', '_blank');
+            });
+            
+            GM_registerMenuCommand('📖 Настройки Google', function() {
+                console.log('[elGoogle] Меню: настройки Google');
+                window.open('https://www.google.com/preferences', '_blank');
+            });
+            
+            console.log('[elGoogle] Меню управления добавлено');
+            
+        } catch(error) {
+            console.warn('[elGoogle] Ошибка создания меню:', error);
         }
     }
+    
+    function showScriptManagerMenu() {
+        alert(`Чтобы открыть меню управления elGoogle:
+        
+1. Нажмите на иконку менеджера скриптов (Tampermonkey/Violentmonkey)
+2. Найдите "elGoogle" в списке скриптов
+3. Нажмите на него для открытия меню
+
+Или используйте горячие клавиши:
+• F2 - открыть/скрыть панель
+• Ctrl+Alt+G - открыть GitHub
+• Ctrl+Alt+R - обновить страницу`);
+    }
+    
+    // ================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==================
     
     function togglePanel() {
         if (!panel) return;
@@ -842,11 +998,76 @@
     }
     
     async function resetSettings() {
-        if (confirm('Сбросить все настройки elGoogle?')) {
+        if (confirm('Сбросить все настройки elGoogle к значениям по умолчанию?')) {
             CONFIG = { ...DEFAULT_CONFIG };
             await saveConfig();
             location.reload();
         }
+    }
+    
+    function exportSettings() {
+        const settingsStr = JSON.stringify(CONFIG, null, 2);
+        navigator.clipboard.writeText(settingsStr)
+            .then(() => alert('✅ Настройки скопированы в буфер обмена!\n\nВы можете вставить их в любой текстовый редактор.'))
+            .catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = settingsStr;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('✅ Настройки скопированы в буфер обмена!');
+            });
+    }
+    
+    function quickSettings() {
+        // Быстрое переключение популярных настроек
+        const oldDarkMode = CONFIG.darkMode;
+        const oldRemoveAI = CONFIG.removeAI;
+        
+        CONFIG.darkMode = !CONFIG.darkMode;
+        CONFIG.removeAI = !CONFIG.removeAI;
+        
+        applyDarkTheme();
+        if (CONFIG.removeAI !== oldRemoveAI) {
+            cleanGooglePage();
+        }
+        
+        saveConfig();
+        
+        alert(`Быстрые настройки применены:
+• Тёмная тема: ${CONFIG.darkMode ? 'ВКЛ' : 'ВЫКЛ'}
+• Удалить AI: ${CONFIG.removeAI ? 'ВКЛ' : 'ВЫКЛ'}
+
+Страница будет обновлена через 3 секунды.`);
+        
+        setTimeout(() => location.reload(), 3000);
+    }
+    
+    function showScriptInfo() {
+        const manager = detectScriptManager();
+        const activeSettings = Object.entries(CONFIG)
+            .filter(([key, value]) => value !== DEFAULT_CONFIG[key])
+            .map(([key, value]) => `${key}: ${value}`)
+            .join('\n');
+        
+        const info = `
+elGoogle v${SCRIPT_VERSION}
+
+Менеджер скриптов: ${manager.name} v${manager.version}
+Автор: ellatuk
+GitHub: https://github.com/ellatuk/elGoogle
+
+Изменённые настройки:
+${activeSettings || 'Все настройки по умолчанию'}
+
+Горячие клавиши:
+• F2 - панель управления
+• Esc - закрыть панель
+• Ctrl+Alt+G - GitHub
+• Ctrl+Alt+R - обновить`;
+        
+        alert(info);
     }
     
     // ================== ЗАПУСК ==================
