@@ -2,12 +2,10 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&height=300&color=0:ff2a3f,25:ffa204,50:00a34d,75:0096eb&text=elGoogle%20/%20elГугал&fontColor=FFFFFF" />
 </p>
 
-# elGoogle ![Latest Release](https://img.shields.io/github/v/release/ElLatuk/elGoogle?color=%23083fe5)
-
+# Кайфовая кастомизация Google Поиска 🎨
+![Latest Release](https://img.shields.io/github/v/release/ElLatuk/elGoogle?color=%23083fe5)
 ![Total Downloads](https://img.shields.io/github/downloads/ElLatuk/elGoogle/total?color=indigo) ![Repo Size](https://img.shields.io/github/repo-size/ElLatuk/elGoogle?color=%23083fe5)
 ![Issues](https://img.shields.io/github/issues/ElLatuk/elGoogle?color=%239E9E9E) ![License](https://img.shields.io/github/license/ElLatuk/elGoogle?color=%239E9E9E) ![Stars](https://img.shields.io/github/stars/ElLatuk/elGoogle?color=%23FFD700)
-
-# elGoogle / elГугал - Кайфовая кастомизация Google Поиска 🎨
 
 > Наслаждайтесь чистым и персонализированным Google!
 > Enjoy the clean and personalized Google! :muscle::sunglasses::+1:
