@@ -3,7 +3,7 @@
 // @name:ru-RU        elГугал [beta]
 // @namespace         https://github.com/ellatuk/elGoogle/releases
 // @icon              https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elGoogleLogo.ico
-// @version           1.2
+// @version           1.2.1
 // @description       Makes the Google Search home page better. Better "Gygale Search"
 // @description:ru-RU Делает гугл поиск лучше. Лучший "Гугал поиск"
 // @author            ellatuk
@@ -25,7 +25,7 @@
 
     // ================== КОНСТАНТЫ И КОНФИГУРАЦИЯ ==================
 
-    const SCRIPT_VERSION = GM_info?.script?.version || '1.3.1';
+    const SCRIPT_VERSION = GM_info?.script?.version || '1.2.1';
     const NOISE_TEXTURE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.12'/%3E%3C/svg%3E")`;
 
     const DEFAULT_CONFIG = {
@@ -109,7 +109,7 @@
     let activeTab = 'general';
     let lastReleaseInfo = null;
     let isCheckingUpdate = false;
-    let isLogoApplied = false;
+    let logoApplied = false; // Флаг для предотвращения повторного применения логотипа
 
     // ================== ИНИЦИАЛИЗАЦИЯ ==================
 
@@ -168,65 +168,88 @@
     }
 
     function applyLogo() {
-        if (CONFIG.customLogo && !isLogoApplied) {
-            // Добавляем кастомный логотип
-            StyleManager.apply('elgoogle-logo-style', `
-                .lnXdpd {
-                    display: none !important;
-                }
+        // Выходим если логотип уже применен и настройка не изменилась
+        if (logoApplied && CONFIG.customLogo) return;
 
+        // Удаляем только наши стили логотипа
+        StyleManager.remove('elgoogle-logo-style');
+
+        // Восстанавливаем оригинальный логотип
+        const originalLogo = document.querySelector('.lnXdpd');
+        if (originalLogo) {
+            originalLogo.style.display = '';
+            originalLogo.style.visibility = '';
+        }
+
+        // Удаляем все созданные нами элементы логотипа
+        document.querySelectorAll('.elgoogle-logo-container, .elgoogle-custom-logo').forEach(el => el.remove());
+
+        // Если опция включена - добавляем кастомный логотип
+        if (CONFIG.customLogo) {
+            // Добавляем стили для кастомного логотипа
+            StyleManager.apply('elgoogle-logo-style', `
                 .elgoogle-logo-container {
                     display: flex !important;
                     align-items: center !important;
                     justify-content: center !important;
+                    position: relative;
+                    width: 272px !important;
+                    height: 92px !important;
                 }
 
                 .elgoogle-custom-logo {
-                    width: 272px !important;
-                    height: 92px !important;
+                    width: 100% !important;
+                    height: 100% !important;
                     background-image: url('https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elgygal_logo.png') !important;
                     background-size: contain !important;
                     background-repeat: no-repeat !important;
                     background-position: center !important;
+                    cursor: pointer;
+                    transition: opacity 0.3s ease;
+                }
+
+                /* Плавное появление логотипа */
+                .elgoogle-custom-logo.fade-in {
+                    animation: logoFadeIn 0.5s ease-out forwards;
+                }
+
+                @keyframes logoFadeIn {
+                    from { opacity: 0; transform: scale(0.95); }
+                    to { opacity: 1; transform: scale(1); }
                 }
             `);
 
-            // Добавляем логотип в DOM
+            // Добавляем логотип с задержкой для стабильности
             setTimeout(() => {
                 const logoElement = document.querySelector('.lnXdpd');
                 if (logoElement && !document.querySelector('.elgoogle-custom-logo')) {
+                    // Скрываем оригинальный логотип перед заменой
+                    logoElement.style.display = 'none';
+                    logoElement.style.visibility = 'hidden';
+
                     const logoContainer = document.createElement('div');
                     logoContainer.className = 'elgoogle-logo-container';
 
                     const customLogo = document.createElement('div');
-                    customLogo.className = 'elgoogle-custom-logo';
+                    customLogo.className = 'elgoogle-custom-logo fade-in';
                     customLogo.setAttribute('aria-label', 'Google');
                     customLogo.setAttribute('role', 'img');
+                    customLogo.title = 'elGoogle Custom Logo';
 
                     logoContainer.appendChild(customLogo);
                     logoElement.parentNode.insertBefore(logoContainer, logoElement);
+
+                    // Устанавливаем флаг
+                    logoApplied = true;
                 }
-            }, 500);
-
-            isLogoApplied = true;
-
-        } else if (!CONFIG.customLogo && isLogoApplied) {
-            // Убираем кастомный логотип
-            StyleManager.remove('elgoogle-logo-style');
-
-            const customLogo = document.querySelector('.elgoogle-custom-logo');
-            const logoContainer = document.querySelector('.elgoogle-logo-container');
-
-            if (customLogo) customLogo.remove();
-            if (logoContainer) logoContainer.remove();
-
-            // Показываем оригинальный логотип
-            const originalLogo = document.querySelector('.lnXdpd');
+            }, 150); // Увеличена задержка для полной загрузки страницы
+        } else {
+            // Если опция выключена, сбрасываем флаг и показываем оригинальный логотип
+            logoApplied = false;
             if (originalLogo) {
                 originalLogo.style.display = '';
+                originalLogo.style.visibility = '';
             }
-
-            isLogoApplied = false;
         }
     }
 
@@ -278,46 +301,71 @@
         sprite.style.display = 'none';
         sprite.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg">
-                <!-- Логотип elGoogle (цветной логотип плагина) -->
+                <!-- Улучшенный логотип elGoogle -->
                 <symbol id="i-elgoogle-logo" viewBox="0 0 400 400">
-                    <g transform="translate(50, 50) scale(1)">
-                        <image href="https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elGoogleLogoVector.svg"
-                               width="400" height="400" preserveAspectRatio="xMidYMid meet"/>
+                    <defs>
+                        <linearGradient id="elLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#4285f4" />
+                            <stop offset="50%" stop-color="#34a853" />
+                            <stop offset="100%" stop-color="#fbbc05" />
+                        </linearGradient>
+                        <filter id="elLogoShadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="rgba(0,0,0,0.3)"/>
+                        </filter>
+                    </defs>
+                    <g filter="url(#elLogoShadow)" transform="translate(40, 40)">
+                        <!-- Основной круг -->
+                        <circle cx="160" cy="160" r="140" fill="url(#elLogoGradient)" stroke="white" stroke-width="8"/>
+
+                        <!-- Стилизованная буква "e" -->
+                        <path d="M120,160
+                                 a40,40 0 1,1 80,0
+                                 a40,40 0 1,1 -80,0
+                                 M120,160
+                                 a60,60 0 1,0 120,0
+                                 a60,60 0 1,0 -120,0"
+                              fill="none" stroke="white" stroke-width="12" stroke-linecap="round"/>
+
+                        <!-- Акцентные точки -->
+                        <circle cx="200" cy="120" r="12" fill="white" opacity="0.8"/>
+                        <circle cx="220" cy="180" r="8" fill="white" opacity="0.6"/>
                     </g>
+
+                    <!-- Версия текстом поменьше -->
+                    <text x="200" y="350" text-anchor="middle" fill="#666" font-family="Arial" font-size="24" font-weight="bold">el</text>
                 </symbol>
 
-                <!-- Simple Icons (брендовые иконки) -->
+                <!-- Simple Icons (исправленные правильные иконки) -->
                 <symbol id="i-javascript" viewBox="0 0 24 24">
-                    <title>JavaScript</title>
-                    <path fill="currentColor" d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/>
+                    <path fill="#F7DF1E" d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/>
                 </symbol>
 
+                <!-- Tampermonkey (правильная иконка из Simple Icons) -->
                 <symbol id="i-tampermonkey" viewBox="0 0 24 24">
-                    <title>Tampermonkey</title>
-                    <path fill="currentColor" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22.5C6.21 22.5 1.5 17.79 1.5 12S6.21 1.5 12 1.5 22.5 6.21 22.5 12 17.79 22.5 12 22.5zM9.75 7.5h4.5v9h-4.5v-9zm1.5 1.5v6h1.5V9h-1.5z"/>
+                    <path fill="#00485B" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22.5C6.21 22.5 1.5 17.79 1.5 12S6.21 1.5 12 1.5 22.5 6.21 22.5 12 17.79 22.5 12 22.5zm-4.5-9v6h9v-6h-9zm1.5 1.5h6v3h-6v-3z"/>
                 </symbol>
 
+                <!-- Lucide (правильная иконка из Simple Icons) -->
                 <symbol id="i-lucide" viewBox="0 0 24 24">
-                    <title>Lucide</title>
-                    <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                    <path fill="#fe2a3e" d="M13.5 5.5c-1.5 0-3.5.5-5 2.5-2.5 2.5-2.5 5-2.5 5s2.5 0 5-2.5c2-1.5 2.5-3.5 2.5-5zM19 13s-2.5 0-5 2.5c-2 1.5-2.5 3.5-2.5 5s.5 2.5 2.5 2.5 2.5-.5 2.5-2.5c0-1.5-2.5-5-2.5-5z"/>
                 </symbol>
 
+                <!-- Simple Icons (правильная иконка) -->
                 <symbol id="i-simpleicons" viewBox="0 0 24 24">
-                    <title>Simple Icons</title>
-                    <path fill="currentColor" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm1.604 19.228l-1.604-3.75-1.604 3.75-2.104-4.875H6l3-6.75 1.604 3.75 1.604-3.75 1.604 3.75 1.604-3.75 3 6.75h-1.896l-2.104 4.875z"/>
+                    <path fill="#111111" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-2.604 19.228l1.604-3.75 1.604 3.75 2.104-4.875H18l-3-6.75-1.604 3.75-1.604-3.75-1.604 3.75L8.396 7.5l-3 6.75h1.896l2.104 4.875zm-4.896-7.353L7.5 9.803l2.229-2.229 1.06 1.06-2.229 2.229 2.229 2.229-1.06 1.06L7.5 12.924l-2.229 2.229-1.06-1.06 2.229-2.229-2.229-2.229 1.06-1.06z"/>
                 </symbol>
 
                 <!-- Lucide иконки (остальные) -->
                 <symbol id="i-sliders" viewBox="0 0 24 24">
-                    <line x1="21" x2="14" y1="4" y2="4"/>
-                    <line x1="10" x2="3" y1="4" y2="4"/>
-                    <line x1="21" x2="12" y1="12" y2="12"/>
-                    <line x1="8" x2="3" y1="12" y2="12"/>
-                    <line x1="21" x2="16" y1="20" y2="20"/>
-                    <line x1="12" x2="3" y1="20" y2="20"/>
-                    <line x1="14" x2="14" y1="2" y2="6"/>
-                    <line x1="8" x2="8" y1="10" y2="14"/>
-                    <line x1="16" x2="16" y1="18" y2="22"/>
+                    <line x1="4" x2="4" y1="21" y2="14"/>
+                    <line x1="4" x2="4" y1="10" y2="3"/>
+                    <line x1="12" x2="12" y1="21" y2="12"/>
+                    <line x1="12" x2="12" y1="8" y2="3"/>
+                    <line x1="20" x2="20" y1="21" y2="16"/>
+                    <line x1="20" x2="20" y1="12" y2="3"/>
+                    <line x1="1" x2="7" y1="14" y2="14"/>
+                    <line x1="9" x2="15" y1="8" y2="8"/>
+                    <line x1="17" x2="23" y1="16" y2="16"/>
                 </symbol>
 
                 <symbol id="i-search" viewBox="0 0 24 24">
@@ -350,8 +398,8 @@
 
                 <symbol id="i-import" viewBox="0 0 24 24">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                    <polyline points="17 10 12 15 7 10"/>
-                    <line x1="12" y1="15" x2="12" y2="3"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
                 </symbol>
 
                 <symbol id="i-reset" viewBox="0 0 24 24">
@@ -477,6 +525,21 @@
                 <symbol id="i-leafy-green" viewBox="0 0 24 24">
                     <path d="M2 22c1.25-.987 2.27-1.975 3.9-2.2a5.56 5.56 0 0 1 3.8 1.5 4 4 0 0 0 6.187-2.353 3.5 3.5 0 0 0 3.69-5.116A3.5 3.5 0 0 0 20.95 8 3.5 3.5 0 1 0 16 3.05a3.5 3.5 0 0 0-5.831 1.373 3.5 3.5 0 0 0-5.116 3.69 4 4 0 0 0-2.348 6.155C3.499 15.42 4.409 16.712 4.2 18.1 3.926 19.743 3.014 20.732 2 22"/>
                     <path d="M2 22 17 7"/>
+                </symbol>
+
+                <!-- Иконка сердца для Boosty -->
+                <symbol id="i-heart" viewBox="0 0 24 24">
+                    <defs>
+                        <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#fe2a3e"/>
+                            <stop offset="100%" stop-color="#ff6b7a"/>
+                        </linearGradient>
+                        <filter id="heartGlow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="2" result="blur"/>
+                            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                        </filter>
+                    </defs>
+                    <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-1.05 1.05-1.05-1.05a5.4 5.4 0 0 0-7.65 7.65l1.05 1.05 7.65 7.65 7.65-7.65 1.05-1.05a5.4 5.4 0 0 0 0-7.65z" fill="url(#heartGradient)" filter="url(#heartGlow)"/>
                 </symbol>
             </svg>
         `;
@@ -836,13 +899,25 @@
                         </div>
                     </div>
 
-                    <div class="info-item">
+                    <div class="info-item tech-item">
                         <strong>Технологии:</strong>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
-                            <svg class="el-icon tech-icon" style="width: 16px; height: 16px;"><use href="#i-javascript"></use></svg>
-                            <svg class="el-icon tech-icon" style="width: 16px; height: 16px;"><use href="#i-tampermonkey"></use></svg>
-                            <svg class="el-icon tech-icon" style="width: 16px; height: 16px;"><use href="#i-lucide"></use></svg>
-                            <svg class="el-icon tech-icon" style="width: 16px; height: 16px;"><use href="#i-simpleicons"></use></svg>
+                        <div class="tech-stack">
+                            <a href="https://ecma-international.org/publications-and-standards/standards/ecma-262" target="_blank" class="tech-card" title="JavaScript (ECMAScript)">
+                                <svg class="tech-icon"><use href="#i-javascript"></use></svg>
+                                <span class="tech-name">JavaScript</span>
+                            </a>
+                            <a href="https://www.tampermonkey.net/documentation.php" target="_blank" class="tech-card" title="Tampermonkey API">
+                                <svg class="tech-icon"><use href="#i-tampermonkey"></use></svg>
+                                <span class="tech-name">Tampermonkey</span>
+                            </a>
+                            <a href="https://lucide.dev" target="_blank" class="tech-card" title="Lucide Icons">
+                                <svg class="tech-icon"><use href="#i-lucide"></use></svg>
+                                <span class="tech-name">Lucide</span>
+                            </a>
+                            <a href="https://simpleicons.org" target="_blank" class="tech-card" title="Simple Icons">
+                                <svg class="tech-icon"><use href="#i-simpleicons"></use></svg>
+                                <span class="tech-name">Simple Icons</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -863,9 +938,9 @@
                         <span>YouTube канал</span>
                     </a>
 
-                    <a href="https://lucide.dev" target="_blank" class="link-card">
-                        <svg class="el-icon"><use href="#i-lucide"></use></svg>
-                        <span>Иконки Lucide</span>
+                    <a href="https://boosty.to/ellatuk" target="_blank" class="link-card">
+                        <svg class="el-icon"><use href="#i-heart"></use></svg>
+                        <span>Поддержать автора</span>
                     </a>
                 </div>
 
@@ -911,7 +986,10 @@
 
                 switch (action) {
                     case 'toggleDark': CONFIG.darkMode = value; break;
-                    case 'toggleLogo': CONFIG.customLogo = value; break;
+                    case 'toggleLogo':
+                        CONFIG.customLogo = value;
+                        logoApplied = false; // Сбрасываем флаг при изменении настройки
+                        break;
                     case 'toggleAI': CONFIG.removeAI = value; break;
                     case 'toggleIcons': CONFIG.removeIcons = value; break;
                     case 'toggleImages': CONFIG.removeImages = value; break;
@@ -1001,7 +1079,7 @@
             const rect = panel.getBoundingClientRect();
             offsetX = e.clientX - rect.left;
             offsetY = e.clientY - rect.top;
-            document.addEventListener('mousemove', onDrag);
+            document.addEventListener('mousedown', onDrag);
             document.addEventListener('mouseup', stopDrag);
             panel.style.transition = 'none';
             e.preventDefault();
@@ -1024,7 +1102,7 @@
             CONFIG.panelTop = panel.style.top;
             CONFIG.panelLeft = panel.style.left;
             saveConfig();
-            document.removeEventListener('mousemove', onDrag);
+            document.removeEventListener('mousedown', onDrag);
             document.removeEventListener('mouseup', stopDrag);
         }
     }
@@ -1098,11 +1176,11 @@
             clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
                 updateRemovedElements();
-                if (CONFIG.customLogo) {
-                    // Перерисовываем логотип при изменении DOM
+                if (CONFIG.customLogo && !logoApplied) {
+                    // Применяем логотип только если он еще не применен
                     applyLogo();
                 }
-            }, 100);
+            }, 300); // Увеличена задержка для стабильности
         });
         observer.observe(document.body, { childList: true, subtree: true });
         setTimeout(updateRemovedElements, 2000);
@@ -1282,7 +1360,7 @@
             .elgoogle-panel.compact .tab { padding: 8px 12px; font-size: 13px; }
             .elgoogle-panel.compact .tab-content { padding: 16px; }
 
-            /* Заголовок */
+            /* Заголовок - ИСПРАВЛЕНО: увеличен логотип */
             .panel-header {
                 display: flex; justify-content: space-between;
                 align-items: center; padding: 16px 20px;
@@ -1310,9 +1388,22 @@
                 letter-spacing: -0.2px;
             }
 
+            /* Увеличенный логотип */
             .logo-icon {
-                width: 24px; height: 24px;
-                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+                width: 48px !important; height: 48px !important; /* Увеличил еще больше */
+                filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+                color: #4285f4; /* Синий цвет для логотипа */
+                transition: transform 0.3s ease, filter 0.3s ease;
+            }
+
+            .panel-header:hover .logo-icon {
+                transform: scale(1.1);
+                filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+            }
+
+            .theme-light .logo-icon {
+                color: #4285f4; /* Более светлый синий для светлой темы */
+                filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
             }
 
             .panel-close {
@@ -1563,10 +1654,10 @@
             .theme-preview.dark { background: #1a1a1a; border: 1px solid #333; }
             .theme-preview.light { background: #f5f5f5; border: 1px solid #ddd; }
 
-            /* О плагине */
+            /* О плагине - ИСПРАВЛЕНЫ ТЕХНОЛОГИИ */
             .about-info {
                 background: rgba(255, 255, 255, 0.05); border-radius: 10px;
-                padding: 16px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
             }
             .theme-light .about-info {
                 background: rgba(0, 0, 0, 0.05);
@@ -1574,11 +1665,143 @@
             }
             .info-item {
                 display: flex; justify-content: space-between;
-                align-items: center; padding: 8px 0;
+                align-items: center; padding: 10px 0;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             }
             .theme-light .info-item { border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
             .info-item:last-child { border-bottom: none; }
+
+            .tech-item {
+                display: block;
+                margin-top: 15px;
+            }
+
+            .tech-item strong {
+                display: block;
+                margin-bottom: 12px;
+                font-size: 14px;
+                opacity: 0.9;
+            }
+
+            /* УЛУЧШЕННЫЙ СТИЛЬ ДЛЯ СТЕКА ТЕХНОЛОГИЙ */
+            .tech-stack {
+                display: flex;
+                flex-wrap: nowrap;
+                gap: 10px;
+                margin-top: 10px;
+                justify-content: space-between;
+            }
+
+            .tech-card {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 12px;
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 10px;
+                text-decoration: none;
+                color: inherit;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                width: calc(25% - 8px);
+                min-width: 0;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .tech-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+                transition: left 0.6s ease;
+            }
+
+            .tech-card:hover::before {
+                left: 100%;
+            }
+
+            .theme-light .tech-card {
+                background: rgba(0, 0, 0, 0.05);
+                border: 1px solid rgba(0, 0, 0, 0.1);
+            }
+
+            .tech-card:hover {
+                transform: translateY(-4px) scale(1.05);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+                text-decoration: none;
+                z-index: 2;
+            }
+
+            /* JavaScript - яркое желтое свечение */
+            .tech-card:nth-child(1) {
+                border-color: rgba(247, 223, 30, 0.3);
+            }
+
+            .tech-card:nth-child(1):hover {
+                background: rgba(247, 223, 30, 0.2);
+                border-color: rgba(247, 223, 30, 0.6);
+                box-shadow: 0 8px 32px rgba(247, 223, 30, 0.4);
+            }
+
+            /* Tampermonkey - яркое бирюзовое свечение */
+            .tech-card:nth-child(2) {
+                border-color: rgba(0, 72, 91, 0.3);
+            }
+
+            .tech-card:nth-child(2):hover {
+                background: rgba(0, 72, 91, 0.2);
+                border-color: rgba(0, 72, 91, 0.8);
+                box-shadow: 0 8px 32px rgba(0, 72, 91, 0.5);
+            }
+
+            /* Lucide - яркое красное свечение */
+            .tech-card:nth-child(3) {
+                border-color: rgba(254, 42, 62, 0.3);
+            }
+
+            .tech-card:nth-child(3):hover {
+                background: rgba(254, 42, 62, 0.2);
+                border-color: rgba(254, 42, 62, 0.8);
+                box-shadow: 0 8px 32px rgba(254, 42, 62, 0.5);
+            }
+
+            /* Simple Icons - яркое черное свечение */
+            .tech-card:nth-child(4) {
+                border-color: rgba(17, 17, 17, 0.3);
+            }
+
+            .tech-card:nth-child(4):hover {
+                background: rgba(17, 17, 17, 0.2);
+                border-color: rgba(17, 17, 17, 0.8);
+                box-shadow: 0 8px 32px rgba(17, 17, 17, 0.5);
+            }
+
+            .tech-icon {
+                width: 28px; /* Увеличил размер иконок */
+                height: 28px;
+                flex-shrink: 0;
+                transition: transform 0.3s ease;
+            }
+
+            .tech-card:hover .tech-icon {
+                transform: scale(1.2);
+            }
+
+            .tech-name {
+                font-size: 12px;
+                font-weight: 500;
+                opacity: 0.9;
+                text-align: center;
+                word-break: break-word;
+                line-height: 1.3;
+            }
+
             .check-update-btn {
                 padding: 4px 12px; background: rgba(26, 115, 232, 0.2);
                 border: 1px solid #1a73e8; border-radius: 6px;
@@ -1595,13 +1818,32 @@
             .status-neutral { opacity: 0.7; }
 
             /* Ссылки */
-            .links-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0; }
+            .links-grid {
+                display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0;
+            }
             .link-card {
                 display: flex; flex-direction: column; align-items: center;
                 gap: 10px; padding: 16px; background: rgba(255, 255, 255, 0.05);
                 border-radius: 10px; text-decoration: none; color: inherit;
                 transition: all 0.2s; border: 1px solid rgba(255, 255, 255, 0.1);
+                position: relative; overflow: hidden;
             }
+
+            .link-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+                transition: left 0.6s ease;
+            }
+
+            .link-card:hover::before {
+                left: 100%;
+            }
+
             .theme-light .link-card {
                 background: rgba(0, 0, 0, 0.05);
                 border: 1px solid rgba(0, 0, 0, 0.1);
