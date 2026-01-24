@@ -3,7 +3,7 @@
 // @name:ru-RU        elГугал [beta]
 // @namespace         https://github.com/ellatuk/elGoogle/releases
 // @icon              https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elGoogleLogo.ico
-// @version           2.1
+// @version           1.2.3
 // @description       Makes the Google Search home page better. Better "Gygale Search"
 // @description:ru-RU Делает гугл поиск лучше. Лучший "Гугал поиск"
 // @author            ellatuk
@@ -77,7 +77,6 @@
             exportSettings: 'Экспорт настроек',
             importSettings: 'Импорт настроек',
             resetSettings: 'Сброс настроек',
-            // НОВОЕ: Переводы для переключателя языка
             menuLanguage: 'Язык меню',
             languageDesc: 'Выбор языка интерфейса панели управления',
             russian: 'Русский',
@@ -134,7 +133,6 @@
             exportSettings: 'Export settings',
             importSettings: 'Import settings',
             resetSettings: 'Reset settings',
-            // НОВОЕ: Переводы для переключателя языка
             menuLanguage: 'Menu Language',
             languageDesc: 'Interface language selection for control panel',
             russian: 'Русский',
@@ -168,8 +166,7 @@
         panelLeft: '20px',
         panelVisible: false,
         lastVersionCheck: 0,
-        language: userLang, // Сохраняем язык в настройках
-        // НОВОЕ: Язык меню (отдельная настройка для интерфейса панели)
+        language: userLang,
         menuLanguage: userLang
     };
 
@@ -211,11 +208,11 @@
         },
         custom: { 
             name: t.custom,
-            values: null // будет заполняться текущими настройками
+            values: null
         }
     };
 
-    // ================== МЕНЕДЖЕРЫ И СОСТОЯНИЕ ==================
+    // ================== МЕНЕДЖЕР СТИЛЕЙ ==================
 
     const StyleManager = (() => {
         const styles = new Map();
@@ -236,12 +233,17 @@
                     styles.delete(id);
                 }
             },
+            exists(id) {
+                return styles.has(id);
+            },
             clear() {
                 styles.forEach(style => style.remove());
                 styles.clear();
             }
         };
     })();
+
+    // ================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==================
 
     let CONFIG = { ...DEFAULT_CONFIG };
     let panel = null;
@@ -255,7 +257,6 @@
     async function init() {
         await loadConfig();
         
-        // Обновляем объект перевода на основе сохраненного языка меню
         if (CONFIG.menuLanguage && LANGUAGES[CONFIG.menuLanguage]) {
             window.t = LANGUAGES[CONFIG.menuLanguage];
         } else {
@@ -337,7 +338,7 @@
         saveConfig();
     }
 
-    // ================== ПРИМЕНЕНИЕ СТИЛЕЙ ==================
+    // ================== ГЛАВНАЯ ФУНКЦИЯ ПРИМЕНЕНИЯ ==================
 
     function applyAll() {
         applyDarkTheme();
@@ -349,6 +350,8 @@
         applyCompactMode();
         updateRemovedElements();
     }
+
+    // ================== ФУНКЦИИ ПРИМЕНЕНИЯ НАСТРОЕК ==================
 
     function applyDarkTheme() {
         if (CONFIG.darkMode) {
@@ -473,6 +476,27 @@
         }
     }
 
+    function updateRemovedElements() {
+        const aiButton = document.querySelector('button[jsname="B6rgad"]');
+        if (aiButton) aiButton.style.display = CONFIG.removeAI ? 'none' : '';
+
+        document.querySelectorAll('div[jsname="UdfVXc"].WC2Die').forEach(el => {
+            el.style.display = CONFIG.removeIcons ? 'none' : '';
+        });
+
+        const imagesLink = document.querySelector('a.gb_Z[data-pid="2"], a[aria-label*="картинк" i], a[href*="imghp"]');
+        if (imagesLink) {
+            const parent = imagesLink.closest('div.gb_0') || imagesLink.parentElement;
+            if (parent) parent.style.display = CONFIG.removeImages ? 'none' : '';
+        }
+
+        const mailLink = document.querySelector('a.gb_Z[data-pid="23"], a[aria-label*="почт" i], a[href*="mail.google.com"]');
+        if (mailLink) {
+            const parent = mailLink.closest('div.gb_0') || mailLink.parentElement;
+            if (parent) parent.style.display = CONFIG.removeMail ? 'none' : '';
+        }
+    }
+
     // ================== SVG-СПРАЙТ ==================
 
     function injectSVGSprite() {
@@ -483,27 +507,22 @@
         sprite.style.display = 'none';
         sprite.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg">
-                <!-- Иконка JavaScript -->
                 <symbol id="i-javascript" viewBox="0 0 24 24">
                     <path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/>
                 </symbol>
 
-                <!-- Simple Icons с сайта simpleicons.org -->
                 <symbol id="i-simpleicons" viewBox="0 0 24 24">
                     <path d="M12 0C8.688 0 6 2.688 6 6s2.688 6 6 6c4.64-.001 7.526 5.039 5.176 9.04h1.68A7.507 7.507 0 0 0 12 10.5 4.502 4.502 0 0 1 7.5 6c0-2.484 2.016-4.5 4.5-4.5s4.5 2.016 4.5 4.5H18c0-3.312-2.688-6-6-6Zm0 3a3 3 0 0 0 0 6c4 0 4-6 0-6Zm0 1.5A1.5 1.5 0 0 1 13.5 6v.002c-.002 1.336-1.617 2.003-2.561 1.058C9.995 6.115 10.664 4.5 12 4.5ZM7.5 15v1.5H9v6H4.5V24h15v-1.5H15v-6h1.5V15Zm3 1.5h3v6h-3zm-6 1.47c0 1.09.216 2.109.644 3.069h1.684A5.957 5.957 0 0 1 6 17.97Z"/>
                 </symbol>
 
-                <!-- Иконка Tampermonkey с сайта simpleicons.org -->
                 <symbol id="i-tampermonkey" viewBox="0 0 24 24">
                     <path d="M5.955.002C3-.071.275 2.386.043 5.335c-.069 3.32-.011 6.646-.03 9.969.06 1.87-.276 3.873.715 5.573 1.083 2.076 3.456 3.288 5.77 3.105 4.003-.011 8.008.022 12.011-.017 2.953-.156 5.478-2.815 5.482-5.772-.007-4.235.023-8.473-.015-12.708C23.82 2.533 21.16.007 18.205.003c-4.083-.005-8.167 0-12.25-.002zm.447 12.683c2.333-.046 4.506 1.805 4.83 4.116.412 2.287-1.056 4.716-3.274 5.411-2.187.783-4.825-.268-5.874-2.341-1.137-2.039-.52-4.827 1.37-6.197a4.896 4.896 0 012.948-.99zm11.245 0c2.333-.046 4.505 1.805 4.829 4.116.413 2.287-1.056 4.716-3.273 5.411-2.188.783-4.825-.268-5.875-2.341-1.136-2.039-.52-4.827 1.37-6.197a4.896 4.896 0 012.949-.99z"/>
                 </symbol>
 
-                <!-- Иконка Lucide с сайта simpleicons.org -->
                 <symbol id="i-lucide" viewBox="0 0 24 24">
                     <path d="M18.483 1.123a1.09 1.09 0 0 0-.752.362 1.09 1.09 0 0 0 .088 1.54 11.956 11.956 0 0 1 4 8.946 7.62 7.62 0 0 1-7.637 7.636 7.62 7.62 0 0 1-7.637-7.636 3.255 3.255 0 0 1 3.273-3.273c1.82 0 3.273 1.45 3.273 3.273a1.09 1.09 0 0 0 1.09 1.09 1.09 1.09 0 0 0 1.092-1.09c0-3-2.455-5.455-5.455-5.455s-5.454 2.455-5.454 5.455c0 5.408 4.408 9.818 9.818 9.818 5.41 0 9.818-4.41 9.818-9.818A14.16 14.16 0 0 0 19.272 1.4a1.09 1.09 0 0 0-.789-.277ZM9.818 2.15C4.408 2.151 0 6.561 0 11.97a14.16 14.16 0 0 0 4.8 10.637 1.09 1.09 0 0 0 1.54-.096 1.09 1.09 0 0 0-.095-1.54 11.957 11.957 0 0 1-4.063-9 7.62 7.62 0 0 1 7.636-7.637 7.62 7.62 0 0 1 7.637 7.636 3.256 3.256 0 0 1-3.273 3.273 3.256 3.256 0 0 1-3.273-3.273 1.09 1.09 0 0 0-1.09-1.09 1.09 1.09 0 0 0-1.092 1.09c0 3 2.455 5.455 5.455 5.455s5.454-2.455 5.454-5.455c0-5.408-4.408-9.818-9.818-9.818z"/>
                 </symbol>
 
-                <!-- Lucide иконки (остальные) -->
                 <symbol id="i-sliders" viewBox="0 0 24 24">
                     <line x1="4" x2="4" y1="21" y2="14"/>
                     <line x1="4" x2="4" y1="10" y2="3"/>
@@ -675,7 +694,6 @@
                     <path d="M2 22 17 7"/>
                 </symbol>
 
-                <!-- Иконка сердца для Boosty -->
                 <symbol id="i-heart" viewBox="0 0 24 24">
                     <defs>
                         <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -690,7 +708,6 @@
                     <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-1.05 1.05-1.05-1.05a5.4 5.4 0 0 0-7.65 7.65l1.05 1.05 7.65 7.65 7.65-7.65 1.05-1.05a5.4 5.4 0 0 0 0-7.65z" fill="url(#heartGradient)" filter="url(#heartGlow)"/>
                 </symbol>
 
-                <!-- НОВАЯ ИКОНКА: languages (для переключателя языка) -->
                 <symbol id="i-languages" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10"/>
                     <path d="M2 12h20"/>
@@ -699,29 +716,6 @@
             </svg>
         `;
         document.body.appendChild(sprite);
-    }
-
-    // ================== УПРАВЛЕНИЕ ЭЛЕМЕНТАМИ ==================
-
-    function updateRemovedElements() {
-        const aiButton = document.querySelector('button[jsname="B6rgad"]');
-        if (aiButton) aiButton.style.display = CONFIG.removeAI ? 'none' : '';
-
-        document.querySelectorAll('div[jsname="UdfVXc"].WC2Die').forEach(el => {
-            el.style.display = CONFIG.removeIcons ? 'none' : '';
-        });
-
-        const imagesLink = document.querySelector('a.gb_Z[data-pid="2"], a[aria-label*="картинк" i], a[href*="imghp"]');
-        if (imagesLink) {
-            const parent = imagesLink.closest('div.gb_0') || imagesLink.parentElement;
-            if (parent) parent.style.display = CONFIG.removeImages ? 'none' : '';
-        }
-
-        const mailLink = document.querySelector('a.gb_Z[data-pid="23"], a[aria-label*="почт" i], a[href*="mail.google.com"]');
-        if (mailLink) {
-            const parent = mailLink.closest('div.gb_0') || mailLink.parentElement;
-            if (parent) parent.style.display = CONFIG.removeMail ? 'none' : '';
-        }
     }
 
     // ================== ПАНЕЛЬ УПРАВЛЕНИЯ ==================
@@ -986,7 +980,6 @@
                     </div>
                 </div>
 
-                <!-- НОВЫЙ БЛОК: ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА -->
                 <div class="control-group">
                     <h4><svg class="el-icon section-icon"><use href="#i-languages"></use></svg>${t.menuLanguage}</h4>
                     <div class="language-buttons">
@@ -1171,7 +1164,6 @@
                 await saveConfig();
                 checkIfSettingsChanged();
                 applyAll();
-                updateRemovedElements();
                 renderActiveTab();
             });
         });
@@ -1187,7 +1179,6 @@
 
                 await saveConfig();
                 applyAll();
-                updateRemovedElements();
                 renderActiveTab();
             });
         });
@@ -1210,7 +1201,6 @@
             });
         });
 
-        // НОВЫЙ ОБРАБОТЧИК: переключение языка меню
         container.querySelectorAll('.language-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const lang = btn.dataset.language;
@@ -1481,7 +1471,6 @@
                 pointer-events: none;
             }
 
-            /* Основные темы */
             .elgoogle-panel.theme-dark {
                 background: rgba(25, 25, 25, 0.95);
                 color: #fff; border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1494,7 +1483,6 @@
                 box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
             }
 
-            /* Эффект стекла */
             .elgoogle-panel.glass {
                 background: rgba(30, 30, 30, 0.65) !important;
                 backdrop-filter: blur(25px) saturate(2) !important;
@@ -1527,7 +1515,6 @@
                 mix-blend-mode: multiply; z-index: -1; border-radius: inherit;
             }
 
-            /* Состояние без эффекта стекла */
             .elgoogle-panel.no-glass {
                 backdrop-filter: none !important;
                 -webkit-backdrop-filter: none !important;
@@ -1543,7 +1530,6 @@
             .elgoogle-panel.compact .tab { padding: 8px 12px; font-size: 13px; }
             .elgoogle-panel.compact .tab-content { padding: 16px; }
 
-            /* Заголовок */
             .panel-header {
                 display: flex; justify-content: space-between;
                 align-items: center; padding: 16px 20px;
@@ -1563,17 +1549,16 @@
             }
 
             .title-main {
-                font-weight: 600; font-size: 16px;
+                font-weight: 600; font-size: 18px;
             }
 
             .title-version {
-                font-size: 12px; opacity: 0.6; font-weight: 400;
+                font-size: 13px; opacity: 0.6; font-weight: 400;
                 letter-spacing: -0.2px;
             }
 
-            /* ОБНОВЛЕННЫЙ ЛОГОТИП */
             .logo-icon {
-                width: 48px !important; height: 48px !important;
+                width: 40px !important; height: 40px !important;
                 background-image: url('https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elGoogleLogoVector.svg');
                 background-size: contain; background-repeat: no-repeat;
                 background-position: center;
@@ -1604,7 +1589,6 @@
             }
             .theme-light .panel-close:hover { background: rgba(0, 0, 0, 0.2); }
 
-            /* Вкладки */
             .tabs {
                 display: flex; padding: 0 16px;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -1642,7 +1626,6 @@
                 background: rgba(26, 115, 232, 0.15);
             }
 
-            /* Контент вкладок */
             .tab-content {
                 padding: 20px; max-height: 60vh; overflow-y: auto;
             }
@@ -1659,7 +1642,6 @@
 
             .control-group { margin-bottom: 24px; }
 
-            /* Строки управления */
             .control-row {
                 display: flex; justify-content: space-between;
                 align-items: center; padding: 12px 0;
@@ -1699,7 +1681,6 @@
                 font-size: 12px; opacity: 0.7; margin-top: 2px;
             }
 
-            /* Иконки */
             .el-icon {
                 width: 18px; height: 18px;
                 stroke: currentColor; fill: none;
@@ -1709,9 +1690,18 @@
             }
 
             .tech-icon {
-                width: 28px; height: 28px;
+                width: 24px; height: 24px;
                 fill: currentColor;
                 stroke: none;
+            }
+
+            .tech-name {
+                font-size: 12px;
+                text-align: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
             }
 
             .section-icon {
@@ -1728,7 +1718,6 @@
                 justify-content: space-between;
             }
 
-            /* Переключатель */
             .switch {
                 position: relative; display: inline-block;
                 width: 52px; height: 26px;
@@ -1761,7 +1750,6 @@
                 transform: translateX(26px);
             }
 
-            /* Пресеты */
             .preset-buttons { 
                 display: grid; 
                 grid-template-columns: repeat(3, 1fr); 
@@ -1827,7 +1815,6 @@
                 border-left: 3px solid rgba(26, 115, 232, 0.5);
             }
 
-            /* Предпросмотр стилей */
             .style-preview-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px; }
             .style-preview {
                 cursor: pointer; border: 2px solid transparent; border-radius: 10px;
@@ -1853,7 +1840,6 @@
                 opacity: 0.9; font-weight: 500;
             }
 
-            /* Темы меню */
             .theme-buttons { display: flex; gap: 12px; margin-top: 12px; }
             .theme-btn {
                 flex: 1; display: flex; flex-direction: column;
@@ -1876,7 +1862,6 @@
             .theme-preview.dark { background: #1a1a1a; border: 1px solid #333; }
             .theme-preview.light { background: #f5f5f5; border: 1px solid #ddd; }
 
-            /* НОВЫЙ БЛОК: КНОПКИ ВЫБОРА ЯЗЫКА */
             .language-buttons {
                 display: flex;
                 gap: 12px;
@@ -1929,7 +1914,6 @@
                 border-left: 3px solid rgba(26, 115, 232, 0.5);
             }
 
-            /* О плагине */
             .about-info {
                 background: rgba(255, 255, 255, 0.05); border-radius: 10px;
                 padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1947,11 +1931,14 @@
             }
             
             .info-item {
-                display: flex; justify-content: space-between;
+                display: flex; justify-content: flex-start;
                 align-items: center; padding: 10px 0;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                gap: 10px;
             }
-            .theme-light .info-item { border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+            .theme-light .info-item { 
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05); 
+            }
             .info-item:last-child { border-bottom: none; }
 
             .tech-item {
@@ -1969,7 +1956,7 @@
             .tech-stack {
                 display: flex;
                 flex-wrap: nowrap;
-                gap: 10px;
+                gap: 12px;
                 margin-top: 10px;
                 justify-content: space-between;
             }
@@ -1980,14 +1967,14 @@
                 align-items: center;
                 justify-content: center;
                 gap: 8px;
-                padding: 12px;
+                padding: 16px;
                 background: rgba(255, 255, 255, 0.05);
                 border-radius: 10px;
                 text-decoration: none;
                 color: #fff !important;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 border: 1px solid rgba(255, 255, 255, 0.1);
-                width: calc(25% - 8px);
+                flex: 1;
                 min-width: 0;
                 position: relative;
                 overflow: hidden;
@@ -2021,7 +2008,6 @@
                 z-index: 2;
             }
 
-            /* JavaScript - желтый */
             .tech-card:nth-child(1) {
                 border-color: rgba(247, 223, 30, 0.3);
             }
@@ -2032,7 +2018,6 @@
                 box-shadow: 0 8px 32px rgba(247, 223, 30, 0.4);
             }
 
-            /* Tampermonkey - темно-синий */
             .tech-card:nth-child(2) {
                 border-color: rgba(0, 72, 91, 0.3);
             }
@@ -2043,7 +2028,6 @@
                 box-shadow: 0 8px 32px rgba(0, 72, 91, 0.5);
             }
 
-            /* Lucide - красный */
             .tech-card:nth-child(3) {
                 border-color: rgba(254, 42, 62, 0.3);
             }
@@ -2054,7 +2038,6 @@
                 box-shadow: 0 8px 32px rgba(254, 42, 62, 0.5);
             }
 
-            /* Simple Icons - черный */
             .tech-card:nth-child(4) {
                 border-color: rgba(0, 0, 0, 0.3);
             }
@@ -2080,7 +2063,6 @@
             .status-warning { color: #fbbc05 !important; }
             .status-neutral { opacity: 0.7; }
 
-            /* Ссылки */
             .links-grid {
                 display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0;
             }
@@ -2120,7 +2102,6 @@
             .link-card .el-icon { width: 24px; height: 24px; }
             .link-card span { font-size: 13px; text-align: center; opacity: 0.9; }
 
-            /* Цвета ссылок */
             .repository-link {
                 background: rgba(255, 255, 255, 0.05) !important;
                 border-color: rgba(255, 255, 255, 0.2) !important;
@@ -2181,7 +2162,6 @@
             }
             .theme-light .about-footer { border-top: 1px solid rgba(0, 0, 0, 0.1); }
 
-            /* Футер панели */
             .panel-footer {
                 display: flex; align-items: center; padding: 12px 20px;
                 border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -2209,6 +2189,46 @@
             .footer-status {
                 flex: 1; text-align: right;
                 font-size: 12px; opacity: 0.7;
+            }
+
+            /* Стили полосы прокрутки */
+            .tab-content::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .tab-content::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 4px;
+            }
+
+            .tab-content::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 4px;
+            }
+
+            .tab-content::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.3);
+            }
+
+            .tab-content {
+                scrollbar-width: thin;
+                scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+            }
+
+            .theme-light .tab-content::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.05);
+            }
+
+            .theme-light .tab-content::-webkit-scrollbar-thumb {
+                background: rgba(0, 0, 0, 0.2);
+            }
+
+            .theme-light .tab-content::-webkit-scrollbar-thumb:hover {
+                background: rgba(0, 0, 0, 0.3);
+            }
+
+            .theme-light .tab-content {
+                scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
             }
         `;
     }
