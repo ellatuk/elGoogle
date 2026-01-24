@@ -109,12 +109,13 @@
     let activeTab = 'general';
     let lastReleaseInfo = null;
     let isCheckingUpdate = false;
+    let isLogoApplied = false;
 
     // ================== ИНИЦИАЛИЗАЦИЯ ==================
 
     async function init() {
         await loadConfig();
-        injectLucideSprite();
+        injectSVGSprite();
         applyAll();
         createControlPanel();
         setupMutationObserver();
@@ -167,19 +168,65 @@
     }
 
     function applyLogo() {
-        if (CONFIG.customLogo) {
+        if (CONFIG.customLogo && !isLogoApplied) {
+            // Добавляем кастомный логотип
             StyleManager.apply('elgoogle-logo-style', `
-                .lnXdpd { display: none !important; }
-                .lnXdpd::before {
-                    content: '' !important; display: inline-block !important;
-                    width: 272px !important; height: 92px !important;
+                .lnXdpd {
+                    display: none !important;
+                }
+
+                .elgoogle-logo-container {
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                }
+
+                .elgoogle-custom-logo {
+                    width: 272px !important;
+                    height: 92px !important;
                     background-image: url('https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elgygal_logo.png') !important;
-                    background-size: contain !important; background-repeat: no-repeat !important;
-                    background-position: center !important; vertical-align: middle !important;
+                    background-size: contain !important;
+                    background-repeat: no-repeat !important;
+                    background-position: center !important;
                 }
             `);
-        } else {
+
+            // Добавляем логотип в DOM
+            setTimeout(() => {
+                const logoElement = document.querySelector('.lnXdpd');
+                if (logoElement && !document.querySelector('.elgoogle-custom-logo')) {
+                    const logoContainer = document.createElement('div');
+                    logoContainer.className = 'elgoogle-logo-container';
+
+                    const customLogo = document.createElement('div');
+                    customLogo.className = 'elgoogle-custom-logo';
+                    customLogo.setAttribute('aria-label', 'Google');
+                    customLogo.setAttribute('role', 'img');
+
+                    logoContainer.appendChild(customLogo);
+                    logoElement.parentNode.insertBefore(logoContainer, logoElement);
+                }
+            }, 500);
+
+            isLogoApplied = true;
+
+        } else if (!CONFIG.customLogo && isLogoApplied) {
+            // Убираем кастомный логотип
             StyleManager.remove('elgoogle-logo-style');
+
+            const customLogo = document.querySelector('.elgoogle-custom-logo');
+            const logoContainer = document.querySelector('.elgoogle-logo-container');
+
+            if (customLogo) customLogo.remove();
+            if (logoContainer) logoContainer.remove();
+
+            // Показываем оригинальный логотип
+            const originalLogo = document.querySelector('.lnXdpd');
+            if (originalLogo) {
+                originalLogo.style.display = '';
+            }
+
+            isLogoApplied = false;
         }
     }
 
@@ -205,9 +252,13 @@
 
     function applyMenuGlass() {
         if (panel) {
-            // ИСПРАВЛЕНИЕ: правильная логика эффекта стекла
-            panel.classList.toggle('glass', CONFIG.glassEffect);
-            panel.classList.toggle('no-glass', !CONFIG.glassEffect);
+            if (CONFIG.glassEffect) {
+                panel.classList.add('glass');
+                panel.classList.remove('no-glass');
+            } else {
+                panel.classList.add('no-glass');
+                panel.classList.remove('glass');
+            }
         }
     }
 
@@ -217,17 +268,46 @@
         }
     }
 
-    // ================== SVG-СПРАЙТ LUCIDE ==================
+    // ================== SVG-СПРАЙТ ==================
 
-    function injectLucideSprite() {
-        if (document.getElementById('el-lucide-sprite')) return;
+    function injectSVGSprite() {
+        if (document.getElementById('el-svg-sprite')) return;
 
         const sprite = document.createElement('div');
-        sprite.id = 'el-lucide-sprite';
+        sprite.id = 'el-svg-sprite';
         sprite.style.display = 'none';
         sprite.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg">
-                <!-- Основные иконки -->
+                <!-- Логотип elGoogle (цветной логотип плагина) -->
+                <symbol id="i-elgoogle-logo" viewBox="0 0 400 400">
+                    <g transform="translate(50, 50) scale(1)">
+                        <image href="https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elGoogleLogoVector.svg"
+                               width="400" height="400" preserveAspectRatio="xMidYMid meet"/>
+                    </g>
+                </symbol>
+
+                <!-- Simple Icons (брендовые иконки) -->
+                <symbol id="i-javascript" viewBox="0 0 24 24">
+                    <title>JavaScript</title>
+                    <path fill="currentColor" d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/>
+                </symbol>
+
+                <symbol id="i-tampermonkey" viewBox="0 0 24 24">
+                    <title>Tampermonkey</title>
+                    <path fill="currentColor" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22.5C6.21 22.5 1.5 17.79 1.5 12S6.21 1.5 12 1.5 22.5 6.21 22.5 12 17.79 22.5 12 22.5zM9.75 7.5h4.5v9h-4.5v-9zm1.5 1.5v6h1.5V9h-1.5z"/>
+                </symbol>
+
+                <symbol id="i-lucide" viewBox="0 0 24 24">
+                    <title>Lucide</title>
+                    <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                </symbol>
+
+                <symbol id="i-simpleicons" viewBox="0 0 24 24">
+                    <title>Simple Icons</title>
+                    <path fill="currentColor" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm1.604 19.228l-1.604-3.75-1.604 3.75-2.104-4.875H6l3-6.75 1.604 3.75 1.604-3.75 1.604 3.75 1.604-3.75 3 6.75h-1.896l-2.104 4.875z"/>
+                </symbol>
+
+                <!-- Lucide иконки (остальные) -->
                 <symbol id="i-sliders" viewBox="0 0 24 24">
                     <line x1="21" x2="14" y1="4" y2="4"/>
                     <line x1="10" x2="3" y1="4" y2="4"/>
@@ -239,40 +319,46 @@
                     <line x1="8" x2="8" y1="10" y2="14"/>
                     <line x1="16" x2="16" y1="18" y2="22"/>
                 </symbol>
+
                 <symbol id="i-search" viewBox="0 0 24 24">
                     <circle cx="11" cy="11" r="8"/>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </symbol>
+
                 <symbol id="i-menu" viewBox="0 0 24 24">
                     <line x1="3" y1="6" x2="21" y2="6"/>
                     <line x1="3" y1="12" x2="21" y2="12"/>
                     <line x1="3" y1="18" x2="21" y2="18"/>
                 </symbol>
+
                 <symbol id="i-info" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10"/>
                     <path d="M12 16v-4"/>
                     <path d="M12 8h.01"/>
                 </symbol>
 
-                <!-- Вспомогательные иконки -->
                 <symbol id="i-close" viewBox="0 0 24 24">
                     <line x1="18" y1="6" x2="6" y2="18"/>
                     <line x1="6" y1="6" x2="18" y2="18"/>
                 </symbol>
+
                 <symbol id="i-export" viewBox="0 0 24 24">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                     <polyline points="7 10 12 15 17 10"/>
                     <line x1="12" y1="15" x2="12" y2="3"/>
                 </symbol>
+
                 <symbol id="i-import" viewBox="0 0 24 24">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                     <polyline points="17 10 12 15 7 10"/>
                     <line x1="12" y1="15" x2="12" y2="3"/>
                 </symbol>
+
                 <symbol id="i-reset" viewBox="0 0 24 24">
                     <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
                     <path d="M3 3v5h5"/>
                 </symbol>
+
                 <symbol id="i-list-restart" viewBox="0 0 24 24">
                     <path d="M21 6H3"/>
                     <path d="M7 12H3"/>
@@ -280,10 +366,12 @@
                     <path d="M12 18a5 5 0 0 0 9-3 4.5 4.5 0 0 0-4.5-4.5c-1.33 0-2.54.54-3.41 1.41L11 14"/>
                     <path d="M11 10v4h4"/>
                 </symbol>
+
                 <symbol id="i-settings" viewBox="0 0 24 24">
                     <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
                     <circle cx="12" cy="12" r="3"/>
                 </symbol>
+
                 <symbol id="i-theme" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="4"/>
                     <path d="M12 2v2"/>
@@ -295,10 +383,7 @@
                     <path d="m6.34 17.66-1.41 1.41"/>
                     <path d="m19.07 4.93-1.41 1.41"/>
                 </symbol>
-                <symbol id="i-logo" viewBox="0 0 24 24">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                    <line x1="9" y1="3" x2="9" y2="21"/>
-                </symbol>
+
                 <symbol id="i-image-off" viewBox="0 0 24 24">
                     <line x1="2" x2="22" y1="2" y2="22"/>
                     <path d="M10.41 10.41a2 2 0 1 1-2.83-2.83"/>
@@ -307,12 +392,14 @@
                     <path d="M3.59 3.59A1.99 1.99 0 0 0 3 5v14a2 2 0 0 0 2 2h14c.55 0 1.052-.22 1.41-.59"/>
                     <path d="M21 15V5a2 2 0 0 0-2-2H9"/>
                 </symbol>
+
                 <symbol id="i-mail-x" viewBox="0 0 24 24">
                     <path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h9"/>
                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
                     <path d="m17 17 4 4"/>
                     <path d="m21 17-4 4"/>
                 </symbol>
+
                 <symbol id="i-ai" viewBox="0 0 24 24">
                     <path d="M12 8V4H8"/>
                     <rect width="16" height="12" x="4" y="8" rx="2"/>
@@ -321,37 +408,75 @@
                     <path d="M15 13v2"/>
                     <path d="M9 13v2"/>
                 </symbol>
+
                 <symbol id="i-icon" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10"/>
                     <circle cx="12" cy="9" r="1"/>
                     <path d="M12 13v3"/>
                 </symbol>
+
                 <symbol id="i-check" viewBox="0 0 24 24">
                     <polyline points="20 6 9 17 4 12"/>
                 </symbol>
+
                 <symbol id="i-github" viewBox="0 0 24 24">
                     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
                 </symbol>
+
                 <symbol id="i-user" viewBox="0 0 24 24">
                     <circle cx="12" cy="8" r="5"/>
                     <path d="M20 21a8 8 0 1 0-16 0"/>
                 </symbol>
+
                 <symbol id="i-leaf" viewBox="0 0 24 24">
                     <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
                     <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
                 </symbol>
+
                 <symbol id="i-youtube" viewBox="0 0 24 24">
                     <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/>
                     <path d="m10 15 5-3-5-3z"/>
                 </symbol>
-                <symbol id="i-lucide" viewBox="0 0 24 24">
-                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-                </symbol>
+
                 <symbol id="i-settings-2" viewBox="0 0 24 24">
                     <path d="M20 7h-9"/>
                     <path d="M14 17H5"/>
                     <circle cx="17" cy="17" r="3"/>
                     <circle cx="7" cy="7" r="3"/>
+                </symbol>
+
+                <symbol id="i-layout-list" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <line x1="9" y1="8" x2="21" y2="8"/>
+                    <line x1="9" y1="12" x2="21" y2="12"/>
+                    <line x1="9" y1="16" x2="21" y2="16"/>
+                    <line x1="5" y1="8" x2="7" y2="8"/>
+                    <line x1="5" y1="12" x2="7" y2="12"/>
+                    <line x1="5" y1="16" x2="7" y2="16"/>
+                </symbol>
+
+                <symbol id="i-brush-cleaning" viewBox="0 0 24 24">
+                    <path d="M20 6.5a2.5 2.5 0 0 0-2.5-2.5"/>
+                    <path d="M17.5 4a2.5 2.5 0 0 0-2.5 2.5"/>
+                    <path d="m4 20 10-10"/>
+                    <path d="M11 13 7 17l-3-1 1-3 4-4"/>
+                    <path d="m14 10 6-6"/>
+                    <path d="M9 21a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v2H9Z"/>
+                </symbol>
+
+                <symbol id="i-house-heart" viewBox="0 0 24 24">
+                    <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <path d="M14 15h-4c-.5 0-1-.5-1-1s.5-1 1-1h4c.5 0 1 .5 1 1s-.5 1-1 1"/>
+                    <path d="M16 11a3 3 0 0 0-6 0"/>
+                </symbol>
+
+                <symbol id="i-wrench" viewBox="0 0 24 24">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                </symbol>
+
+                <symbol id="i-leafy-green" viewBox="0 0 24 24">
+                    <path d="M2 22c1.25-.987 2.27-1.975 3.9-2.2a5.56 5.56 0 0 1 3.8 1.5 4 4 0 0 0 6.187-2.353 3.5 3.5 0 0 0 3.69-5.116A3.5 3.5 0 0 0 20.95 8 3.5 3.5 0 1 0 16 3.05a3.5 3.5 0 0 0-5.831 1.373 3.5 3.5 0 0 0-5.116 3.69 4 4 0 0 0-2.348 6.155C3.499 15.42 4.409 16.712 4.2 18.1 3.926 19.743 3.014 20.732 2 22"/>
+                    <path d="M2 22 17 7"/>
                 </symbol>
             </svg>
         `;
@@ -398,7 +523,7 @@
         panel.innerHTML = `
             <div class="panel-header" id="elgoogle-drag-handle">
                 <div class="panel-title">
-                    <svg class="el-icon logo-icon"><use href="#i-logo"></use></svg>
+                    <svg class="el-icon logo-icon"><use href="#i-elgoogle-logo"></use></svg>
                     <div class="title-text">
                         <span class="title-main">elGoogle</span>
                         <span class="title-version">v${SCRIPT_VERSION}</span>
@@ -450,7 +575,7 @@
         renderActiveTab();
         setupPanelEvents();
         makePanelDraggable();
-        applyAll(); // Применяем стили к панели
+        applyAll();
     }
 
     function renderActiveTab() {
@@ -489,7 +614,7 @@
 
                     <div class="control-row ${CONFIG.customLogo ? 'active' : ''}" data-action="toggleLogo">
                         <div class="control-label">
-                            <svg class="el-icon"><use href="#i-logo"></use></svg>
+                            <svg class="el-icon"><use href="#i-wrench"></use></svg>
                             <div>
                                 <div class="control-title">Кастомный логотип</div>
                                 <div class="control-description">Заменить логотип Google</div>
@@ -563,11 +688,20 @@
                 </div>
 
                 <div class="control-group">
-                    <h4><svg class="el-icon section-icon"><use href="#i-list-restart"></use></svg>Пресеты</h4>
+                    <h4><svg class="el-icon section-icon"><use href="#i-layout-list"></use></svg>Пресеты</h4>
                     <div class="preset-buttons">
-                        <button class="preset-btn ${CONFIG.preset === 'minimal' ? 'active' : ''}" data-preset="minimal">Minimal</button>
-                        <button class="preset-btn ${CONFIG.preset === 'clean' ? 'active' : ''}" data-preset="clean">Clean</button>
-                        <button class="preset-btn ${CONFIG.preset === 'full' ? 'active' : ''}" data-preset="full">Full</button>
+                        <button class="preset-btn ${CONFIG.preset === 'minimal' ? 'active' : ''}" data-preset="minimal">
+                            <svg class="el-icon preset-icon"><use href="#i-wrench"></use></svg>
+                            Minimal
+                        </button>
+                        <button class="preset-btn ${CONFIG.preset === 'clean' ? 'active' : ''}" data-preset="clean">
+                            <svg class="el-icon preset-icon"><use href="#i-brush-cleaning"></use></svg>
+                            Clean
+                        </button>
+                        <button class="preset-btn ${CONFIG.preset === 'full' ? 'active' : ''}" data-preset="full">
+                            <svg class="el-icon preset-icon"><use href="#i-house-heart"></use></svg>
+                            Full
+                        </button>
                     </div>
                     <div class="preset-description">${getPresetDescription(CONFIG.preset)}</div>
                 </div>
@@ -695,12 +829,21 @@
                     </div>
 
                     <div class="info-item author-info">
-                        <svg class="el-icon author-icon"><use href="#i-leaf"></use></svg>
-                        <strong>Автор:</strong> ellatuk
+                        <strong>Автор:</strong>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <svg class="el-icon" style="width: 16px; height: 16px; margin-right: 4px;"><use href="#i-leafy-green"></use></svg>
+                            <span>ellatuk</span>
+                        </div>
                     </div>
 
                     <div class="info-item">
-                        <strong>Технологии:</strong> JavaScript, Tampermonkey API, Lucide Icons
+                        <strong>Технологии:</strong>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                            <svg class="el-icon tech-icon" style="width: 16px; height: 16px;"><use href="#i-javascript"></use></svg>
+                            <svg class="el-icon tech-icon" style="width: 16px; height: 16px;"><use href="#i-tampermonkey"></use></svg>
+                            <svg class="el-icon tech-icon" style="width: 16px; height: 16px;"><use href="#i-lucide"></use></svg>
+                            <svg class="el-icon tech-icon" style="width: 16px; height: 16px;"><use href="#i-simpleicons"></use></svg>
+                        </div>
                     </div>
                 </div>
 
@@ -955,7 +1098,10 @@
             clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
                 updateRemovedElements();
-                if (CONFIG.customLogo) applyLogo();
+                if (CONFIG.customLogo) {
+                    // Перерисовываем логотип при изменении DOM
+                    applyLogo();
+                }
             }, 100);
         });
         observer.observe(document.body, { childList: true, subtree: true });
@@ -1066,7 +1212,6 @@
                 font-family: 'Segoe UI', system-ui, sans-serif;
                 user-select: none; border-radius: 16px;
                 transition: opacity 0.3s ease, transform 0.3s ease;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
                 overflow: hidden;
             }
 
@@ -1079,44 +1224,53 @@
             .elgoogle-panel.theme-dark {
                 background: rgba(25, 25, 25, 0.95);
                 color: #fff; border: 1px solid rgba(255, 255, 255, 0.1);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             }
 
             .elgoogle-panel.theme-light {
                 background: rgba(255, 255, 255, 0.95);
                 color: #333; border: 1px solid rgba(0, 0, 0, 0.1);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
             }
 
-            /* Эффект стекла - ИСПРАВЛЕН */
+            /* Эффект стекла */
             .elgoogle-panel.glass {
-                background: rgba(30, 30, 30, 0.55) !important;
-                backdrop-filter: blur(20px) saturate(1.8) !important;
-                -webkit-backdrop-filter: blur(20px) saturate(1.8) !important;
-                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                background: rgba(30, 30, 30, 0.65) !important;
+                backdrop-filter: blur(25px) saturate(2) !important;
+                -webkit-backdrop-filter: blur(25px) saturate(2) !important;
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
+                           inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                           inset 0 -1px 0 rgba(0, 0, 0, 0.2) !important;
             }
 
             .elgoogle-panel.theme-dark.glass::before {
                 content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-                background: ${NOISE_TEXTURE}; opacity: 0.15; pointer-events: none;
-                mix-blend-mode: overlay; z-index: -1;
+                background: ${NOISE_TEXTURE}; opacity: 0.25; pointer-events: none;
+                mix-blend-mode: overlay; z-index: -1; border-radius: inherit;
             }
 
             .elgoogle-panel.theme-light.glass {
-                background: rgba(255, 255, 255, 0.65) !important;
-                backdrop-filter: blur(20px) saturate(1.8) !important;
-                -webkit-backdrop-filter: blur(20px) saturate(1.8) !important;
-                border: 1px solid rgba(0, 0, 0, 0.1) !important;
+                background: rgba(255, 255, 255, 0.75) !important;
+                backdrop-filter: blur(25px) saturate(1.8) !important;
+                -webkit-backdrop-filter: blur(25px) saturate(1.8) !important;
+                border: 1px solid rgba(255, 255, 255, 0.3) !important;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
+                           inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                           inset 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
             }
 
             .elgoogle-panel.theme-light.glass::before {
                 content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-                background: ${NOISE_TEXTURE}; opacity: 0.1; pointer-events: none;
-                mix-blend-mode: multiply; z-index: -1;
+                background: ${NOISE_TEXTURE}; opacity: 0.15; pointer-events: none;
+                mix-blend-mode: multiply; z-index: -1; border-radius: inherit;
             }
 
             /* Состояние без эффекта стекла */
             .elgoogle-panel.no-glass {
                 backdrop-filter: none !important;
                 -webkit-backdrop-filter: none !important;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25) !important;
             }
 
             .elgoogle-panel.compact {
@@ -1128,7 +1282,7 @@
             .elgoogle-panel.compact .tab { padding: 8px 12px; font-size: 13px; }
             .elgoogle-panel.compact .tab-content { padding: 16px; }
 
-            /* Заголовок - ИСПРАВЛЕНО отображение версии */
+            /* Заголовок */
             .panel-header {
                 display: flex; justify-content: space-between;
                 align-items: center; padding: 16px 20px;
@@ -1157,25 +1311,29 @@
             }
 
             .logo-icon {
-                width: 20px; height: 20px;
+                width: 24px; height: 24px;
+                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
             }
 
             .panel-close {
                 background: rgba(255, 255, 255, 0.1); border: none;
                 border-radius: 50%; width: 32px; height: 32px;
                 display: flex; align-items: center; justify-content: center;
-                cursor: pointer; transition: background 0.2s;
+                cursor: pointer; transition: background 0.2s, transform 0.2s;
             }
 
             .theme-light .panel-close { background: rgba(0, 0, 0, 0.1); }
-            .panel-close:hover { background: rgba(255, 255, 255, 0.2); }
+            .panel-close:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: scale(1.05);
+            }
             .theme-light .panel-close:hover { background: rgba(0, 0, 0, 0.2); }
 
-            /* Вкладки - ИСПРАВЛЕНО отображение текста */
+            /* Вкладки */
             .tabs {
                 display: flex; padding: 0 16px;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                background: rgba(0, 0, 0, 0.1);
+                background: rgba(0, 0, 0, 0.15);
                 border-radius: 16px 16px 0 0;
             }
 
@@ -1190,7 +1348,7 @@
                 background: none; border: none; color: inherit;
                 cursor: pointer; font-size: 14px; transition: all 0.2s;
                 border-bottom: 2px solid transparent; opacity: 0.7;
-                white-space: nowrap; /* Предотвращаем перенос текста */
+                white-space: nowrap;
             }
 
             .tab-text {
@@ -1198,15 +1356,15 @@
             }
 
             .tab:hover {
-                opacity: 1; background: rgba(255, 255, 255, 0.05);
+                opacity: 1; background: rgba(255, 255, 255, 0.08);
                 transform: translateY(-1px);
             }
 
-            .theme-light .tab:hover { background: rgba(0, 0, 0, 0.05); }
+            .theme-light .tab:hover { background: rgba(0, 0, 0, 0.08); }
 
             .tab.active {
                 opacity: 1; border-bottom-color: #1a73e8;
-                background: rgba(26, 115, 232, 0.1);
+                background: rgba(26, 115, 232, 0.15);
             }
 
             /* Контент вкладок */
@@ -1241,12 +1399,12 @@
             }
 
             .control-row:hover {
-                background: rgba(255, 255, 255, 0.06);
+                background: rgba(255, 255, 255, 0.08);
                 transform: translateX(2px);
             }
 
             .theme-light .control-row:hover {
-                background: rgba(0, 0, 0, 0.06);
+                background: rgba(0, 0, 0, 0.08);
             }
 
             .control-row.active {
@@ -1275,17 +1433,24 @@
                 flex-shrink: 0;
             }
 
+            /* Simple Icons имеют fill вместо stroke */
+            .tech-icon {
+                fill: currentColor;
+                stroke: none;
+            }
+
             .section-icon {
                 width: 20px; height: 20px; opacity: 0.9;
             }
 
-            .author-icon {
-                width: 16px; height: 16px; margin-right: 6px;
-                opacity: 0.8;
+            .preset-icon {
+                width: 16px; height: 16px;
+                margin-right: 6px;
             }
 
             .author-info {
                 display: flex; align-items: center;
+                justify-content: space-between;
             }
 
             /* Переключатель */
@@ -1327,13 +1492,27 @@
                 flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.1);
                 border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px;
                 color: inherit; cursor: pointer; transition: all 0.2s;
+                display: flex; align-items: center; justify-content: center;
             }
             .theme-light .preset-btn { background: rgba(0, 0, 0, 0.05); border-color: rgba(0, 0, 0, 0.1); }
-            .preset-btn:hover { background: rgba(255, 255, 255, 0.2); }
+            .preset-btn:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: translateY(-2px);
+            }
             .theme-light .preset-btn:hover { background: rgba(0, 0, 0, 0.1); }
-            .preset-btn.active { background: #1a73e8; border-color: #1a73e8; color: white; }
-            .preset-description { font-size: 13px; opacity: 0.8; padding: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 6px; }
-            .theme-light .preset-description { background: rgba(0, 0, 0, 0.05); }
+            .preset-btn.active {
+                background: #1a73e8; border-color: #1a73e8; color: white;
+                box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+            }
+            .preset-description {
+                font-size: 13px; opacity: 0.8; padding: 8px;
+                background: rgba(255, 255, 255, 0.05); border-radius: 6px;
+                border-left: 3px solid #1a73e8;
+            }
+            .theme-light .preset-description {
+                background: rgba(0, 0, 0, 0.05);
+                border-left: 3px solid rgba(26, 115, 232, 0.5);
+            }
 
             /* Предпросмотр стилей */
             .style-preview-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px; }
@@ -1344,11 +1523,22 @@
             .theme-light .style-preview { background: rgba(0, 0, 0, 0.05); }
             .style-preview:hover {
                 background: rgba(255, 255, 255, 0.1); transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             }
             .theme-light .style-preview:hover { background: rgba(0, 0, 0, 0.1); }
-            .style-preview.active { border-color: #1a73e8; background: rgba(26, 115, 232, 0.1); }
-            .preview-box { width: 100%; height: 40px; border-radius: 8px; margin-bottom: 8px; transition: all 0.3s; }
-            .preview-label { display: block; text-align: center; font-size: 13px; opacity: 0.9; }
+            .style-preview.active {
+                border-color: #1a73e8; background: rgba(26, 115, 232, 0.1);
+                box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+            }
+            .preview-box {
+                width: 100%; height: 40px; border-radius: 8px;
+                margin-bottom: 8px; transition: all 0.3s;
+                position: relative; overflow: hidden;
+            }
+            .preview-label {
+                display: block; text-align: center; font-size: 13px;
+                opacity: 0.9; font-weight: 500;
+            }
 
             /* Темы меню */
             .theme-buttons { display: flex; gap: 12px; margin-top: 12px; }
@@ -1360,16 +1550,28 @@
                 cursor: pointer; transition: all 0.2s;
             }
             .theme-light .theme-btn { background: rgba(0, 0, 0, 0.05); }
-            .theme-btn:hover { background: rgba(255, 255, 255, 0.1); }
+            .theme-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateY(-2px);
+            }
             .theme-light .theme-btn:hover { background: rgba(0, 0, 0, 0.1); }
-            .theme-btn.active { border-color: #1a73e8; background: rgba(26, 115, 232, 0.1); }
+            .theme-btn.active {
+                border-color: #1a73e8; background: rgba(26, 115, 232, 0.1);
+                box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+            }
             .theme-preview { width: 60px; height: 40px; border-radius: 6px; }
             .theme-preview.dark { background: #1a1a1a; border: 1px solid #333; }
             .theme-preview.light { background: #f5f5f5; border: 1px solid #ddd; }
 
             /* О плагине */
-            .about-info { background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 16px; margin-bottom: 20px; }
-            .theme-light .about-info { background: rgba(0, 0, 0, 0.05); }
+            .about-info {
+                background: rgba(255, 255, 255, 0.05); border-radius: 10px;
+                padding: 16px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .theme-light .about-info {
+                background: rgba(0, 0, 0, 0.05);
+                border: 1px solid rgba(0, 0, 0, 0.1);
+            }
             .info-item {
                 display: flex; justify-content: space-between;
                 align-items: center; padding: 8px 0;
@@ -1383,7 +1585,10 @@
                 color: inherit; cursor: pointer; font-size: 12px;
                 transition: background 0.2s;
             }
-            .check-update-btn:hover:not(:disabled) { background: rgba(26, 115, 232, 0.3); }
+            .check-update-btn:hover:not(:disabled) {
+                background: rgba(26, 115, 232, 0.3);
+                transform: scale(1.05);
+            }
             .check-update-btn:disabled { opacity: 0.5; cursor: not-allowed; }
             .status-good { color: #34a853; }
             .status-warning { color: #fbbc05; }
@@ -1395,14 +1600,22 @@
                 display: flex; flex-direction: column; align-items: center;
                 gap: 10px; padding: 16px; background: rgba(255, 255, 255, 0.05);
                 border-radius: 10px; text-decoration: none; color: inherit;
-                transition: all 0.2s;
+                transition: all 0.2s; border: 1px solid rgba(255, 255, 255, 0.1);
             }
-            .theme-light .link-card { background: rgba(0, 0, 0, 0.05); }
+            .theme-light .link-card {
+                background: rgba(0, 0, 0, 0.05);
+                border: 1px solid rgba(0, 0, 0, 0.1);
+            }
             .link-card:hover {
                 background: rgba(255, 255, 255, 0.1);
                 transform: translateY(-2px); text-decoration: none;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                border-color: rgba(255, 255, 255, 0.2);
             }
-            .theme-light .link-card:hover { background: rgba(0, 0, 0, 0.1); }
+            .theme-light .link-card:hover {
+                background: rgba(0, 0, 0, 0.1);
+                border-color: rgba(0, 0, 0, 0.2);
+            }
             .link-card .el-icon { width: 24px; height: 24px; }
             .link-card span { font-size: 13px; text-align: center; opacity: 0.9; }
 
@@ -1429,10 +1642,13 @@
                 background: rgba(255, 255, 255, 0.1); border: none;
                 border-radius: 6px; width: 32px; height: 32px;
                 display: flex; align-items: center; justify-content: center;
-                cursor: pointer; margin-right: 8px; transition: background 0.2s;
+                cursor: pointer; margin-right: 8px; transition: all 0.2s;
             }
             .theme-light .footer-btn { background: rgba(0, 0, 0, 0.1); }
-            .footer-btn:hover { background: rgba(255, 255, 255, 0.2); }
+            .footer-btn:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: scale(1.05);
+            }
             .theme-light .footer-btn:hover { background: rgba(0, 0, 0, 0.2); }
 
             .footer-status {
