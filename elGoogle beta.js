@@ -3,11 +3,11 @@
 // @name:ru-RU        elГугал [beta]
 // @namespace         https://github.com/ellatuk/elGoogle/releases
 // @icon              https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elGoogleLogo.ico
-// @version           1.2.1
+// @version           1.2
 // @description       Makes the Google Search home page better. Better "Gygale Search"
 // @description:ru-RU Делает гугл поиск лучше. Лучший "Гугал поиск"
 // @author            ellatuk
-// @homepageURL   https://github.com/ellatuk/elGoogle
+// @homepageURL       https://github.com/ellatuk/elGoogle
 // @match             https://www.google.com/*
 // @match             https://www.google.ru/*
 // @grant             GM.getValue
@@ -25,7 +25,7 @@
 
     // ================== КОНСТАНТЫ И КОНФИГУРАЦИЯ ==================
 
-    const SCRIPT_VERSION = GM_info?.script?.version || '1.2.1';
+    const SCRIPT_VERSION = GM_info?.script?.version || '1.2.2';
     const NOISE_TEXTURE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.12'/%3E%3C/svg%3E")`;
 
     const DEFAULT_CONFIG = {
@@ -71,9 +71,22 @@
     };
 
     const PRESETS = {
-        minimal: { darkMode: true, customLogo: false, removeAI: false, removeIcons: false, removeImages: false, removeMail: false },
-        clean: { darkMode: true, customLogo: true, removeAI: true, removeIcons: false, removeImages: false, removeMail: false },
-        full: { darkMode: true, customLogo: true, removeAI: true, removeIcons: true, removeImages: true, removeMail: true }
+        minimal: {
+            name: 'Минимальный',
+            values: { darkMode: true, customLogo: false, removeAI: false, removeIcons: false, removeImages: false, removeMail: false }
+        },
+        clean: {
+            name: 'Чистый',
+            values: { darkMode: true, customLogo: true, removeAI: true, removeIcons: false, removeImages: false, removeMail: false }
+        },
+        full: {
+            name: 'Полный',
+            values: { darkMode: true, customLogo: true, removeAI: true, removeIcons: true, removeImages: true, removeMail: true }
+        },
+        custom: {
+            name: 'Пользовательский',
+            values: null // будет заполняться текущими настройками
+        }
     };
 
     // ================== МЕНЕДЖЕРЫ И СОСТОЯНИЕ ==================
@@ -109,12 +122,13 @@
     let activeTab = 'general';
     let lastReleaseInfo = null;
     let isCheckingUpdate = false;
-    let logoApplied = false; // Флаг для предотвращения повторного применения логотипа
+    let logoApplied = false;
 
     // ================== ИНИЦИАЛИЗАЦИЯ ==================
 
     async function init() {
         await loadConfig();
+        updatePresetType(); // Определяем тип пресета при загрузке
         injectSVGSprite();
         applyAll();
         createControlPanel();
@@ -129,7 +143,13 @@
     async function loadConfig() {
         try {
             const saved = await GM.getValue('elGoogle_config');
-            if (saved) CONFIG = { ...DEFAULT_CONFIG, ...saved };
+            if (saved) {
+                CONFIG = { ...DEFAULT_CONFIG, ...saved };
+                // Убеждаемся, что preset существует в PRESETS
+                if (!PRESETS[CONFIG.preset]) {
+                    CONFIG.preset = 'custom';
+                }
+            }
         } catch (e) {
             console.warn('[elGoogle] Ошибка загрузки настроек:', e);
         }
@@ -141,6 +161,50 @@
         } catch (e) {
             console.warn('[elGoogle] Ошибка сохранения настроек:', e);
         }
+    }
+
+    // ================== ОПРЕДЕЛЕНИЕ ПРЕСЕТА ==================
+
+    function updatePresetType() {
+        // Проверяем, соответствует ли текущая конфигурация какому-либо из пресетов
+        const currentSettings = {
+            darkMode: CONFIG.darkMode,
+            customLogo: CONFIG.customLogo,
+            removeAI: CONFIG.removeAI,
+            removeIcons: CONFIG.removeIcons,
+            removeImages: CONFIG.removeImages,
+            removeMail: CONFIG.removeMail
+        };
+
+        let matchedPreset = 'custom';
+
+        // Проверяем соответствие каждому пресету
+        for (const [presetKey, preset] of Object.entries(PRESETS)) {
+            if (presetKey === 'custom') continue;
+
+            const presetValues = preset.values;
+            let isMatch = true;
+
+            // Сравниваем каждую настройку
+            for (const key in presetValues) {
+                if (currentSettings[key] !== presetValues[key]) {
+                    isMatch = false;
+                    break;
+                }
+            }
+
+            if (isMatch) {
+                matchedPreset = presetKey;
+                break;
+            }
+        }
+
+        CONFIG.preset = matchedPreset;
+    }
+
+    function checkIfSettingsChanged() {
+        updatePresetType();
+        saveConfig();
     }
 
     // ================== ПРИМЕНЕНИЕ СТИЛЕЙ ==================
@@ -168,25 +232,18 @@
     }
 
     function applyLogo() {
-        // Выходим если логотип уже применен и настройка не изменилась
         if (logoApplied && CONFIG.customLogo) return;
 
-        // Удаляем только наши стили логотипа
         StyleManager.remove('elgoogle-logo-style');
-
-        // Восстанавливаем оригинальный логотип
         const originalLogo = document.querySelector('.lnXdpd');
         if (originalLogo) {
             originalLogo.style.display = '';
             originalLogo.style.visibility = '';
         }
 
-        // Удаляем все созданные нами элементы логотипа
         document.querySelectorAll('.elgoogle-logo-container, .elgoogle-custom-logo').forEach(el => el.remove());
 
-        // Если опция включена - добавляем кастомный логотип
         if (CONFIG.customLogo) {
-            // Добавляем стили для кастомного логотипа
             StyleManager.apply('elgoogle-logo-style', `
                 .elgoogle-logo-container {
                     display: flex !important;
@@ -208,7 +265,6 @@
                     transition: opacity 0.3s ease;
                 }
 
-                /* Плавное появление логотипа */
                 .elgoogle-custom-logo.fade-in {
                     animation: logoFadeIn 0.5s ease-out forwards;
                 }
@@ -219,11 +275,9 @@
                 }
             `);
 
-            // Добавляем логотип с задержкой для стабильности
             setTimeout(() => {
                 const logoElement = document.querySelector('.lnXdpd');
                 if (logoElement && !document.querySelector('.elgoogle-custom-logo')) {
-                    // Скрываем оригинальный логотип перед заменой
                     logoElement.style.display = 'none';
                     logoElement.style.visibility = 'hidden';
 
@@ -239,12 +293,10 @@
                     logoContainer.appendChild(customLogo);
                     logoElement.parentNode.insertBefore(logoContainer, logoElement);
 
-                    // Устанавливаем флаг
                     logoApplied = true;
                 }
-            }, 150); // Увеличена задержка для полной загрузки страницы
+            }, 150);
         } else {
-            // Если опция выключена, сбрасываем флаг и показываем оригинальный логотип
             logoApplied = false;
             if (originalLogo) {
                 originalLogo.style.display = '';
@@ -335,24 +387,25 @@
                     <text x="200" y="350" text-anchor="middle" fill="#666" font-family="Arial" font-size="24" font-weight="bold">el</text>
                 </symbol>
 
-                <!-- Simple Icons (исправленные правильные иконки) -->
-                <symbol id="i-javascript" viewBox="0 0 24 24">
-                    <path fill="#F7DF1E" d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/>
-                </symbol>
-
-                <!-- Tampermonkey (правильная иконка из Simple Icons) -->
-                <symbol id="i-tampermonkey" viewBox="0 0 24 24">
-                    <path fill="#00485B" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22.5C6.21 22.5 1.5 17.79 1.5 12S6.21 1.5 12 1.5 22.5 6.21 22.5 12 17.79 22.5 12 22.5zm-4.5-9v6h9v-6h-9zm1.5 1.5h6v3h-6v-3z"/>
-                </symbol>
-
-                <!-- Lucide (правильная иконка из Simple Icons) -->
-                <symbol id="i-lucide" viewBox="0 0 24 24">
-                    <path fill="#fe2a3e" d="M13.5 5.5c-1.5 0-3.5.5-5 2.5-2.5 2.5-2.5 5-2.5 5s2.5 0 5-2.5c2-1.5 2.5-3.5 2.5-5zM19 13s-2.5 0-5 2.5c-2 1.5-2.5 3.5-2.5 5s.5 2.5 2.5 2.5 2.5-.5 2.5-2.5c0-1.5-2.5-5-2.5-5z"/>
-                </symbol>
-
-                <!-- Simple Icons (правильная иконка) -->
+                <!-- Simple Icons (ПРАВИЛЬНЫЕ ИКОНКИ) -->
+                <!-- Иконка Simple Icons с сайта simpleicons.org -->
                 <symbol id="i-simpleicons" viewBox="0 0 24 24">
-                    <path fill="#111111" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-2.604 19.228l1.604-3.75 1.604 3.75 2.104-4.875H18l-3-6.75-1.604 3.75-1.604-3.75-1.604 3.75L8.396 7.5l-3 6.75h1.896l2.104 4.875zm-4.896-7.353L7.5 9.803l2.229-2.229 1.06 1.06-2.229 2.229 2.229 2.229-1.06 1.06L7.5 12.924l-2.229 2.229-1.06-1.06 2.229-2.229-2.229-2.229 1.06-1.06z"/>
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-2.165 19.763l1.915-4.505 1.91 4.495 2.565-5.989H18L15 7.055l-1.948 4.56L11.07 7.06 8 13.774h1.335l2.5-5.72 2.5 5.72h1.335l-1.335 3.11H14.5l-.61 1.46h-1.945l-.665-1.46h-1.33z"/>
+                </symbol>
+
+                <!-- Иконка Tampermonkey с сайта simpleicons.org -->
+                <symbol id="i-tampermonkey" viewBox="0 0 24 24">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zM8.214 9.042l7.572 7.572-3.547 3.547L4.667 12.59zm9.768 9.768l-3.547-3.547 3.547-3.547 3.547 3.547z"/>
+                </symbol>
+
+                <!-- Иконка Lucide с сайта simpleicons.org -->
+                <symbol id="i-lucide" viewBox="0 0 24 24">
+                    <path d="M8.13 5.343C8.589 4.93 9.178 4.75 10 4.75s1.411.18 1.87.593c.44.395.63.934.63 1.657 0 .629-.133 1.122-.397 1.547-.239.385-.592.71-1.032 1.003a9.442 9.442 0 01-1.028.603L10 10.75l-.043.024a9.442 9.442 0 01-1.028-.603c-.44-.293-.793-.618-1.032-1.003-.264-.425-.397-.918-.397-1.547 0-.723.19-1.262.63-1.657zM5.75 12.25v7h3v-3.5h2.5v3.5h3v-7M12.75 5.75h3.5v3.5h-3.5zM16.25 12.25h3.5v3.5h-3.5zM7.75 12.25h3.5v3.5h-3.5z"/>
+                </symbol>
+
+                <!-- Иконка JavaScript с сайта simpleicons.org -->
+                <symbol id="i-javascript" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/>
                 </symbol>
 
                 <!-- Lucide иконки (остальные) -->
@@ -549,23 +602,19 @@
     // ================== УПРАВЛЕНИЕ ЭЛЕМЕНТАМИ ==================
 
     function updateRemovedElements() {
-        // Кнопка "Режим ИИ"
         const aiButton = document.querySelector('button[jsname="B6rgad"]');
         if (aiButton) aiButton.style.display = CONFIG.removeAI ? 'none' : '';
 
-        // Иконки поиска
         document.querySelectorAll('div[jsname="UdfVXc"].WC2Die').forEach(el => {
             el.style.display = CONFIG.removeIcons ? 'none' : '';
         });
 
-        // Кнопка "Картинки"
         const imagesLink = document.querySelector('a.gb_Z[data-pid="2"], a[aria-label*="картинк" i], a[href*="imghp"]');
         if (imagesLink) {
             const parent = imagesLink.closest('div.gb_0') || imagesLink.parentElement;
             if (parent) parent.style.display = CONFIG.removeImages ? 'none' : '';
         }
 
-        // Кнопка "Почта"
         const mailLink = document.querySelector('a.gb_Z[data-pid="23"], a[aria-label*="почт" i], a[href*="mail.google.com"]');
         if (mailLink) {
             const parent = mailLink.closest('div.gb_0') || mailLink.parentElement;
@@ -755,15 +804,19 @@
                     <div class="preset-buttons">
                         <button class="preset-btn ${CONFIG.preset === 'minimal' ? 'active' : ''}" data-preset="minimal">
                             <svg class="el-icon preset-icon"><use href="#i-wrench"></use></svg>
-                            Minimal
+                            ${PRESETS.minimal.name}
                         </button>
                         <button class="preset-btn ${CONFIG.preset === 'clean' ? 'active' : ''}" data-preset="clean">
                             <svg class="el-icon preset-icon"><use href="#i-brush-cleaning"></use></svg>
-                            Clean
+                            ${PRESETS.clean.name}
                         </button>
                         <button class="preset-btn ${CONFIG.preset === 'full' ? 'active' : ''}" data-preset="full">
                             <svg class="el-icon preset-icon"><use href="#i-house-heart"></use></svg>
-                            Full
+                            ${PRESETS.full.name}
+                        </button>
+                        <button class="preset-btn ${CONFIG.preset === 'custom' ? 'active' : ''}" data-preset="custom">
+                            <svg class="el-icon preset-icon"><use href="#i-settings"></use></svg>
+                            ${PRESETS.custom.name}
                         </button>
                     </div>
                     <div class="preset-description">${getPresetDescription(CONFIG.preset)}</div>
@@ -959,7 +1012,8 @@
         const descriptions = {
             minimal: 'Только самое необходимое. Тёмная тема.',
             clean: 'Чистый Google. Тёмная тема, кастомный логотип, удаление AI.',
-            full: 'Полная кастомизация. Все функции включены.'
+            full: 'Полная кастомизация. Все функции включены.',
+            custom: 'Пользовательские настройки. Вы изменили стандартные параметры.'
         };
         return descriptions[preset] || '';
     }
@@ -988,7 +1042,7 @@
                     case 'toggleDark': CONFIG.darkMode = value; break;
                     case 'toggleLogo':
                         CONFIG.customLogo = value;
-                        logoApplied = false; // Сбрасываем флаг при изменении настройки
+                        logoApplied = false;
                         break;
                     case 'toggleAI': CONFIG.removeAI = value; break;
                     case 'toggleIcons': CONFIG.removeIcons = value; break;
@@ -1000,6 +1054,7 @@
                 }
 
                 await saveConfig();
+                checkIfSettingsChanged(); // Проверяем и обновляем тип пресета
                 applyAll();
                 updateRemovedElements();
                 renderActiveTab();
@@ -1011,7 +1066,10 @@
             btn.addEventListener('click', async () => {
                 const preset = btn.dataset.preset;
                 CONFIG.preset = preset;
-                Object.assign(CONFIG, PRESETS[preset]);
+
+                if (preset !== 'custom') {
+                    Object.assign(CONFIG, PRESETS[preset].values);
+                }
 
                 await saveConfig();
                 applyAll();
@@ -1079,7 +1137,7 @@
             const rect = panel.getBoundingClientRect();
             offsetX = e.clientX - rect.left;
             offsetY = e.clientY - rect.top;
-            document.addEventListener('mousedown', onDrag);
+            document.addEventListener('mousemove', onDrag);
             document.addEventListener('mouseup', stopDrag);
             panel.style.transition = 'none';
             e.preventDefault();
@@ -1102,7 +1160,7 @@
             CONFIG.panelTop = panel.style.top;
             CONFIG.panelLeft = panel.style.left;
             saveConfig();
-            document.removeEventListener('mousedown', onDrag);
+            document.removeEventListener('mousemove', onDrag);
             document.removeEventListener('mouseup', stopDrag);
         }
     }
@@ -1151,6 +1209,7 @@
 
                 if (confirm(`Импортировать настройки? ВНИМАНИЕ: Это перезапишет текущие настройки.`)) {
                     CONFIG = { ...DEFAULT_CONFIG, ...imported };
+                    updatePresetType(); // Обновляем тип пресета после импорта
                     await saveConfig();
                     location.reload();
                 }
@@ -1165,6 +1224,7 @@
     async function resetSettings() {
         if (confirm('Сбросить ВСЕ настройки к значениям по умолчанию?')) {
             CONFIG = { ...DEFAULT_CONFIG };
+            CONFIG.preset = 'full'; // Устанавливаем пресет по умолчанию
             await saveConfig();
             location.reload();
         }
@@ -1177,10 +1237,9 @@
             timeoutId = setTimeout(() => {
                 updateRemovedElements();
                 if (CONFIG.customLogo && !logoApplied) {
-                    // Применяем логотип только если он еще не применен
                     applyLogo();
                 }
-            }, 300); // Увеличена задержка для стабильности
+            }, 300);
         });
         observer.observe(document.body, { childList: true, subtree: true });
         setTimeout(updateRemovedElements, 2000);
@@ -1360,7 +1419,7 @@
             .elgoogle-panel.compact .tab { padding: 8px 12px; font-size: 13px; }
             .elgoogle-panel.compact .tab-content { padding: 16px; }
 
-            /* Заголовок - ИСПРАВЛЕНО: увеличен логотип */
+            /* Заголовок */
             .panel-header {
                 display: flex; justify-content: space-between;
                 align-items: center; padding: 16px 20px;
@@ -1388,11 +1447,10 @@
                 letter-spacing: -0.2px;
             }
 
-            /* Увеличенный логотип */
             .logo-icon {
-                width: 48px !important; height: 48px !important; /* Увеличил еще больше */
+                width: 48px !important; height: 48px !important;
                 filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
-                color: #4285f4; /* Синий цвет для логотипа */
+                color: #4285f4;
                 transition: transform 0.3s ease, filter 0.3s ease;
             }
 
@@ -1402,7 +1460,7 @@
             }
 
             .theme-light .logo-icon {
-                color: #4285f4; /* Более светлый синий для светлой темы */
+                color: #4285f4;
                 filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
             }
 
@@ -1526,6 +1584,7 @@
 
             /* Simple Icons имеют fill вместо stroke */
             .tech-icon {
+                width: 28px; height: 28px;
                 fill: currentColor;
                 stroke: none;
             }
@@ -1654,7 +1713,7 @@
             .theme-preview.dark { background: #1a1a1a; border: 1px solid #333; }
             .theme-preview.light { background: #f5f5f5; border: 1px solid #ddd; }
 
-            /* О плагине - ИСПРАВЛЕНЫ ТЕХНОЛОГИИ */
+            /* О плагине */
             .about-info {
                 background: rgba(255, 255, 255, 0.05); border-radius: 10px;
                 padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1683,7 +1742,6 @@
                 opacity: 0.9;
             }
 
-            /* УЛУЧШЕННЫЙ СТИЛЬ ДЛЯ СТЕКА ТЕХНОЛОГИЙ */
             .tech-stack {
                 display: flex;
                 flex-wrap: nowrap;
@@ -1738,7 +1796,7 @@
                 z-index: 2;
             }
 
-            /* JavaScript - яркое желтое свечение */
+            /* JavaScript - желтый */
             .tech-card:nth-child(1) {
                 border-color: rgba(247, 223, 30, 0.3);
             }
@@ -1749,7 +1807,7 @@
                 box-shadow: 0 8px 32px rgba(247, 223, 30, 0.4);
             }
 
-            /* Tampermonkey - яркое бирюзовое свечение */
+            /* Tampermonkey - темно-синий */
             .tech-card:nth-child(2) {
                 border-color: rgba(0, 72, 91, 0.3);
             }
@@ -1760,7 +1818,7 @@
                 box-shadow: 0 8px 32px rgba(0, 72, 91, 0.5);
             }
 
-            /* Lucide - яркое красное свечение */
+            /* Lucide - красный */
             .tech-card:nth-child(3) {
                 border-color: rgba(254, 42, 62, 0.3);
             }
@@ -1771,35 +1829,15 @@
                 box-shadow: 0 8px 32px rgba(254, 42, 62, 0.5);
             }
 
-            /* Simple Icons - яркое черное свечение */
+            /* Simple Icons - черный */
             .tech-card:nth-child(4) {
-                border-color: rgba(17, 17, 17, 0.3);
+                border-color: rgba(0, 0, 0, 0.3);
             }
 
             .tech-card:nth-child(4):hover {
-                background: rgba(17, 17, 17, 0.2);
-                border-color: rgba(17, 17, 17, 0.8);
-                box-shadow: 0 8px 32px rgba(17, 17, 17, 0.5);
-            }
-
-            .tech-icon {
-                width: 28px; /* Увеличил размер иконок */
-                height: 28px;
-                flex-shrink: 0;
-                transition: transform 0.3s ease;
-            }
-
-            .tech-card:hover .tech-icon {
-                transform: scale(1.2);
-            }
-
-            .tech-name {
-                font-size: 12px;
-                font-weight: 500;
-                opacity: 0.9;
-                text-align: center;
-                word-break: break-word;
-                line-height: 1.3;
+                background: rgba(0, 0, 0, 0.2);
+                border-color: rgba(0, 0, 0, 0.8);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             }
 
             .check-update-btn {
