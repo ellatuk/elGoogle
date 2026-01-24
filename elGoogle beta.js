@@ -3,7 +3,7 @@
 // @name:ru-RU        elГугал [beta]
 // @namespace         https://github.com/ellatuk/elGoogle/releases
 // @icon              https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elGoogleLogo.ico
-// @version           1.2
+// @version           2.1
 // @description       Makes the Google Search home page better. Better "Gygale Search"
 // @description:ru-RU Делает гугл поиск лучше. Лучший "Гугал поиск"
 // @author            ellatuk
@@ -23,9 +23,132 @@
 (function() {
     'use strict';
 
+    // ================== СИСТЕМА ЯЗЫКА ==================
+    
+    const LANGUAGES = {
+        ru: {
+            general: 'Общие',
+            search: 'Поиск',
+            menu: 'Меню',
+            about: 'О плагине',
+            darkTheme: 'Тёмная тема Google',
+            darkThemeDesc: 'Полная тёмная тема страницы',
+            customLogo: 'Кастомный логотип',
+            customLogoDesc: 'Заменить логотип Google',
+            removeAI: 'Удалить "Режим ИИ"',
+            removeAIDesc: 'Скрыть кнопку AI-поиска',
+            removeIcons: 'Удалить иконки поиска',
+            removeIconsDesc: 'Скрыть голосовой поиск и камеру',
+            removeImages: 'Удалить "Картинки"',
+            removeImagesDesc: 'Скрыть ссылку на поиск по картинкам',
+            removeMail: 'Удалить "Почта"',
+            removeMailDesc: 'Скрыть ссылку на Gmail',
+            searchStyleEnabled: 'Включить кастомизацию поиска',
+            searchStyleEnabledDesc: 'Использовать кастомные стили поисковой строки',
+            compactMode: 'Компактный режим',
+            compactModeDesc: 'Уменьшить отступы и размеры',
+            glassEffect: 'Эффект "Жидкое стекло"',
+            glassEffectDesc: 'Полупрозрачный фон с размытием и шероховатостью',
+            presets: 'Пресеты',
+            minimal: 'Минимальный',
+            clean: 'Чистый',
+            full: 'Полный',
+            custom: 'Пользовательский',
+            minimalDesc: 'Только самое необходимое. Тёмная тема.',
+            cleanDesc: 'Чистый Google. Тёмная тема, кастомный логотип, удаление AI.',
+            fullDesc: 'Полная кастомизация. Все функции включены.',
+            customDesc: 'Пользовательские настройки. Вы изменили стандартные параметры.',
+            searchStyle: 'Стиль строки поиска',
+            theme: 'Тема панели',
+            dark: 'Тёмная',
+            light: 'Светлая',
+            panelSettings: 'Настройки панели',
+            currentVersion: 'Текущая версия:',
+            latestVersion: 'Последняя версия:',
+            status: 'Статус:',
+            author: 'Автор:',
+            technologies: 'Технологии:',
+            repository: 'Репозиторий проекта',
+            authorGitHub: 'Автор на GitHub',
+            youtubeChannel: 'YouTube канал',
+            supportAuthor: 'Поддержать автора',
+            f2Menu: 'F2 - меню',
+            checkingUpdates: 'Проверка обновлений...',
+            exportSettings: 'Экспорт настроек',
+            importSettings: 'Импорт настроек',
+            resetSettings: 'Сброс настроек',
+            // НОВОЕ: Переводы для переключателя языка
+            menuLanguage: 'Язык меню',
+            languageDesc: 'Выбор языка интерфейса панели управления',
+            russian: 'Русский',
+            english: 'English'
+        },
+        en: {
+            general: 'General',
+            search: 'Search',
+            menu: 'Menu',
+            about: 'About',
+            darkTheme: 'Dark Google Theme',
+            darkThemeDesc: 'Full dark theme of the page',
+            customLogo: 'Custom Logo',
+            customLogoDesc: 'Replace Google logo',
+            removeAI: 'Remove "AI Mode"',
+            removeAIDesc: 'Hide AI search button',
+            removeIcons: 'Remove Search Icons',
+            removeIconsDesc: 'Hide voice search and camera',
+            removeImages: 'Remove "Images"',
+            removeImagesDesc: 'Hide image search link',
+            removeMail: 'Remove "Mail"',
+            removeMailDesc: 'Hide Gmail link',
+            searchStyleEnabled: 'Enable search customization',
+            searchStyleEnabledDesc: 'Use custom search bar styles',
+            compactMode: 'Compact Mode',
+            compactModeDesc: 'Reduce margins and sizes',
+            glassEffect: 'Liquid Glass Effect',
+            glassEffectDesc: 'Semi-transparent background with blur and roughness',
+            presets: 'Presets',
+            minimal: 'Minimal',
+            clean: 'Clean',
+            full: 'Full',
+            custom: 'Custom',
+            minimalDesc: 'Only the essentials. Dark theme.',
+            cleanDesc: 'Clean Google. Dark theme, custom logo, AI removal.',
+            fullDesc: 'Full customization. All features enabled.',
+            customDesc: 'Custom settings. You have changed the default parameters.',
+            searchStyle: 'Search Bar Style',
+            theme: 'Panel Theme',
+            dark: 'Dark',
+            light: 'Light',
+            panelSettings: 'Panel Settings',
+            currentVersion: 'Current version:',
+            latestVersion: 'Latest version:',
+            status: 'Status:',
+            author: 'Author:',
+            technologies: 'Technologies:',
+            repository: 'Project Repository',
+            authorGitHub: 'Author on GitHub',
+            youtubeChannel: 'YouTube Channel',
+            supportAuthor: 'Support Author',
+            f2Menu: 'F2 - menu',
+            checkingUpdates: 'Checking updates...',
+            exportSettings: 'Export settings',
+            importSettings: 'Import settings',
+            resetSettings: 'Reset settings',
+            // НОВОЕ: Переводы для переключателя языка
+            menuLanguage: 'Menu Language',
+            languageDesc: 'Interface language selection for control panel',
+            russian: 'Русский',
+            english: 'English'
+        }
+    };
+
+    // Определяем язык на основе языка браузера
+    const userLang = navigator.language.startsWith('ru') ? 'ru' : 'en';
+    const t = LANGUAGES[userLang];
+
     // ================== КОНСТАНТЫ И КОНФИГУРАЦИЯ ==================
 
-    const SCRIPT_VERSION = GM_info?.script?.version || '1.2.2';
+    const SCRIPT_VERSION = GM_info?.script?.version || '1.2.3';
     const NOISE_TEXTURE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.12'/%3E%3C/svg%3E")`;
 
     const DEFAULT_CONFIG = {
@@ -44,7 +167,10 @@
         panelTop: '20px',
         panelLeft: '20px',
         panelVisible: false,
-        lastVersionCheck: 0
+        lastVersionCheck: 0,
+        language: userLang, // Сохраняем язык в настройках
+        // НОВОЕ: Язык меню (отдельная настройка для интерфейса панели)
+        menuLanguage: userLang
     };
 
     const SEARCH_STYLES = {
@@ -71,20 +197,20 @@
     };
 
     const PRESETS = {
-        minimal: {
-            name: 'Минимальный',
+        minimal: { 
+            name: t.minimal,
             values: { darkMode: true, customLogo: false, removeAI: false, removeIcons: false, removeImages: false, removeMail: false }
         },
-        clean: {
-            name: 'Чистый',
+        clean: { 
+            name: t.clean,
             values: { darkMode: true, customLogo: true, removeAI: true, removeIcons: false, removeImages: false, removeMail: false }
         },
-        full: {
-            name: 'Полный',
+        full: { 
+            name: t.full,
             values: { darkMode: true, customLogo: true, removeAI: true, removeIcons: true, removeImages: true, removeMail: true }
         },
-        custom: {
-            name: 'Пользовательский',
+        custom: { 
+            name: t.custom,
             values: null // будет заполняться текущими настройками
         }
     };
@@ -128,7 +254,15 @@
 
     async function init() {
         await loadConfig();
-        updatePresetType(); // Определяем тип пресета при загрузке
+        
+        // Обновляем объект перевода на основе сохраненного языка меню
+        if (CONFIG.menuLanguage && LANGUAGES[CONFIG.menuLanguage]) {
+            window.t = LANGUAGES[CONFIG.menuLanguage];
+        } else {
+            window.t = LANGUAGES[userLang];
+        }
+        
+        updatePresetType();
         injectSVGSprite();
         applyAll();
         createControlPanel();
@@ -145,7 +279,6 @@
             const saved = await GM.getValue('elGoogle_config');
             if (saved) {
                 CONFIG = { ...DEFAULT_CONFIG, ...saved };
-                // Убеждаемся, что preset существует в PRESETS
                 if (!PRESETS[CONFIG.preset]) {
                     CONFIG.preset = 'custom';
                 }
@@ -166,7 +299,6 @@
     // ================== ОПРЕДЕЛЕНИЕ ПРЕСЕТА ==================
 
     function updatePresetType() {
-        // Проверяем, соответствует ли текущая конфигурация какому-либо из пресетов
         const currentSettings = {
             darkMode: CONFIG.darkMode,
             customLogo: CONFIG.customLogo,
@@ -177,28 +309,26 @@
         };
 
         let matchedPreset = 'custom';
-
-        // Проверяем соответствие каждому пресету
+        
         for (const [presetKey, preset] of Object.entries(PRESETS)) {
             if (presetKey === 'custom') continue;
-
+            
             const presetValues = preset.values;
             let isMatch = true;
-
-            // Сравниваем каждую настройку
+            
             for (const key in presetValues) {
                 if (currentSettings[key] !== presetValues[key]) {
                     isMatch = false;
                     break;
                 }
             }
-
+            
             if (isMatch) {
                 matchedPreset = presetKey;
                 break;
             }
         }
-
+        
         CONFIG.preset = matchedPreset;
     }
 
@@ -353,59 +483,24 @@
         sprite.style.display = 'none';
         sprite.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg">
-                <!-- Улучшенный логотип elGoogle -->
-                <symbol id="i-elgoogle-logo" viewBox="0 0 400 400">
-                    <defs>
-                        <linearGradient id="elLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#4285f4" />
-                            <stop offset="50%" stop-color="#34a853" />
-                            <stop offset="100%" stop-color="#fbbc05" />
-                        </linearGradient>
-                        <filter id="elLogoShadow" x="-20%" y="-20%" width="140%" height="140%">
-                            <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="rgba(0,0,0,0.3)"/>
-                        </filter>
-                    </defs>
-                    <g filter="url(#elLogoShadow)" transform="translate(40, 40)">
-                        <!-- Основной круг -->
-                        <circle cx="160" cy="160" r="140" fill="url(#elLogoGradient)" stroke="white" stroke-width="8"/>
-
-                        <!-- Стилизованная буква "e" -->
-                        <path d="M120,160
-                                 a40,40 0 1,1 80,0
-                                 a40,40 0 1,1 -80,0
-                                 M120,160
-                                 a60,60 0 1,0 120,0
-                                 a60,60 0 1,0 -120,0"
-                              fill="none" stroke="white" stroke-width="12" stroke-linecap="round"/>
-
-                        <!-- Акцентные точки -->
-                        <circle cx="200" cy="120" r="12" fill="white" opacity="0.8"/>
-                        <circle cx="220" cy="180" r="8" fill="white" opacity="0.6"/>
-                    </g>
-
-                    <!-- Версия текстом поменьше -->
-                    <text x="200" y="350" text-anchor="middle" fill="#666" font-family="Arial" font-size="24" font-weight="bold">el</text>
+                <!-- Иконка JavaScript -->
+                <symbol id="i-javascript" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/>
                 </symbol>
 
-                <!-- Simple Icons (ПРАВИЛЬНЫЕ ИКОНКИ) -->
-                <!-- Иконка Simple Icons с сайта simpleicons.org -->
+                <!-- Simple Icons с сайта simpleicons.org -->
                 <symbol id="i-simpleicons" viewBox="0 0 24 24">
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-2.165 19.763l1.915-4.505 1.91 4.495 2.565-5.989H18L15 7.055l-1.948 4.56L11.07 7.06 8 13.774h1.335l2.5-5.72 2.5 5.72h1.335l-1.335 3.11H14.5l-.61 1.46h-1.945l-.665-1.46h-1.33z"/>
+                    <path d="M12 0C8.688 0 6 2.688 6 6s2.688 6 6 6c4.64-.001 7.526 5.039 5.176 9.04h1.68A7.507 7.507 0 0 0 12 10.5 4.502 4.502 0 0 1 7.5 6c0-2.484 2.016-4.5 4.5-4.5s4.5 2.016 4.5 4.5H18c0-3.312-2.688-6-6-6Zm0 3a3 3 0 0 0 0 6c4 0 4-6 0-6Zm0 1.5A1.5 1.5 0 0 1 13.5 6v.002c-.002 1.336-1.617 2.003-2.561 1.058C9.995 6.115 10.664 4.5 12 4.5ZM7.5 15v1.5H9v6H4.5V24h15v-1.5H15v-6h1.5V15Zm3 1.5h3v6h-3zm-6 1.47c0 1.09.216 2.109.644 3.069h1.684A5.957 5.957 0 0 1 6 17.97Z"/>
                 </symbol>
 
                 <!-- Иконка Tampermonkey с сайта simpleicons.org -->
                 <symbol id="i-tampermonkey" viewBox="0 0 24 24">
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zM8.214 9.042l7.572 7.572-3.547 3.547L4.667 12.59zm9.768 9.768l-3.547-3.547 3.547-3.547 3.547 3.547z"/>
+                    <path d="M5.955.002C3-.071.275 2.386.043 5.335c-.069 3.32-.011 6.646-.03 9.969.06 1.87-.276 3.873.715 5.573 1.083 2.076 3.456 3.288 5.77 3.105 4.003-.011 8.008.022 12.011-.017 2.953-.156 5.478-2.815 5.482-5.772-.007-4.235.023-8.473-.015-12.708C23.82 2.533 21.16.007 18.205.003c-4.083-.005-8.167 0-12.25-.002zm.447 12.683c2.333-.046 4.506 1.805 4.83 4.116.412 2.287-1.056 4.716-3.274 5.411-2.187.783-4.825-.268-5.874-2.341-1.137-2.039-.52-4.827 1.37-6.197a4.896 4.896 0 012.948-.99zm11.245 0c2.333-.046 4.505 1.805 4.829 4.116.413 2.287-1.056 4.716-3.273 5.411-2.188.783-4.825-.268-5.875-2.341-1.136-2.039-.52-4.827 1.37-6.197a4.896 4.896 0 012.949-.99z"/>
                 </symbol>
 
                 <!-- Иконка Lucide с сайта simpleicons.org -->
                 <symbol id="i-lucide" viewBox="0 0 24 24">
-                    <path d="M8.13 5.343C8.589 4.93 9.178 4.75 10 4.75s1.411.18 1.87.593c.44.395.63.934.63 1.657 0 .629-.133 1.122-.397 1.547-.239.385-.592.71-1.032 1.003a9.442 9.442 0 01-1.028.603L10 10.75l-.043.024a9.442 9.442 0 01-1.028-.603c-.44-.293-.793-.618-1.032-1.003-.264-.425-.397-.918-.397-1.547 0-.723.19-1.262.63-1.657zM5.75 12.25v7h3v-3.5h2.5v3.5h3v-7M12.75 5.75h3.5v3.5h-3.5zM16.25 12.25h3.5v3.5h-3.5zM7.75 12.25h3.5v3.5h-3.5z"/>
-                </symbol>
-
-                <!-- Иконка JavaScript с сайта simpleicons.org -->
-                <symbol id="i-javascript" viewBox="0 0 24 24">
-                    <path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/>
+                    <path d="M18.483 1.123a1.09 1.09 0 0 0-.752.362 1.09 1.09 0 0 0 .088 1.54 11.956 11.956 0 0 1 4 8.946 7.62 7.62 0 0 1-7.637 7.636 7.62 7.62 0 0 1-7.637-7.636 3.255 3.255 0 0 1 3.273-3.273c1.82 0 3.273 1.45 3.273 3.273a1.09 1.09 0 0 0 1.09 1.09 1.09 1.09 0 0 0 1.092-1.09c0-3-2.455-5.455-5.455-5.455s-5.454 2.455-5.454 5.455c0 5.408 4.408 9.818 9.818 9.818 5.41 0 9.818-4.41 9.818-9.818A14.16 14.16 0 0 0 19.272 1.4a1.09 1.09 0 0 0-.789-.277ZM9.818 2.15C4.408 2.151 0 6.561 0 11.97a14.16 14.16 0 0 0 4.8 10.637 1.09 1.09 0 0 0 1.54-.096 1.09 1.09 0 0 0-.095-1.54 11.957 11.957 0 0 1-4.063-9 7.62 7.62 0 0 1 7.636-7.637 7.62 7.62 0 0 1 7.637 7.636 3.256 3.256 0 0 1-3.273 3.273 3.256 3.256 0 0 1-3.273-3.273 1.09 1.09 0 0 0-1.09-1.09 1.09 1.09 0 0 0-1.092 1.09c0 3 2.455 5.455 5.455 5.455s5.454-2.455 5.454-5.455c0-5.408-4.408-9.818-9.818-9.818z"/>
                 </symbol>
 
                 <!-- Lucide иконки (остальные) -->
@@ -594,6 +689,13 @@
                     </defs>
                     <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-1.05 1.05-1.05-1.05a5.4 5.4 0 0 0-7.65 7.65l1.05 1.05 7.65 7.65 7.65-7.65 1.05-1.05a5.4 5.4 0 0 0 0-7.65z" fill="url(#heartGradient)" filter="url(#heartGlow)"/>
                 </symbol>
+
+                <!-- НОВАЯ ИКОНКА: languages (для переключателя языка) -->
+                <symbol id="i-languages" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M2 12h20"/>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                </symbol>
             </svg>
         `;
         document.body.appendChild(sprite);
@@ -635,7 +737,7 @@
         panel.innerHTML = `
             <div class="panel-header" id="elgoogle-drag-handle">
                 <div class="panel-title">
-                    <svg class="el-icon logo-icon"><use href="#i-elgoogle-logo"></use></svg>
+                    <div class="logo-icon"></div>
                     <div class="title-text">
                         <span class="title-main">elGoogle</span>
                         <span class="title-version">v${SCRIPT_VERSION}</span>
@@ -649,36 +751,36 @@
             <div class="tabs">
                 <button class="tab ${activeTab === 'general' ? 'active' : ''}" data-tab="general">
                     <svg class="el-icon"><use href="#i-sliders"></use></svg>
-                    Общие
+                    ${t.general}
                 </button>
                 <button class="tab ${activeTab === 'search' ? 'active' : ''}" data-tab="search">
                     <svg class="el-icon"><use href="#i-search"></use></svg>
-                    Поиск
+                    ${t.search}
                 </button>
                 <button class="tab ${activeTab === 'menu' ? 'active' : ''}" data-tab="menu">
                     <svg class="el-icon"><use href="#i-menu"></use></svg>
-                    Меню
+                    ${t.menu}
                 </button>
                 <button class="tab ${activeTab === 'about' ? 'active' : ''}" data-tab="about">
                     <svg class="el-icon"><use href="#i-info"></use></svg>
-                    <span class="tab-text">О плагине</span>
+                    <span class="tab-text">${t.about}</span>
                 </button>
             </div>
 
             <div class="tab-content" id="tabContent"></div>
 
             <div class="panel-footer">
-                <button class="footer-btn" id="exportBtn" title="Экспорт настроек">
+                <button class="footer-btn" id="exportBtn" title="${t.exportSettings}">
                     <svg class="el-icon"><use href="#i-export"></use></svg>
                 </button>
-                <button class="footer-btn" id="importBtn" title="Импорт настроек">
+                <button class="footer-btn" id="importBtn" title="${t.importSettings}">
                     <svg class="el-icon"><use href="#i-import"></use></svg>
                 </button>
-                <button class="footer-btn" id="resetBtn" title="Сбросить настройки">
+                <button class="footer-btn" id="resetBtn" title="${t.resetSettings}">
                     <svg class="el-icon"><use href="#i-list-restart"></use></svg>
                 </button>
                 <div class="footer-status">
-                    ${isCheckingUpdate ? 'Проверка обновлений...' : 'F2 - меню'}
+                    ${isCheckingUpdate ? t.checkingUpdates : t.f2Menu}
                 </div>
             </div>
         `;
@@ -707,15 +809,15 @@
     function renderGeneralTab(container) {
         container.innerHTML = `
             <div class="tab-section">
-                <h3><svg class="el-icon section-icon"><use href="#i-settings-2"></use></svg>Основные настройки</h3>
+                <h3><svg class="el-icon section-icon"><use href="#i-settings-2"></use></svg>${t.general}</h3>
 
                 <div class="control-group">
                     <div class="control-row ${CONFIG.darkMode ? 'active' : ''}" data-action="toggleDark">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-theme"></use></svg>
                             <div>
-                                <div class="control-title">Тёмная тема Google</div>
-                                <div class="control-description">Полная тёмная тема страницы</div>
+                                <div class="control-title">${t.darkTheme}</div>
+                                <div class="control-description">${t.darkThemeDesc}</div>
                             </div>
                         </div>
                         <label class="switch">
@@ -728,8 +830,8 @@
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-wrench"></use></svg>
                             <div>
-                                <div class="control-title">Кастомный логотип</div>
-                                <div class="control-description">Заменить логотип Google</div>
+                                <div class="control-title">${t.customLogo}</div>
+                                <div class="control-description">${t.customLogoDesc}</div>
                             </div>
                         </div>
                         <label class="switch">
@@ -746,8 +848,8 @@
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-ai"></use></svg>
                             <div>
-                                <div class="control-title">Удалить "Режим ИИ"</div>
-                                <div class="control-description">Скрыть кнопку AI-поиска</div>
+                                <div class="control-title">${t.removeAI}</div>
+                                <div class="control-description">${t.removeAIDesc}</div>
                             </div>
                         </div>
                         <label class="switch">
@@ -760,8 +862,8 @@
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-icon"></use></svg>
                             <div>
-                                <div class="control-title">Удалить иконки поиска</div>
-                                <div class="control-description">Скрыть голосовой поиск и камеру</div>
+                                <div class="control-title">${t.removeIcons}</div>
+                                <div class="control-description">${t.removeIconsDesc}</div>
                             </div>
                         </div>
                         <label class="switch">
@@ -774,8 +876,8 @@
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-image-off"></use></svg>
                             <div>
-                                <div class="control-title">Удалить "Картинки"</div>
-                                <div class="control-description">Скрыть ссылку на поиск по картинкам</div>
+                                <div class="control-title">${t.removeImages}</div>
+                                <div class="control-description">${t.removeImagesDesc}</div>
                             </div>
                         </div>
                         <label class="switch">
@@ -788,8 +890,8 @@
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-mail-x"></use></svg>
                             <div>
-                                <div class="control-title">Удалить "Почта"</div>
-                                <div class="control-description">Скрыть ссылку на Gmail</div>
+                                <div class="control-title">${t.removeMail}</div>
+                                <div class="control-description">${t.removeMailDesc}</div>
                             </div>
                         </div>
                         <label class="switch">
@@ -800,7 +902,7 @@
                 </div>
 
                 <div class="control-group">
-                    <h4><svg class="el-icon section-icon"><use href="#i-layout-list"></use></svg>Пресеты</h4>
+                    <h4><svg class="el-icon section-icon"><use href="#i-layout-list"></use></svg>${t.presets}</h4>
                     <div class="preset-buttons">
                         <button class="preset-btn ${CONFIG.preset === 'minimal' ? 'active' : ''}" data-preset="minimal">
                             <svg class="el-icon preset-icon"><use href="#i-wrench"></use></svg>
@@ -814,7 +916,7 @@
                             <svg class="el-icon preset-icon"><use href="#i-house-heart"></use></svg>
                             ${PRESETS.full.name}
                         </button>
-                        <button class="preset-btn ${CONFIG.preset === 'custom' ? 'active' : ''}" data-preset="custom">
+                        <button class="preset-btn custom-preset ${CONFIG.preset === 'custom' ? 'active' : ''}" data-preset="custom">
                             <svg class="el-icon preset-icon"><use href="#i-settings"></use></svg>
                             ${PRESETS.custom.name}
                         </button>
@@ -830,15 +932,15 @@
     function renderSearchTab(container) {
         container.innerHTML = `
             <div class="tab-section">
-                <h3><svg class="el-icon section-icon"><use href="#i-search"></use></svg>Настройки поиска</h3>
+                <h3><svg class="el-icon section-icon"><use href="#i-search"></use></svg>${t.searchStyle}</h3>
 
                 <div class="control-group">
                     <div class="control-row ${CONFIG.searchStyleEnabled ? 'active' : ''}" data-action="toggleSearchStyle">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-check"></use></svg>
                             <div>
-                                <div class="control-title">Включить кастомизацию поиска</div>
-                                <div class="control-description">Использовать кастомные стили поисковой строки</div>
+                                <div class="control-title">${t.searchStyleEnabled}</div>
+                                <div class="control-description">${t.searchStyleEnabledDesc}</div>
                             </div>
                         </div>
                         <label class="switch">
@@ -849,7 +951,7 @@
                 </div>
 
                 <div class="control-group">
-                    <h4><svg class="el-icon section-icon"><use href="#i-theme"></use></svg>Стиль строки поиска</h4>
+                    <h4><svg class="el-icon section-icon"><use href="#i-theme"></use></svg>${t.searchStyle}</h4>
                     <div class="style-preview-grid">
                         ${Object.entries(SEARCH_STYLES).map(([key, style]) => `
                             <div class="style-preview ${CONFIG.searchStyle === key ? 'active' : ''}" data-style="${key}">
@@ -868,20 +970,34 @@
     function renderMenuTab(container) {
         container.innerHTML = `
             <div class="tab-section">
-                <h3><svg class="el-icon section-icon"><use href="#i-menu"></use></svg>Настройки панели</h3>
+                <h3><svg class="el-icon section-icon"><use href="#i-menu"></use></svg>${t.panelSettings}</h3>
 
                 <div class="control-group">
-                    <h4><svg class="el-icon section-icon"><use href="#i-theme"></use></svg>Тема панели</h4>
+                    <h4><svg class="el-icon section-icon"><use href="#i-theme"></use></svg>${t.theme}</h4>
                     <div class="theme-buttons">
                         <button class="theme-btn ${CONFIG.menuTheme === 'dark' ? 'active' : ''}" data-theme="dark">
                             <div class="theme-preview dark"></div>
-                            Тёмная
+                            ${t.dark}
                         </button>
                         <button class="theme-btn ${CONFIG.menuTheme === 'light' ? 'active' : ''}" data-theme="light">
                             <div class="theme-preview light"></div>
-                            Светлая
+                            ${t.light}
                         </button>
                     </div>
+                </div>
+
+                <!-- НОВЫЙ БЛОК: ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА -->
+                <div class="control-group">
+                    <h4><svg class="el-icon section-icon"><use href="#i-languages"></use></svg>${t.menuLanguage}</h4>
+                    <div class="language-buttons">
+                        <button class="language-btn ${CONFIG.menuLanguage === 'ru' ? 'active' : ''}" data-language="ru">
+                            ${t.russian}
+                        </button>
+                        <button class="language-btn ${CONFIG.menuLanguage === 'en' ? 'active' : ''}" data-language="en">
+                            ${t.english}
+                        </button>
+                    </div>
+                    <div class="language-description">${t.languageDesc}</div>
                 </div>
 
                 <div class="control-group">
@@ -889,8 +1005,8 @@
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-check"></use></svg>
                             <div>
-                                <div class="control-title">Компактный режим</div>
-                                <div class="control-description">Уменьшить отступы и размеры</div>
+                                <div class="control-title">${t.compactMode}</div>
+                                <div class="control-description">${t.compactModeDesc}</div>
                             </div>
                         </div>
                         <label class="switch">
@@ -903,8 +1019,8 @@
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-check"></use></svg>
                             <div>
-                                <div class="control-title">Эффект "Жидкое стекло"</div>
-                                <div class="control-description">Полупрозрачный фон с размытием и шероховатостью</div>
+                                <div class="control-title">${t.glassEffect}</div>
+                                <div class="control-description">${t.glassEffectDesc}</div>
                             </div>
                         </div>
                         <label class="switch">
@@ -928,24 +1044,24 @@
 
         container.innerHTML = `
             <div class="tab-section">
-                <h3><svg class="el-icon section-icon"><use href="#i-info"></use></svg>О плагине elGoogle</h3>
+                <h3><svg class="el-icon section-icon"><use href="#i-info"></use></svg>${t.about}</h3>
 
                 <div class="about-info">
                     <div class="info-item">
-                        <strong>Текущая версия:</strong> ${SCRIPT_VERSION}
+                        <strong>${t.currentVersion}</strong> ${SCRIPT_VERSION}
                     </div>
                     <div class="info-item">
-                        <strong>Последняя версия:</strong> ${lastReleaseInfo ? lastReleaseInfo.version : '...'}
+                        <strong>${t.latestVersion}</strong> ${lastReleaseInfo ? lastReleaseInfo.version : '...'}
                         <button class="check-update-btn" id="checkUpdateBtn" ${isCheckingUpdate ? 'disabled' : ''}>
                             ${isCheckingUpdate ? 'Проверка...' : 'Проверить сейчас'}
                         </button>
                     </div>
                     <div class="info-item">
-                        <strong>Статус:</strong> ${versionStatus}
+                        <strong>${t.status}</strong> ${versionStatus}
                     </div>
 
                     <div class="info-item author-info">
-                        <strong>Автор:</strong>
+                        <strong>${t.author}</strong>
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <svg class="el-icon" style="width: 16px; height: 16px; margin-right: 4px;"><use href="#i-leafy-green"></use></svg>
                             <span>ellatuk</span>
@@ -953,7 +1069,7 @@
                     </div>
 
                     <div class="info-item tech-item">
-                        <strong>Технологии:</strong>
+                        <strong>${t.technologies}</strong>
                         <div class="tech-stack">
                             <a href="https://ecma-international.org/publications-and-standards/standards/ecma-262" target="_blank" class="tech-card" title="JavaScript (ECMAScript)">
                                 <svg class="tech-icon"><use href="#i-javascript"></use></svg>
@@ -976,24 +1092,24 @@
                 </div>
 
                 <div class="links-grid">
-                    <a href="https://github.com/ellatuk/elGoogle" target="_blank" class="link-card">
+                    <a href="https://github.com/ellatuk/elGoogle" target="_blank" class="link-card repository-link">
                         <svg class="el-icon"><use href="#i-github"></use></svg>
-                        <span>Репозиторий проекта</span>
+                        <span>${t.repository}</span>
                     </a>
 
-                    <a href="https://github.com/ellatuk" target="_blank" class="link-card">
+                    <a href="https://github.com/ellatuk" target="_blank" class="link-card author-link">
                         <svg class="el-icon"><use href="#i-user"></use></svg>
-                        <span>Автор на GitHub</span>
+                        <span>${t.authorGitHub}</span>
                     </a>
 
-                    <a href="https://www.youtube.com/@ellatuk" target="_blank" class="link-card">
+                    <a href="https://www.youtube.com/@ellatuk" target="_blank" class="link-card youtube-link">
                         <svg class="el-icon"><use href="#i-youtube"></use></svg>
-                        <span>YouTube канал</span>
+                        <span>${t.youtubeChannel}</span>
                     </a>
 
-                    <a href="https://boosty.to/ellatuk" target="_blank" class="link-card">
+                    <a href="https://boosty.to/ellatuk" target="_blank" class="link-card support-link">
                         <svg class="el-icon"><use href="#i-heart"></use></svg>
-                        <span>Поддержать автора</span>
+                        <span>${t.supportAuthor}</span>
                     </a>
                 </div>
 
@@ -1010,10 +1126,10 @@
 
     function getPresetDescription(preset) {
         const descriptions = {
-            minimal: 'Только самое необходимое. Тёмная тема.',
-            clean: 'Чистый Google. Тёмная тема, кастомный логотип, удаление AI.',
-            full: 'Полная кастомизация. Все функции включены.',
-            custom: 'Пользовательские настройки. Вы изменили стандартные параметры.'
+            minimal: t.minimalDesc,
+            clean: t.cleanDesc,
+            full: t.fullDesc,
+            custom: t.customDesc
         };
         return descriptions[preset] || '';
     }
@@ -1030,7 +1146,6 @@
     }
 
     function setupControlHandlers(container) {
-        // Обработчики переключателей
         container.querySelectorAll('.control-row[data-action]').forEach(row => {
             const action = row.dataset.action;
             const checkbox = row.querySelector('input[type="checkbox"]');
@@ -1054,19 +1169,18 @@
                 }
 
                 await saveConfig();
-                checkIfSettingsChanged(); // Проверяем и обновляем тип пресета
+                checkIfSettingsChanged();
                 applyAll();
                 updateRemovedElements();
                 renderActiveTab();
             });
         });
 
-        // Обработчики пресетов
         container.querySelectorAll('.preset-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const preset = btn.dataset.preset;
                 CONFIG.preset = preset;
-
+                
                 if (preset !== 'custom') {
                     Object.assign(CONFIG, PRESETS[preset].values);
                 }
@@ -1078,7 +1192,6 @@
             });
         });
 
-        // Обработчики стилей поиска
         container.querySelectorAll('.style-preview').forEach(preview => {
             preview.addEventListener('click', async () => {
                 CONFIG.searchStyle = preview.dataset.style;
@@ -1088,13 +1201,24 @@
             });
         });
 
-        // Обработчики тем меню
         container.querySelectorAll('.theme-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 CONFIG.menuTheme = btn.dataset.theme;
                 await saveConfig();
                 applyMenuTheme();
                 renderActiveTab();
+            });
+        });
+
+        // НОВЫЙ ОБРАБОТЧИК: переключение языка меню
+        container.querySelectorAll('.language-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const lang = btn.dataset.language;
+                if (CONFIG.menuLanguage !== lang) {
+                    CONFIG.menuLanguage = lang;
+                    await saveConfig();
+                    location.reload();
+                }
             });
         });
     }
@@ -1209,7 +1333,7 @@
 
                 if (confirm(`Импортировать настройки? ВНИМАНИЕ: Это перезапишет текущие настройки.`)) {
                     CONFIG = { ...DEFAULT_CONFIG, ...imported };
-                    updatePresetType(); // Обновляем тип пресета после импорта
+                    updatePresetType();
                     await saveConfig();
                     location.reload();
                 }
@@ -1224,7 +1348,7 @@
     async function resetSettings() {
         if (confirm('Сбросить ВСЕ настройки к значениям по умолчанию?')) {
             CONFIG = { ...DEFAULT_CONFIG };
-            CONFIG.preset = 'full'; // Устанавливаем пресет по умолчанию
+            CONFIG.preset = 'full';
             await saveConfig();
             location.reload();
         }
@@ -1447,10 +1571,13 @@
                 letter-spacing: -0.2px;
             }
 
+            /* ОБНОВЛЕННЫЙ ЛОГОТИП */
             .logo-icon {
                 width: 48px !important; height: 48px !important;
+                background-image: url('https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elGoogleLogoVector.svg');
+                background-size: contain; background-repeat: no-repeat;
+                background-position: center;
                 filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
-                color: #4285f4;
                 transition: transform 0.3s ease, filter 0.3s ease;
             }
 
@@ -1460,7 +1587,6 @@
             }
 
             .theme-light .logo-icon {
-                color: #4285f4;
                 filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
             }
 
@@ -1582,7 +1708,6 @@
                 flex-shrink: 0;
             }
 
-            /* Simple Icons имеют fill вместо stroke */
             .tech-icon {
                 width: 28px; height: 28px;
                 fill: currentColor;
@@ -1637,28 +1762,66 @@
             }
 
             /* Пресеты */
-            .preset-buttons { display: flex; gap: 10px; margin-bottom: 12px; }
-            .preset-btn {
-                flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px;
-                color: inherit; cursor: pointer; transition: all 0.2s;
-                display: flex; align-items: center; justify-content: center;
+            .preset-buttons { 
+                display: grid; 
+                grid-template-columns: repeat(3, 1fr); 
+                gap: 10px; 
+                margin-bottom: 12px; 
             }
-            .theme-light .preset-btn { background: rgba(0, 0, 0, 0.05); border-color: rgba(0, 0, 0, 0.1); }
+            
+            .custom-preset {
+                grid-column: 1 / -1;
+                justify-self: stretch;
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
+            }
+            
+            .preset-btn {
+                padding: 10px; 
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2); 
+                border-radius: 8px;
+                color: inherit; cursor: pointer; 
+                transition: all 0.2s;
+                display: flex; 
+                align-items: center; 
+                justify-content: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
+            .theme-light .preset-btn { 
+                background: rgba(0, 0, 0, 0.05); 
+                border-color: rgba(0, 0, 0, 0.1); 
+            }
+            
             .preset-btn:hover {
                 background: rgba(255, 255, 255, 0.2);
                 transform: translateY(-2px);
             }
-            .theme-light .preset-btn:hover { background: rgba(0, 0, 0, 0.1); }
+            
+            .theme-light .preset-btn:hover { 
+                background: rgba(0, 0, 0, 0.1); 
+            }
+            
             .preset-btn.active {
-                background: #1a73e8; border-color: #1a73e8; color: white;
+                background: #1a73e8; 
+                border-color: #1a73e8; 
+                color: white;
                 box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
             }
+            
             .preset-description {
-                font-size: 13px; opacity: 0.8; padding: 8px;
-                background: rgba(255, 255, 255, 0.05); border-radius: 6px;
+                font-size: 13px; 
+                opacity: 0.8; 
+                padding: 8px;
+                background: rgba(255, 255, 255, 0.05); 
+                border-radius: 6px;
                 border-left: 3px solid #1a73e8;
             }
+            
             .theme-light .preset-description {
                 background: rgba(0, 0, 0, 0.05);
                 border-left: 3px solid rgba(26, 115, 232, 0.5);
@@ -1713,15 +1876,76 @@
             .theme-preview.dark { background: #1a1a1a; border: 1px solid #333; }
             .theme-preview.light { background: #f5f5f5; border: 1px solid #ddd; }
 
+            /* НОВЫЙ БЛОК: КНОПКИ ВЫБОРА ЯЗЫКА */
+            .language-buttons {
+                display: flex;
+                gap: 12px;
+                margin-top: 12px;
+            }
+
+            .language-btn {
+                flex: 1;
+                padding: 10px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 2px solid transparent;
+                border-radius: 8px;
+                color: inherit;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-size: 14px;
+            }
+
+            .theme-light .language-btn {
+                background: rgba(0, 0, 0, 0.05);
+            }
+
+            .language-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateY(-2px);
+            }
+
+            .theme-light .language-btn:hover {
+                background: rgba(0, 0, 0, 0.1);
+            }
+
+            .language-btn.active {
+                border-color: #1a73e8;
+                background: rgba(26, 115, 232, 0.1);
+                box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+            }
+
+            .language-description {
+                font-size: 13px;
+                opacity: 0.8;
+                padding: 8px;
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 6px;
+                border-left: 3px solid #1a73e8;
+                margin-top: 8px;
+            }
+
+            .theme-light .language-description {
+                background: rgba(0, 0, 0, 0.05);
+                border-left: 3px solid rgba(26, 115, 232, 0.5);
+            }
+
             /* О плагине */
             .about-info {
                 background: rgba(255, 255, 255, 0.05); border-radius: 10px;
                 padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
+                color: #fff !important;
             }
+            
             .theme-light .about-info {
                 background: rgba(0, 0, 0, 0.05);
                 border: 1px solid rgba(0, 0, 0, 0.1);
+                color: #333 !important;
             }
+            
+            .about-info * {
+                color: inherit !important;
+            }
+            
             .info-item {
                 display: flex; justify-content: space-between;
                 align-items: center; padding: 10px 0;
@@ -1760,7 +1984,7 @@
                 background: rgba(255, 255, 255, 0.05);
                 border-radius: 10px;
                 text-decoration: none;
-                color: inherit;
+                color: #fff !important;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 width: calc(25% - 8px);
@@ -1787,6 +2011,7 @@
             .theme-light .tech-card {
                 background: rgba(0, 0, 0, 0.05);
                 border: 1px solid rgba(0, 0, 0, 0.1);
+                color: #333 !important;
             }
 
             .tech-card:hover {
@@ -1851,8 +2076,8 @@
                 transform: scale(1.05);
             }
             .check-update-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-            .status-good { color: #34a853; }
-            .status-warning { color: #fbbc05; }
+            .status-good { color: #34a853 !important; }
+            .status-warning { color: #fbbc05 !important; }
             .status-neutral { opacity: 0.7; }
 
             /* Ссылки */
@@ -1861,8 +2086,8 @@
             }
             .link-card {
                 display: flex; flex-direction: column; align-items: center;
-                gap: 10px; padding: 16px; background: rgba(255, 255, 255, 0.05);
-                border-radius: 10px; text-decoration: none; color: inherit;
+                gap: 10px; padding: 16px; border-radius: 10px; 
+                text-decoration: none; color: #fff !important;
                 transition: all 0.2s; border: 1px solid rgba(255, 255, 255, 0.1);
                 position: relative; overflow: hidden;
             }
@@ -1883,21 +2108,71 @@
             }
 
             .theme-light .link-card {
-                background: rgba(0, 0, 0, 0.05);
+                color: #333 !important;
                 border: 1px solid rgba(0, 0, 0, 0.1);
             }
+            
             .link-card:hover {
-                background: rgba(255, 255, 255, 0.1);
                 transform: translateY(-2px); text-decoration: none;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-                border-color: rgba(255, 255, 255, 0.2);
             }
-            .theme-light .link-card:hover {
-                background: rgba(0, 0, 0, 0.1);
-                border-color: rgba(0, 0, 0, 0.2);
-            }
+            
             .link-card .el-icon { width: 24px; height: 24px; }
             .link-card span { font-size: 13px; text-align: center; opacity: 0.9; }
+
+            /* Цвета ссылок */
+            .repository-link {
+                background: rgba(255, 255, 255, 0.05) !important;
+                border-color: rgba(255, 255, 255, 0.2) !important;
+            }
+            .repository-link:hover {
+                background: rgba(255, 255, 255, 0.15) !important;
+                border-color: #ffffff !important;
+            }
+
+            .author-link {
+                background: rgba(57, 100, 254, 0.1) !important;
+                border-color: rgba(57, 100, 254, 0.3) !important;
+            }
+            .author-link:hover {
+                background: rgba(57, 100, 254, 0.2) !important;
+                border-color: #3964fe !important;
+            }
+
+            .youtube-link {
+                background: rgba(254, 0, 50, 0.1) !important;
+                border-color: rgba(254, 0, 50, 0.3) !important;
+            }
+            .youtube-link:hover {
+                background: rgba(254, 0, 50, 0.2) !important;
+                border-color: #fe0032 !important;
+            }
+
+            .support-link {
+                background: rgba(254, 42, 62, 0.1) !important;
+                border-color: rgba(254, 42, 62, 0.3) !important;
+            }
+            .support-link:hover {
+                background: rgba(254, 42, 62, 0.2) !important;
+                border-color: #fe2a3e !important;
+            }
+
+            .theme-light .repository-link {
+                background: rgba(0, 0, 0, 0.05) !important;
+                border-color: rgba(0, 0, 0, 0.2) !important;
+            }
+            .theme-light .author-link {
+                background: rgba(57, 100, 254, 0.08) !important;
+                border-color: rgba(57, 100, 254, 0.2) !important;
+            }
+            .theme-light .youtube-link {
+                background: rgba(254, 0, 50, 0.08) !important;
+                border-color: rgba(254, 0, 50, 0.2) !important;
+            }
+            .theme-light .support-link {
+                background: rgba(254, 42, 62, 0.08) !important;
+                border-color: rgba(254, 42, 62, 0.2) !important;
+            }
 
             .about-footer {
                 margin-top: 20px; padding-top: 16px;
