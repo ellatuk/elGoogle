@@ -3,7 +3,7 @@
 // @name:ru-RU        elГугал [beta]
 // @namespace         https://github.com/ellatuk/elGoogle/releases
 // @icon              https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elGoogleLogo.ico
-// @version           1.2.3
+// @version           2.3
 // @description       Makes the Google Search home page better. Better "Gygale Search"
 // @description:ru-RU Делает гугл поиск лучше. Лучший "Гугал поиск"
 // @author            ellatuk
@@ -23,8 +23,8 @@
 (function() {
     'use strict';
 
-    // ================== СИСТЕМА ЯЗЫКА ==================
-    
+    // ================== СИСТЕМА ЯЗЫКОВ ==================
+
     const LANGUAGES = {
         ru: {
             general: 'Общие',
@@ -35,6 +35,7 @@
             darkThemeDesc: 'Полная тёмная тема страницы',
             customLogo: 'Кастомный логотип',
             customLogoDesc: 'Заменить логотип Google',
+            cleaninginterface: 'Очистка внешнего вида',
             removeAI: 'Удалить "Режим ИИ"',
             removeAIDesc: 'Скрыть кнопку AI-поиска',
             removeIcons: 'Удалить иконки поиска',
@@ -66,6 +67,9 @@
             currentVersion: 'Текущая версия:',
             latestVersion: 'Последняя версия:',
             status: 'Статус:',
+            upToDate: 'У вас актуальная версия',
+            updateAvailable: 'Доступна новая версия',
+            checkFailed: 'Не удалось проверить',
             author: 'Автор:',
             technologies: 'Технологии:',
             repository: 'Репозиторий проекта',
@@ -74,13 +78,18 @@
             supportAuthor: 'Поддержать автора',
             f2Menu: 'F2 - меню',
             checkingUpdates: 'Проверка обновлений...',
+            checkNow: 'Проверить сейчас',
+            checking: 'Проверка...',
             exportSettings: 'Экспорт настроек',
             importSettings: 'Импорт настроек',
             resetSettings: 'Сброс настроек',
             menuLanguage: 'Язык меню',
             languageDesc: 'Выбор языка интерфейса панели управления',
             russian: 'Русский',
-            english: 'English'
+            english: 'English',
+            auto: 'Автоматически',
+            autoDesc: 'Язык определяется автоматически на основе языка браузера',
+            thanksForUsing: 'Спасибо за использование elGoogle! Если вам нравится скрипт, поставьте звезду на GitHub ⭐'
         },
         en: {
             general: 'General',
@@ -91,6 +100,7 @@
             darkThemeDesc: 'Full dark theme of the page',
             customLogo: 'Custom Logo',
             customLogoDesc: 'Replace Google logo',
+            cleaninginterface: 'Clean up appearance',
             removeAI: 'Remove "AI Mode"',
             removeAIDesc: 'Hide AI search button',
             removeIcons: 'Remove Search Icons',
@@ -122,6 +132,9 @@
             currentVersion: 'Current version:',
             latestVersion: 'Latest version:',
             status: 'Status:',
+            upToDate: '✅ You have the latest version',
+            updateAvailable: '⚠️ New version available',
+            checkFailed: 'Failed to check',
             author: 'Author:',
             technologies: 'Technologies:',
             repository: 'Project Repository',
@@ -130,19 +143,27 @@
             supportAuthor: 'Support Author',
             f2Menu: 'F2 - menu',
             checkingUpdates: 'Checking updates...',
+            checkNow: 'Check now',
+            checking: 'Checking...',
             exportSettings: 'Export settings',
             importSettings: 'Import settings',
             resetSettings: 'Reset settings',
             menuLanguage: 'Menu Language',
             languageDesc: 'Interface language selection for control panel',
             russian: 'Русский',
-            english: 'English'
+            english: 'English',
+            auto: 'Auto',
+            autoDesc: 'Language is automatically determined based on browser language',
+            thanksForUsing: 'Thank you for using elGoogle! If you like the script, give it a star on GitHub ⭐'
         }
     };
 
-    // Определяем язык на основе языка браузера
-    const userLang = navigator.language.startsWith('ru') ? 'ru' : 'en';
-    const t = LANGUAGES[userLang];
+    // Определяем язык браузера
+    const browserLang = navigator.language.startsWith('ru') ? 'ru' : 'en';
+
+    // Инициализируем переводы с дефолтным языком (будет переопределено после загрузки конфига)
+    let currentLang = browserLang;
+    let t = LANGUAGES[currentLang];
 
     // ================== КОНСТАНТЫ И КОНФИГУРАЦИЯ ==================
 
@@ -166,17 +187,16 @@
         panelLeft: '20px',
         panelVisible: false,
         lastVersionCheck: 0,
-        language: userLang,
-        menuLanguage: userLang
+        menuLanguage: 'auto'  // По умолчанию автоматическое определение
     };
 
     const SEARCH_STYLES = {
         'google-default': {
-            name: 'Google (родной)',
+            name: 'Google',
             css: `.RNNXgb{border-radius:24px!important;background-color:transparent!important;border:1px solid #5f6368!important;box-shadow:none!important;}`
         },
         'elgoogle-classic': {
-            name: 'elGoogle Classic',
+            name: 'elGoogle',
             css: `.RNNXgb{border-radius:34px 14px!important;background-color:#121212!important;border:3px solid #1c1d1d!important;box-shadow:0 2px 8px rgba(0,0,0,0.3)!important;}`
         },
         'minimal-dark': {
@@ -191,26 +211,37 @@
             name: 'Rounded Soft',
             css: `.RNNXgb{border-radius:28px!important;background:linear-gradient(135deg,#121212 0%,#1a1a1a 100%)!important;border:2px solid #2d2d2d!important;box-shadow:0 6px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05)!important;}`
         }
+
     };
 
     const PRESETS = {
-        minimal: { 
-            name: t.minimal,
+        minimal: {
+            name: 'minimal',
             values: { darkMode: true, customLogo: false, removeAI: false, removeIcons: false, removeImages: false, removeMail: false }
         },
-        clean: { 
-            name: t.clean,
+        clean: {
+            name: 'clean',
             values: { darkMode: true, customLogo: true, removeAI: true, removeIcons: false, removeImages: false, removeMail: false }
         },
-        full: { 
-            name: t.full,
+        full: {
+            name: 'full',
             values: { darkMode: true, customLogo: true, removeAI: true, removeIcons: true, removeImages: true, removeMail: true }
         },
-        custom: { 
-            name: t.custom,
+        custom: {
+            name: 'custom',
             values: null
         }
     };
+
+    // Обновляем названия пресетов с учетом перевода
+    function updatePresetNames() {
+        if (t) {
+            PRESETS.minimal.name = t.minimal;
+            PRESETS.clean.name = t.clean;
+            PRESETS.full.name = t.full;
+            PRESETS.custom.name = t.custom;
+        }
+    }
 
     // ================== МЕНЕДЖЕР СТИЛЕЙ ==================
 
@@ -256,14 +287,13 @@
 
     async function init() {
         await loadConfig();
-        
-        if (CONFIG.menuLanguage && LANGUAGES[CONFIG.menuLanguage]) {
-            window.t = LANGUAGES[CONFIG.menuLanguage];
-        } else {
-            window.t = LANGUAGES[userLang];
-        }
-        
-        updatePresetType();
+
+        // Определяем активный язык на основе настроек
+        updateActiveLanguage();
+
+        // Обновляем переводы пресетов
+        updatePresetNames();
+
         injectSVGSprite();
         applyAll();
         createControlPanel();
@@ -272,7 +302,22 @@
         setupUserScriptMenu();
         checkForUpdates(true);
 
-        console.log(`[elGoogle v${SCRIPT_VERSION}] Запущен`);
+        console.log(`[elGoogle v${SCRIPT_VERSION}] Запущен (язык: ${currentLang})`);
+    }
+
+    // Функция для определения активного языка
+    function updateActiveLanguage() {
+        if (CONFIG.menuLanguage === 'auto') {
+            currentLang = browserLang;
+        } else if (CONFIG.menuLanguage === 'ru' || CONFIG.menuLanguage === 'en') {
+            currentLang = CONFIG.menuLanguage;
+        } else {
+            currentLang = browserLang;
+        }
+
+        // Устанавливаем переводы
+        t = LANGUAGES[currentLang];
+        window.t = t;
     }
 
     async function loadConfig() {
@@ -310,26 +355,26 @@
         };
 
         let matchedPreset = 'custom';
-        
+
         for (const [presetKey, preset] of Object.entries(PRESETS)) {
             if (presetKey === 'custom') continue;
-            
+
             const presetValues = preset.values;
             let isMatch = true;
-            
+
             for (const key in presetValues) {
                 if (currentSettings[key] !== presetValues[key]) {
                     isMatch = false;
                     break;
                 }
             }
-            
+
             if (isMatch) {
                 matchedPreset = presetKey;
                 break;
             }
         }
-        
+
         CONFIG.preset = matchedPreset;
     }
 
@@ -507,6 +552,7 @@
         sprite.style.display = 'none';
         sprite.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg">
+                <!-- Все символы SVG остаются без изменений -->
                 <symbol id="i-javascript" viewBox="0 0 24 24">
                     <path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/>
                 </symbol>
@@ -836,7 +882,7 @@
                 </div>
 
                 <div class="control-group">
-                    <h4><svg class="el-icon section-icon"><use href="#i-ai"></use></svg>Очистка интерфейса</h4>
+                    <h4><svg class="el-icon section-icon"><use href="#i-ai"></use></svg>${t.cleaninginterface}</h4>
 
                     <div class="control-row ${CONFIG.removeAI ? 'active' : ''}" data-action="toggleAI">
                         <div class="control-label">
@@ -962,6 +1008,10 @@
     }
 
     function renderMenuTab(container) {
+        const isAuto = CONFIG.menuLanguage === 'auto';
+        const isRu = CONFIG.menuLanguage === 'ru';
+        const isEn = CONFIG.menuLanguage === 'en';
+
         container.innerHTML = `
             <div class="tab-section">
                 <h3><svg class="el-icon section-icon"><use href="#i-menu"></use></svg>${t.panelSettings}</h3>
@@ -983,14 +1033,19 @@
                 <div class="control-group">
                     <h4><svg class="el-icon section-icon"><use href="#i-languages"></use></svg>${t.menuLanguage}</h4>
                     <div class="language-buttons">
-                        <button class="language-btn ${CONFIG.menuLanguage === 'ru' ? 'active' : ''}" data-language="ru">
+                        <button class="language-btn ${isAuto ? 'active' : ''}" data-language="auto">
+                            ${t.auto}
+                        </button>
+                        <button class="language-btn ${isRu ? 'active' : ''}" data-language="ru">
                             ${t.russian}
                         </button>
-                        <button class="language-btn ${CONFIG.menuLanguage === 'en' ? 'active' : ''}" data-language="en">
+                        <button class="language-btn ${isEn ? 'active' : ''}" data-language="en">
                             ${t.english}
                         </button>
                     </div>
-                    <div class="language-description">${t.languageDesc}</div>
+                    <div class="language-description">
+                        ${isAuto ? t.autoDesc : (isRu ? 'Выбран русский язык интерфейса' : 'English interface language selected')}
+                    </div>
                 </div>
 
                 <div class="control-group">
@@ -1029,11 +1084,16 @@
     }
 
     function renderAboutTab(container) {
-        const versionStatus = lastReleaseInfo
-            ? compareVersions(SCRIPT_VERSION, lastReleaseInfo.version) >= 0
-                ? '<span class="status-good">✅ У вас актуальная версия</span>'
-                : `<span class="status-warning">⚠️ Доступна новая версия ${lastReleaseInfo.version}</span>`
-            : '<span class="status-neutral">Не удалось проверить</span>';
+        let versionStatus = '';
+        if (lastReleaseInfo) {
+            if (compareVersions(SCRIPT_VERSION, lastReleaseInfo.version) >= 0) {
+                versionStatus = `<span class="status-good">${t.upToDate}</span>`;
+            } else {
+                versionStatus = `<span class="status-warning">${t.updateAvailable} ${lastReleaseInfo.version}</span>`;
+            }
+        } else {
+            versionStatus = `<span class="status-neutral">${t.checkFailed}</span>`;
+        }
 
         container.innerHTML = `
             <div class="tab-section">
@@ -1046,7 +1106,7 @@
                     <div class="info-item">
                         <strong>${t.latestVersion}</strong> ${lastReleaseInfo ? lastReleaseInfo.version : '...'}
                         <button class="check-update-btn" id="checkUpdateBtn" ${isCheckingUpdate ? 'disabled' : ''}>
-                            ${isCheckingUpdate ? 'Проверка...' : 'Проверить сейчас'}
+                            ${isCheckingUpdate ? t.checking : t.checkNow}
                         </button>
                     </div>
                     <div class="info-item">
@@ -1107,7 +1167,7 @@
                 </div>
 
                 <div class="about-footer">
-                    <p>Спасибо за использование elGoogle! Если вам нравится скрипт, поставьте звезду на GitHub ⭐</p>
+                    <p>${t.thanksForUsing}</p>
                 </div>
             </div>
         `;
@@ -1172,7 +1232,7 @@
             btn.addEventListener('click', async () => {
                 const preset = btn.dataset.preset;
                 CONFIG.preset = preset;
-                
+
                 if (preset !== 'custom') {
                     Object.assign(CONFIG, PRESETS[preset].values);
                 }
@@ -1201,13 +1261,40 @@
             });
         });
 
+        // Обработчики для кнопок выбора языка
         container.querySelectorAll('.language-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const lang = btn.dataset.language;
                 if (CONFIG.menuLanguage !== lang) {
                     CONFIG.menuLanguage = lang;
                     await saveConfig();
-                    location.reload();
+
+                    // Обновляем активный язык и перерисовываем панель
+                    updateActiveLanguage();
+                    updatePresetNames();
+                    renderActiveTab();
+
+                    // Обновляем заголовки вкладок
+                    panel.querySelectorAll('.tab').forEach(tab => {
+                        const tabName = tab.dataset.tab;
+                        if (tabName === 'general') {
+                            tab.innerHTML = `<svg class="el-icon"><use href="#i-sliders"></use></svg>${t.general}`;
+                        } else if (tabName === 'search') {
+                            tab.innerHTML = `<svg class="el-icon"><use href="#i-search"></use></svg>${t.search}`;
+                        } else if (tabName === 'menu') {
+                            tab.innerHTML = `<svg class="el-icon"><use href="#i-menu"></use></svg>${t.menu}`;
+                        } else if (tabName === 'about') {
+                            tab.innerHTML = `<svg class="el-icon"><use href="#i-info"></use></svg><span class="tab-text">${t.about}</span>`;
+                        }
+                    });
+
+                    // Обновляем footer
+                    panel.querySelector('.footer-status').textContent = isCheckingUpdate ? t.checkingUpdates : t.f2Menu;
+
+                    // Обновляем кнопки в footer
+                    panel.querySelector('#exportBtn').title = t.exportSettings;
+                    panel.querySelector('#importBtn').title = t.importSettings;
+                    panel.querySelector('#resetBtn').title = t.resetSettings;
                 }
             });
         });
@@ -1690,18 +1777,18 @@
             }
 
             .tech-icon {
-                width: 24px; height: 24px;
+                width: 35px; height: 35px;
                 fill: currentColor;
                 stroke: none;
             }
 
             .tech-name {
-                font-size: 12px;
+                font-size: 11px;
                 text-align: center;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
+                white-space: normal;
+                word-break: break-word;
                 width: 100%;
+                line-height: 1.3;
             }
 
             .section-icon {
@@ -1750,13 +1837,13 @@
                 transform: translateX(26px);
             }
 
-            .preset-buttons { 
-                display: grid; 
-                grid-template-columns: repeat(3, 1fr); 
-                gap: 10px; 
-                margin-bottom: 12px; 
+            .preset-buttons {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                margin-bottom: 12px;
             }
-            
+
             .custom-preset {
                 grid-column: 1 / -1;
                 justify-self: stretch;
@@ -1764,52 +1851,52 @@
                 max-width: 100%;
                 min-width: 0;
             }
-            
+
             .preset-btn {
-                padding: 10px; 
+                padding: 10px;
                 background: rgba(255, 255, 255, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.2); 
+                border: 1px solid rgba(255, 255, 255, 0.2);
                 border-radius: 8px;
-                color: inherit; cursor: pointer; 
+                color: inherit; cursor: pointer;
                 transition: all 0.2s;
-                display: flex; 
-                align-items: center; 
+                display: flex;
+                align-items: center;
                 justify-content: center;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
-            
-            .theme-light .preset-btn { 
-                background: rgba(0, 0, 0, 0.05); 
-                border-color: rgba(0, 0, 0, 0.1); 
+
+            .theme-light .preset-btn {
+                background: rgba(0, 0, 0, 0.05);
+                border-color: rgba(0, 0, 0, 0.1);
             }
-            
+
             .preset-btn:hover {
                 background: rgba(255, 255, 255, 0.2);
                 transform: translateY(-2px);
             }
-            
-            .theme-light .preset-btn:hover { 
-                background: rgba(0, 0, 0, 0.1); 
+
+            .theme-light .preset-btn:hover {
+                background: rgba(0, 0, 0, 0.1);
             }
-            
+
             .preset-btn.active {
-                background: #1a73e8; 
-                border-color: #1a73e8; 
+                background: #1a73e8;
+                border-color: #1a73e8;
                 color: white;
                 box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
             }
-            
+
             .preset-description {
-                font-size: 13px; 
-                opacity: 0.8; 
+                font-size: 13px;
+                opacity: 0.8;
                 padding: 8px;
-                background: rgba(255, 255, 255, 0.05); 
+                background: rgba(255, 255, 255, 0.05);
                 border-radius: 6px;
                 border-left: 3px solid #1a73e8;
             }
-            
+
             .theme-light .preset-description {
                 background: rgba(0, 0, 0, 0.05);
                 border-left: 3px solid rgba(26, 115, 232, 0.5);
@@ -1863,21 +1950,25 @@
             .theme-preview.light { background: #f5f5f5; border: 1px solid #ddd; }
 
             .language-buttons {
-                display: flex;
-                gap: 12px;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
                 margin-top: 12px;
             }
 
             .language-btn {
-                flex: 1;
-                padding: 10px;
+                padding: 10px 8px;
                 background: rgba(255, 255, 255, 0.05);
                 border: 2px solid transparent;
                 border-radius: 8px;
                 color: inherit;
                 cursor: pointer;
                 transition: all 0.2s;
-                font-size: 14px;
+                font-size: 13px;
+                text-align: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             .theme-light .language-btn {
@@ -1919,25 +2010,25 @@
                 padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
                 color: #fff !important;
             }
-            
+
             .theme-light .about-info {
                 background: rgba(0, 0, 0, 0.05);
                 border: 1px solid rgba(0, 0, 0, 0.1);
                 color: #333 !important;
             }
-            
+
             .about-info * {
                 color: inherit !important;
             }
-            
+
             .info-item {
                 display: flex; justify-content: flex-start;
                 align-items: center; padding: 10px 0;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
                 gap: 10px;
             }
-            .theme-light .info-item { 
-                border-bottom: 1px solid rgba(0, 0, 0, 0.05); 
+            .theme-light .info-item {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             }
             .info-item:last-child { border-bottom: none; }
 
@@ -1954,11 +2045,10 @@
             }
 
             .tech-stack {
-                display: flex;
-                flex-wrap: nowrap;
+                display: grid;
+                grid-template-columns: repeat(4, minmax(70px, 1fr));
                 gap: 12px;
                 margin-top: 10px;
-                justify-content: space-between;
             }
 
             .tech-card {
@@ -1967,15 +2057,14 @@
                 align-items: center;
                 justify-content: center;
                 gap: 8px;
-                padding: 16px;
+                padding: 16px 12px;
                 background: rgba(255, 255, 255, 0.05);
                 border-radius: 10px;
                 text-decoration: none;
                 color: #fff !important;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 border: 1px solid rgba(255, 255, 255, 0.1);
-                flex: 1;
-                min-width: 0;
+                min-height: 90px;
                 position: relative;
                 overflow: hidden;
             }
@@ -2068,7 +2157,7 @@
             }
             .link-card {
                 display: flex; flex-direction: column; align-items: center;
-                gap: 10px; padding: 16px; border-radius: 10px; 
+                gap: 10px; padding: 16px; border-radius: 10px;
                 text-decoration: none; color: #fff !important;
                 transition: all 0.2s; border: 1px solid rgba(255, 255, 255, 0.1);
                 position: relative; overflow: hidden;
@@ -2093,12 +2182,12 @@
                 color: #333 !important;
                 border: 1px solid rgba(0, 0, 0, 0.1);
             }
-            
+
             .link-card:hover {
                 transform: translateY(-2px); text-decoration: none;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             }
-            
+
             .link-card .el-icon { width: 24px; height: 24px; }
             .link-card span { font-size: 13px; text-align: center; opacity: 0.9; }
 
