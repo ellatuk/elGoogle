@@ -18,6 +18,8 @@
 // @connect           github.com
 // @connect           api.github.com
 // @license           MIT
+// @downloadURL https://update.greasyfork.org/scripts/501245/elGoogle.user.js
+// @updateURL https://update.greasyfork.org/scripts/501245/elGoogle.meta.js
 // ==/UserScript==
 
 (function() {
@@ -27,14 +29,19 @@
 
     const LANGUAGES = {
         ru: {
+            // Общие названия разделов и элементов интерфейса
             general: 'Общие',
             search: 'Поиск',
             menu: 'Меню',
             about: 'О плагине',
+
+            // Тема и внешний вид
             darkTheme: 'Тёмная тема Google',
             darkThemeDesc: 'Полная тёмная тема страницы',
             customLogo: 'Кастомный логотип',
             customLogoDesc: 'Заменить логотип Google',
+
+            // Очистка интерфейса
             cleaninginterface: 'Очистка внешнего вида',
             removeAI: 'Удалить "Режим ИИ"',
             removeAIDesc: 'Скрыть кнопку AI-поиска',
@@ -44,12 +51,18 @@
             removeImagesDesc: 'Скрыть ссылку на поиск по картинкам',
             removeMail: 'Удалить "Почта"',
             removeMailDesc: 'Скрыть ссылку на Gmail',
+
+            // Стили поисковой строки
             searchStyleEnabled: 'Включить кастомизацию поиска',
             searchStyleEnabledDesc: 'Использовать кастомные стили поисковой строки',
+
+            // Компактный режим и эффекты
             compactMode: 'Компактный режим',
             compactModeDesc: 'Уменьшить отступы и размеры',
             glassEffect: 'Эффект "Жидкое стекло"',
             glassEffectDesc: 'Полупрозрачный фон с размытием и шероховатостью',
+
+            // Пресеты
             presets: 'Пресеты',
             minimal: 'Минимальный',
             clean: 'Чистый',
@@ -59,23 +72,45 @@
             cleanDesc: 'Чистый Google. Тёмная тема, кастомный логотип, удаление AI.',
             fullDesc: 'Полная кастомизация. Все функции включены.',
             customDesc: 'Пользовательские настройки. Вы изменили стандартные параметры.',
+
+            // Стили поисковой строки (названия)
+            searchstylegoogle: 'Google',
+            searchstyleelgoogle: 'elGoogle',
+            searchstyleminimaldark: 'Маленькая Темнота',
+            searchstyleglassfrosted: 'Матовое Стекло',
+            searchstyleroundedsoft: 'Округлый Мягкий',
+            searchstyleshadowblurwhite: 'Белая Размытая Тень',
+            searchstyleglassmorph: 'Стеклянный Morph',
+            searchstyleliquidmetal: 'Жидкий Метал',
+            searchstylemonochromecrt: 'Монохромный CRT',
+            searchstylecyberpunkneon: 'Неоновый Киберпанк',
+
+            // Тема панели
             searchStyle: 'Стиль строки поиска',
             theme: 'Тема панели',
             dark: 'Тёмная',
             light: 'Светлая',
+
+            // Настройки панели
             panelSettings: 'Настройки панели',
+
+            // Информация о версии
             currentVersion: 'Текущая версия:',
             latestVersion: 'Последняя версия:',
             status: 'Статус:',
             upToDate: 'У вас актуальная версия',
             updateAvailable: 'Доступна новая версия',
             checkFailed: 'Не удалось проверить',
+
+            // Информация об авторе и проекте
             author: 'Автор:',
             technologies: 'Технологии:',
             repository: 'Репозиторий проекта',
             authorGitHub: 'Автор на GitHub',
             youtubeChannel: 'YouTube канал',
             supportAuthor: 'Поддержать автора',
+
+            // Горячие клавиши и управление
             f2Menu: 'F2 - меню',
             checkingUpdates: 'Проверка обновлений...',
             checkNow: 'Проверить сейчас',
@@ -83,23 +118,32 @@
             exportSettings: 'Экспорт настроек',
             importSettings: 'Импорт настроек',
             resetSettings: 'Сброс настроек',
+
+            // Язык меню
             menuLanguage: 'Язык меню',
             languageDesc: 'Выбор языка интерфейса панели управления',
             russian: 'Русский',
             english: 'English',
             auto: 'Автоматически',
             autoDesc: 'Язык определяется автоматически на основе языка браузера',
+
+            // Благодарности
             thanksForUsing: 'Спасибо за использование elGoogle! Если вам нравится скрипт, поставьте звезду на GitHub ⭐'
         },
         en: {
+            // General section names and UI elements
             general: 'General',
             search: 'Search',
             menu: 'Menu',
             about: 'About',
+
+            // Theme and appearance
             darkTheme: 'Dark Google Theme',
             darkThemeDesc: 'Full dark theme of the page',
             customLogo: 'Custom Logo',
             customLogoDesc: 'Replace Google logo',
+
+            // Interface cleaning
             cleaninginterface: 'Clean up appearance',
             removeAI: 'Remove "AI Mode"',
             removeAIDesc: 'Hide AI search button',
@@ -109,12 +153,18 @@
             removeImagesDesc: 'Hide image search link',
             removeMail: 'Remove "Mail"',
             removeMailDesc: 'Hide Gmail link',
+
+            // Search bar styles
             searchStyleEnabled: 'Enable search customization',
             searchStyleEnabledDesc: 'Use custom search bar styles',
+
+            // Compact mode and effects
             compactMode: 'Compact Mode',
             compactModeDesc: 'Reduce margins and sizes',
             glassEffect: 'Liquid Glass Effect',
             glassEffectDesc: 'Semi-transparent background with blur and roughness',
+
+            // Presets
             presets: 'Presets',
             minimal: 'Minimal',
             clean: 'Clean',
@@ -124,23 +174,45 @@
             cleanDesc: 'Clean Google. Dark theme, custom logo, AI removal.',
             fullDesc: 'Full customization. All features enabled.',
             customDesc: 'Custom settings. You have changed the default parameters.',
+
+            // Search Bar Style names
+            searchstylegoogle: 'Google',
+            searchstyleelgoogle: 'elGoogle',
+            searchstyleminimaldark: 'Minimal Dark',
+            searchstyleglassfrosted: 'Glass Frosted',
+            searchstyleroundedsoft: 'Rounded Soft',
+            searchstyleshadowblurwhite: 'Shadow Blur White',
+            searchstyleglassmorph: 'Glass Morph',
+            searchstyleliquidmetal: 'Liquid Metal',
+            searchstylemonochromecrt: 'Monochrome CRT',
+            searchstylecyberpunkneon: 'Cyberpunk Neon',
+
+            // Panel theme
             searchStyle: 'Search Bar Style',
             theme: 'Panel Theme',
             dark: 'Dark',
             light: 'Light',
+
+            // Panel settings
             panelSettings: 'Panel Settings',
+
+            // Version information
             currentVersion: 'Current version:',
             latestVersion: 'Latest version:',
             status: 'Status:',
             upToDate: '✅ You have the latest version',
             updateAvailable: '⚠️ New version available',
             checkFailed: 'Failed to check',
+
+            // Author and project information
             author: 'Author:',
             technologies: 'Technologies:',
             repository: 'Project Repository',
             authorGitHub: 'Author on GitHub',
             youtubeChannel: 'YouTube Channel',
             supportAuthor: 'Support Author',
+
+            // Hotkeys and controls
             f2Menu: 'F2 - menu',
             checkingUpdates: 'Checking updates...',
             checkNow: 'Check now',
@@ -148,12 +220,16 @@
             exportSettings: 'Export settings',
             importSettings: 'Import settings',
             resetSettings: 'Reset settings',
+
+            // Menu language
             menuLanguage: 'Menu Language',
             languageDesc: 'Interface language selection for control panel',
             russian: 'Русский',
             english: 'English',
             auto: 'Auto',
             autoDesc: 'Language is automatically determined based on browser language',
+
+            // Thanks
             thanksForUsing: 'Thank you for using elGoogle! If you like the script, give it a star on GitHub ⭐'
         }
     };
@@ -192,26 +268,427 @@
 
     const SEARCH_STYLES = {
         'google-default': {
-            name: 'Google',
+            key: 'google',
             css: `.RNNXgb{border-radius:24px!important;background-color:transparent!important;border:1px solid #5f6368!important;box-shadow:none!important;}`
         },
         'elgoogle-classic': {
-            name: 'elGoogle',
+            key: 'elgoogle',
             css: `.RNNXgb{border-radius:34px 14px!important;background-color:#121212!important;border:3px solid #1c1d1d!important;box-shadow:0 2px 8px rgba(0,0,0,0.3)!important;}`
         },
         'minimal-dark': {
-            name: 'Minimal Dark',
+            key: 'minimaldark',
             css: `.RNNXgb{border-radius:12px!important;background-color:#0a0a0a!important;border:1px solid #2a2a2a!important;box-shadow:0 1px 3px rgba(0,0,0,0.2)!important;}`
         },
         'glass-frosted': {
-            name: 'Glass / Frosted',
+            key: 'glassfrosted',
             css: `.RNNXgb{border-radius:20px!important;background:linear-gradient(135deg,rgba(25,25,25,0.85)0%,rgba(35,35,35,0.8)100%),${NOISE_TEXTURE}!important;backdrop-filter:blur(12px) saturate(2)!important;-webkit-backdrop-filter:blur(12px) saturate(2)!important;border:1px solid rgba(255,255,255,0.2)!important;box-shadow:0 4px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.15),inset 0 -1px 0 rgba(0,0,0,0.6)!important;}.RNNXgb::before{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:${NOISE_TEXTURE}!important;opacity:0.2!important;pointer-events:none!important;border-radius:inherit!important;mix-blend-mode:overlay!important;}`
         },
         'rounded-soft': {
-            name: 'Rounded Soft',
+            key: 'roundedsoft',
             css: `.RNNXgb{border-radius:28px!important;background:linear-gradient(135deg,#121212 0%,#1a1a1a 100%)!important;border:2px solid #2d2d2d!important;box-shadow:0 6px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05)!important;}`
+        },
+        'shadow-blur-white': {
+            key: 'shadowblurwhite',
+            css: `.RNNXgb{
+                border-radius: 20px!important;
+                background-color: rgba(18, 18, 18, 0.95)!important;
+                border: 1px solid rgba(255, 255, 255, 0.15)!important;
+                box-shadow:
+                    0 0 32px 8px rgba(255, 255, 255, 0.25)!important;
+                backdrop-filter: blur(10px)!important;
+                -webkit-backdrop-filter: blur(10px)!important;
+                position: relative!important;
+                overflow: hidden!important;
+            }
+            .RNNXgb::before{
+                content: ''!important;
+                position: absolute!important;
+                top: -8px!important;
+                left: -8px!important;
+                right: -8px!important;
+                bottom: -8px!important;
+                background: radial-gradient(
+                    circle at center,
+                    rgba(255, 255, 255, 0.15) 0%,
+                    rgba(255, 255, 255, 0.05) 40%,
+                    transparent 70%
+                )!important;
+                border-radius: 28px!important;
+                z-index: -1!important;
+                pointer-events: none!important;
+                filter: blur(16px)!important;
+            }
+            .RNNXgb::after{
+                content: ''!important;
+                position: absolute!important;
+                top: 0!important;
+                left: 0!important;
+                right: 0!important;
+                bottom: 0!important;
+                border-radius: 20px!important;
+                border: 1px solid rgba(255, 255, 255, 0.1)!important;
+                pointer-events: none!important;
+                box-shadow:
+                    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.2)!important;
+            }`
+        },
+        'glass-morph': {
+            key: 'glassmorph',
+            css: `.RNNXgb{
+                background: rgba(255, 255, 255, 0.04)!important;
+                border-radius: 16px!important;
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1)!important;
+                backdrop-filter: blur(5.9px)!important;
+                -webkit-backdrop-filter: blur(5.9px)!important;
+                border: 1px solid rgba(255, 255, 255, 0.02)!important;
+            }`
+        },
+        'liquid-metal': {
+            key: 'liquidmetal',
+            css: `.RNNXgb{
+                border-radius: 16px!important;
+                background:
+                    linear-gradient(135deg,
+                        #1a1a1a 0%,
+                        #2a2a2a 50%,
+                        #1a1a1a 100%
+                    )!important;
+                border: 2px solid transparent!important;
+                box-shadow:
+                    inset 0 2px 10px rgba(255, 255, 255, 0.1),
+                    inset 0 -2px 10px rgba(0, 0, 0, 0.5),
+                    0 5px 30px rgba(0, 0, 0, 0.6)!important;
+                position: relative!important;
+                overflow: hidden!important;
+            }
+            .RNNXgb::before{
+                content: ''!important;
+                position: absolute!important;
+                top: 0!important;
+                left: 0!important;
+                right: 0!important;
+                bottom: 0!important;
+                background: linear-gradient(
+                    90deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.05) 50%,
+                    transparent 100%
+                )!important;
+                border-radius: 16px!important;
+                animation: metal-shine 4s ease-in-out infinite alternate!important;
+                z-index: 1!important;
+                pointer-events: none!important;
+            }
+            .RNNXgb::after{
+                content: ''!important;
+                position: absolute!important;
+                top: 2px!important;
+                left: 2px!important;
+                right: 2px!important;
+                bottom: 2px!important;
+                background:
+                    radial-gradient(
+                        circle at 30% 30%,
+                        rgba(200, 200, 200, 0.1) 0%,
+                        transparent 50%
+                    ),
+                    radial-gradient(
+                        circle at 70% 70%,
+                        rgba(150, 150, 150, 0.08) 0%,
+                        transparent 50%
+                    )!important;
+                border-radius: 14px!important;
+                border: 1px solid rgba(255, 255, 255, 0.08)!important;
+                box-shadow:
+                    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.3)!important;
+                pointer-events: none!important;
+            }
+            /* Эффект металлической текстуры */
+            .RNNXgb > div {
+                position: relative!important;
+                z-index: 2!important;
+                background:
+                    repeating-linear-gradient(
+                        45deg,
+                        transparent,
+                        transparent 1px,
+                        rgba(255, 255, 255, 0.01) 1px,
+                        rgba(255, 255, 255, 0.01) 2px
+                    )!important;
+                border-radius: 14px!important;
+            }
+            @keyframes metal-shine {
+                0% {
+                    transform: translateX(-100%) rotate(45deg);
+                    opacity: 0.3;
+                }
+                50% {
+                    opacity: 0.6;
+                }
+                100% {
+                    transform: translateX(100%) rotate(45deg);
+                    opacity: 0.3;
+                }
+            }
+            /* Стиль для текста */
+            .RNNXgb input {
+                color: #e0e0e0!important;
+                text-shadow:
+                    0 1px 0 rgba(0, 0, 0, 0.5),
+                    0 -1px 0 rgba(255, 255, 255, 0.1)!important;
+                background: transparent!important;
+                font-weight: 500!important;
+            }`
+        },
+        'monochrome-crt': {
+            key: 'monochromecrt',
+            css: `.RNNXgb{
+                border-radius: 4px!important;
+                background:
+                    radial-gradient(
+                        ellipse at center,
+                        rgba(200, 200, 200, 0.1) 0%,
+                        rgba(0, 0, 0, 0.95) 100%
+                    )!important;
+                border: 4px solid #b0b0b0!important;
+                box-shadow:
+                    inset 0 0 60px rgba(255, 255, 255, 0.2),
+                    0 0 40px rgba(255, 255, 255, 0.3),
+                    0 0 0 3px rgba(200, 200, 200, 0.4),
+                    inset 0 0 100px rgba(0, 0, 0, 0.8)!important;
+                position: relative!important;
+                overflow: hidden!important;
+                font-family: 'Courier New', monospace!important;
+            }
+            .RNNXgb::before{
+                content: ''!important;
+                position: absolute!important;
+                top: 0!important;
+                left: 0!important;
+                right: 0!important;
+                bottom: 0!important;
+                background: repeating-linear-gradient(
+                    0deg,
+                    rgba(255, 255, 255, 0.08) 0px,
+                    rgba(255, 255, 255, 0.08) 1px,
+                    transparent 1px,
+                    transparent 2px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.03) 0px,
+                    rgba(255, 255, 255, 0.03) 1px,
+                    transparent 1px,
+                    transparent 3px
+                )!important;
+                border-radius: 4px!important;
+                pointer-events: none!important;
+                animation: scanlines 0.08s linear infinite!important;
+                z-index: 1!important;
+                background-size: 100% 3px, 4px 100%!important;
+            }
+            .RNNXgb::after{
+                content: ''!important;
+                position: absolute!important;
+                top: 0!important;
+                left: 0!important;
+                right: 0!important;
+                bottom: 0!important;
+                background:
+                    radial-gradient(
+                        circle at 50% 0%,
+                        rgba(255, 255, 255, 0.25) 0%,
+                        transparent 60%
+                    ),
+                    radial-gradient(
+                        circle at 50% 100%,
+                        rgba(255, 255, 255, 0.15) 0%,
+                        transparent 60%
+                    ),
+                    radial-gradient(
+                        circle at 30% 50%,
+                        rgba(255, 255, 255, 0.1) 0%,
+                        transparent 50%
+                    ),
+                    radial-gradient(
+                        circle at 70% 50%,
+                        rgba(255, 255, 255, 0.1) 0%,
+                        transparent 50%
+                    )!important;
+                border-radius: 4px!important;
+                pointer-events: none!important;
+                animation: crt-flicker 5s infinite!important;
+                z-index: 0!important;
+            }
+            /* Эффект рельефной рамки */
+            .RNNXgb {
+                border-style: outset!important;
+                border-color: #808080 #404040 #404040 #808080!important;
+                border-width: 4px!important;
+            }
+            @keyframes scanlines {
+                0% { transform: translateY(0); }
+                100% { transform: translateY(3px); }
+            }
+            @keyframes crt-flicker {
+                0%, 100% { opacity: 1; }
+                1% { opacity: 0.97; }
+                2% { opacity: 1; }
+                10% { opacity: 0.99; }
+                11% { opacity: 1; }
+                20% { opacity: 0.98; }
+                21% { opacity: 1; }
+                30% { opacity: 0.99; }
+                31% { opacity: 1; }
+                40% { opacity: 0.97; }
+                41% { opacity: 1; }
+                50% { opacity: 0.99; }
+                51% { opacity: 1; }
+                60% { opacity: 0.98; }
+                61% { opacity: 1; }
+                70% { opacity: 0.99; }
+                71% { opacity: 1; }
+                80% { opacity: 0.97; }
+                81% { opacity: 1; }
+                90% { opacity: 0.99; }
+                91% { opacity: 1; }
+            }
+            /* Эффект текста CRT */
+            .RNNXgb input {
+                text-shadow:
+                    0 0 8px rgba(255, 255, 255, 0.9),
+                    0 0 15px rgba(255, 255, 255, 0.6),
+                    0 0 25px rgba(255, 255, 255, 0.3)!important;
+                color: #ffffff!important;
+                font-weight: bold!important;
+                letter-spacing: 1px!important;
+            }
+            /* Эффект зернистости */
+            .RNNXgb {
+                background-image:
+                    radial-gradient(circle at 20% 30%, rgba(255,255,255,0.05) 1px, transparent 2px),
+                    radial-gradient(circle at 80% 70%, rgba(255,255,255,0.05) 1px, transparent 2px),
+                    radial-gradient(circle at 40% 60%, rgba(255,255,255,0.05) 1px, transparent 2px)!important;
+                background-size: 200px 200px, 150px 150px, 180px 180px!important;
+            }`
+        },
+        'cyberpunk-neon': {
+            key: 'cyberpunkneon',
+            css: `.RNNXgb{
+                border-radius: 18px!important;
+                background: linear-gradient(135deg, #0a0a0a 0%, #151515 100%)!important;
+                border: 1px solid transparent!important;
+                box-shadow:
+                    0 4px 25px rgba(0, 0, 0, 0.7)!important;
+                position: relative!important;
+                overflow: hidden!important;
+                isolation: isolate!important;
+            }
+            .RNNXgb::before{
+                content: ''!important;
+                position: absolute!important;
+                top: -4px!important;
+                left: -4px!important;
+                right: -4px!important;
+                bottom: -4px!important;
+                background: linear-gradient(
+                    45deg,
+                    #eb08da 0%,
+                    #5fa5fb 25%,
+                    #08ffa2 50%,
+                    #e0fe4e 75%,
+                    #eb08da 100%
+                )!important;
+                border-radius: 22px!important;
+                z-index: -1!important;
+                animation: cyber-glow-4colors 3s linear infinite!important;
+                background-size: 300% 300%!important;
+                filter: blur(12px)!important;
+                opacity: 0.85!important;
+            }
+            .RNNXgb::after{
+                content: ''!important;
+                position: absolute!important;
+                top: 0!important;
+                left: 0!important;
+                right: 0!important;
+                bottom: 0!important;
+                background:
+                    linear-gradient(
+                        90deg,
+                        rgba(235, 8, 218, 0.1) 0%,
+                        rgba(95, 165, 251, 0.08) 25%,
+                        rgba(8, 255, 162, 0.06) 50%,
+                        rgba(224, 254, 78, 0.04) 75%,
+                        rgba(235, 8, 218, 0.02) 100%
+                    ),
+                    radial-gradient(
+                        circle at 80% 20%,
+                        rgba(235, 8, 218, 0.15) 0%,
+                        transparent 60%
+                    ),
+                    radial-gradient(
+                        circle at 20% 80%,
+                        rgba(8, 255, 162, 0.15) 0%,
+                        transparent 60%
+                    )!important;
+                border-radius: 18px!important;
+                pointer-events: none!important;
+                animation: gradient-shift 8s ease-in-out infinite alternate!important;
+                mix-blend-mode: screen!important;
+            }
+            @keyframes cyber-glow-4colors {
+                0% {
+                    background-position: 0% 50%;
+                    opacity: 0.7;
+                }
+                25% {
+                    background-position: 50% 100%;
+                    opacity: 0.9;
+                }
+                50% {
+                    background-position: 100% 50%;
+                    opacity: 0.7;
+                }
+                75% {
+                    background-position: 50% 0%;
+                    opacity: 0.9;
+                }
+                100% {
+                    background-position: 0% 50%;
+                    opacity: 0.7;
+                }
+            }
+            @keyframes gradient-shift {
+                0% {
+                    background-position: 0% 0%, 80% 20%, 20% 80%;
+                    opacity: 0.8;
+                }
+                33% {
+                    background-position: 100% 100%, 60% 40%, 40% 60%;
+                    opacity: 0.9;
+                }
+                66% {
+                    background-position: 0% 100%, 90% 30%, 10% 70%;
+                    opacity: 0.85;
+                }
+                100% {
+                    background-position: 100% 0%, 70% 10%, 30% 90%;
+                    opacity: 0.8;
+                }
+            }
+            /* Эффект для текста */
+            .RNNXgb input {
+                color: #ffffff!important;
+                text-shadow:
+                    0 0 10px rgba(235, 8, 218, 0.5),
+                    0 0 20px rgba(95, 165, 251, 0.3),
+                    0 0 30px rgba(8, 255, 162, 0.2)!important;
+                background: transparent!important;
+            }`
         }
-
     };
 
     const PRESETS = {
@@ -996,7 +1473,7 @@
                         ${Object.entries(SEARCH_STYLES).map(([key, style]) => `
                             <div class="style-preview ${CONFIG.searchStyle === key ? 'active' : ''}" data-style="${key}">
                                 <div class="preview-box" style="${getPreviewStyle(key)}"></div>
-                                <span class="preview-label">${style.name}</span>
+                                <span class="preview-label">${t[`searchstyle${style.key}`] || style.key}</span>
                             </div>
                         `).join('')}
                     </div>
@@ -1193,7 +1670,12 @@
             'elgoogle-classic': 'border-radius:34px 14px;background:#121212;border:3px solid #1c1d1d;',
             'minimal-dark': 'border-radius:12px;background:#0a0a0a;border:1px solid #2a2a2a;',
             'glass-frosted': `border-radius:20px;background:linear-gradient(135deg,rgba(25,25,25,0.85)0%,rgba(35,35,35,0.8)100%),${NOISE_TEXTURE};backdrop-filter:blur(12px) saturate(2);border:1px solid rgba(255,255,255,0.2);`,
-            'rounded-soft': 'border-radius:28px;background:linear-gradient(135deg,#121212 0%,#1a1a1a 100%);border:2px solid #2d2d2d;'
+            'rounded-soft': 'border-radius:28px;background:linear-gradient(135deg,#121212 0%,#1a1a1a 100%);border:2px solid #2d2d2d;',
+            'shadow-blur-white': 'border-radius:20px;background:rgba(18,18,18,0.95);border:1px solid rgba(255,255,255,0.15);box-shadow:0 0 32px 8px rgba(255,255,255,0.25);backdrop-filter:blur(10px);',
+            'glass-morph': 'background:rgba(255,255,255,0.04);border-radius:16px;border:1px solid rgba(255,255,255,0.02);backdrop-filter:blur(5.9px);',
+            'liquid-metal': 'border-radius:16px;background:linear-gradient(135deg,#1a1a1a 0%,#2a2a2a 50%,#1a1a1a 100%);border:2px solid transparent;box-shadow:inset 0 2px 10px rgba(255,255,255,0.1),inset 0 -2px 10px rgba(0,0,0,0.5),0 5px 30px rgba(0,0,0,0.6);',
+            'monochrome-crt': 'border-radius:4px;background:radial-gradient(ellipse at center,rgba(200,200,200,0.1)0%,rgba(0,0,0,0.95)100%);border:4px solid #b0b0b0;box-shadow:inset 0 0 60px rgba(255,255,255,0.2),0 0 40px rgba(255,255,255,0.3),0 0 0 3px rgba(200,200,200,0.4),inset 0 0 100px rgba(0,0,0,0.8);',
+            'cyberpunk-neon': 'border-radius:18px;background:linear-gradient(135deg,#0a0a0a 0%,#151515 100%);border:1px solid transparent;box-shadow:0 4px 25px rgba(0,0,0,0.7);position:relative;'
         };
         return styles[styleKey] || '';
     }
