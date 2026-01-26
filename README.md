@@ -8,7 +8,7 @@
 ![Total Downloads](https://img.shields.io/github/downloads/ElLatuk/elGoogle/total?color=indigo)
 ![Repo Size](https://img.shields.io/github/repo-size/ElLatuk/elGoogle?color=%23083fe5)
 ![Issues](https://img.shields.io/github/issues/ElLatuk/elGoogle?color=%239E9E9E)
-![License](https://img.shields.io/github/license/ElLatuk/elGoogle?color=%239E9E9E)
+[![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-9E9E9E)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 ![Stars](https://img.shields.io/github/stars/ElLatuk/elGoogle?color=%23FFD700)
 
 > Наслаждайтесь чистым и персонализированным Google!
