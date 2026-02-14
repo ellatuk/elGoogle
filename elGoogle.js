@@ -304,7 +304,14 @@
         },
         'glass-frosted': {
             key: 'glassfrosted',
-            css: `.RNNXgb{border-radius:20px!important;background:linear-gradient(135deg,rgba(25,25,25,0.85)0%,rgba(35,35,35,0.8)100%),${NOISE_TEXTURE}!important;backdrop-filter:blur(12px) saturate(2)!important;-webkit-backdrop-filter:blur(12px) saturate(2)!important;border:1px solid rgba(255,255,255,0.2)!important;box-shadow:0 4px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.15),inset 0 -1px 0 rgba(0,0,0,0.6)!important;}.RNNXgb::before{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:${NOISE_TEXTURE}!important;opacity:0.2!important;pointer-events:none!important;border-radius:inherit!important;mix-blend-mode:overlay!important;}`
+            css: createSearchStyle({
+                'border-radius': '20px',
+                background: `linear-gradient(135deg,rgba(25,25,25,0.85)0%,rgba(35,35,35,0.8)100%),${NOISE_TEXTURE}`,
+                'backdrop-filter': 'blur(12px) saturate(2)',
+                '-webkit-backdrop-filter': 'blur(12px) saturate(2)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                'box-shadow': '0 4px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.15),inset 0 -1px 0 rgba(0,0,0,0.6)'
+            }, `.RNNXgb::before{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:${NOISE_TEXTURE}!important;opacity:0.2!important;pointer-events:none!important;border-radius:inherit!important;mix-blend-mode:overlay!important;}`)
         },
         'rounded-soft': {
             key: 'roundedsoft',
@@ -363,14 +370,14 @@
         },
         'glass-morph': {
             key: 'glassmorph',
-            css: `.RNNXgb{
-                background: rgba(255, 255, 255, 0.04)!important;
-                border-radius: 16px!important;
-                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1)!important;
-                backdrop-filter: blur(5.9px)!important;
-                -webkit-backdrop-filter: blur(5.9px)!important;
-                border: 1px solid rgba(255, 255, 255, 0.02)!important;
-            }`
+            css: createSearchStyle({
+                background: 'rgba(255, 255, 255, 0.04)',
+                'border-radius': '16px',
+                'box-shadow': '0 4px 30px rgba(0, 0, 0, 0.1)',
+                'backdrop-filter': 'blur(5.9px)',
+                '-webkit-backdrop-filter': 'blur(5.9px)',
+                border: '1px solid rgba(255, 255, 255, 0.02)'
+            })
         },
         'liquid-metal': {
             key: 'liquidmetal',
@@ -814,7 +821,7 @@
 
         injectSVGSprite();
         applyAll();
-        createControlPanel();
+        if (CONFIG.panelVisible) createControlPanel();
         setupMutationObserver();
         setupHotkeys();
         setupUserScriptMenu();
@@ -1005,7 +1012,7 @@
 
     function applyMenuTheme() {
         if (panel) {
-            panel.classList.remove('theme-dark', 'theme-light', 'theme-blue', 'theme-olive', 'theme-brown');
+            panel.classList.remove('theme-dark', 'theme-light', 'theme-blue', 'theme-olive', 'theme-brown', 'theme-indigo');
             panel.classList.add(`theme-${CONFIG.menuTheme}`);
         }
     }
@@ -1546,6 +1553,10 @@
                             <div class="theme-preview blue"></div>
                             Blue
                         </button>
+                        <button class="theme-btn ${CONFIG.menuTheme === 'indigo' ? 'active' : ''}" data-theme="indigo">
+                            <div class="theme-preview indigo"></div>
+                            Indigo
+                        </button>
                         <button class="theme-btn ${CONFIG.menuTheme === 'olive' ? 'active' : ''}" data-theme="olive">
                             <div class="theme-preview olive"></div>
                             Olive
@@ -1807,30 +1818,37 @@
                     updatePresetNames();
                     renderActiveTab();
 
-                    // Обновляем заголовки вкладок
-                    panel.querySelectorAll('[data-tab]').forEach(tab => {
-                        const tabName = tab.dataset.tab;
-                        if (tabName === 'general') {
-                            tab.innerHTML = `<svg class="el-icon"><use href="#i-sliders"></use></svg>${tt.general}`;
-                        } else if (tabName === 'search') {
-                            tab.innerHTML = `<svg class="el-icon"><use href="#i-search"></use></svg>${tt.search}`;
-                        } else if (tabName === 'menu') {
-                            tab.innerHTML = `<svg class="el-icon"><use href="#i-menu"></use></svg>${tt.menu}`;
-                        } else if (tabName === 'about') {
-                            tab.innerHTML = `<svg class="el-icon"><use href="#i-info"></use></svg><span class="tab-text">${tt.about}</span>`;
-                        }
-                    });
-
-                    // Обновляем footer
-                    panel.querySelector('.footer-status').textContent = isCheckingUpdate ? t.checkingUpdates : t.f2Menu;
-
-                    // Обновляем кнопки в footer
-                    panel.querySelector('#exportBtn').title = t.exportSettings;
-                    panel.querySelector('#importBtn').title = t.importSettings;
-                    panel.querySelector('#resetBtn').title = t.resetSettings;
+                    updateUILanguage();
                 }
             });
         });
+    }
+
+    function updateUILanguage() {
+        if (!panel) return;
+
+        panel.querySelectorAll('[data-tab]').forEach(tab => {
+            const tabName = tab.dataset.tab;
+            if (tabName === 'general') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-sliders"></use></svg>${tt.general}`;
+            } else if (tabName === 'search') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-search"></use></svg>${tt.search}`;
+            } else if (tabName === 'menu') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-menu"></use></svg>${tt.menu}`;
+            } else if (tabName === 'about') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-info"></use></svg><span class="tab-text">${tt.about}</span>`;
+            }
+        });
+
+        const status = panel.querySelector('.u-footer-status');
+        if (status) status.textContent = isCheckingUpdate ? tt.checkingUpdates : tt.f2Menu;
+
+        const exportBtn = panel.querySelector('#exportBtn');
+        const importBtn = panel.querySelector('#importBtn');
+        const resetBtn = panel.querySelector('#resetBtn');
+        if (exportBtn) exportBtn.title = tt.exportSettings;
+        if (importBtn) importBtn.title = tt.importSettings;
+        if (resetBtn) resetBtn.title = tt.resetSettings;
     }
 
     // ================== СОБЫТИЯ ПАНЕЛИ ==================
@@ -1911,7 +1929,13 @@
     }
 
     function togglePanel() {
-        if (!panel) return;
+        if (!panel) {
+            CONFIG.panelVisible = true;
+            createControlPanel();
+            saveConfig();
+            return;
+        }
+
         const isHidden = panel.classList.contains('hidden');
         panel.classList.toggle('hidden', !isHidden);
         CONFIG.panelVisible = isHidden;
@@ -2077,6 +2101,11 @@
 
     function getLatestRelease() {
         return new Promise((resolve, reject) => {
+            if (typeof GM === 'undefined' || typeof GM.xmlHttpRequest !== 'function') {
+                reject(new Error('GM.xmlHttpRequest недоступен в этом окружении'));
+                return;
+            }
+
             GM.xmlHttpRequest({
                 method: 'GET',
                 url: 'https://api.github.com/repos/ellatuk/elGoogle/releases/latest',
@@ -2168,7 +2197,7 @@
                 --panel-text: #ffffff;
                 --panel-border: rgba(255, 255, 255, 0.1);
                 --panel-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-                --accent-color: #9aa0aa;
+                --accent-color: #3b82f6;
 
                 position: fixed; z-index: 999999;
                 min-width: 400px; max-width: 500px;
@@ -2192,7 +2221,7 @@
                 --panel-text: #ffffff;
                 --panel-border: rgba(255, 255, 255, 0.1);
                 --panel-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-                --accent-color: #9aa0aa;
+                --accent-color: #3b82f6;
             }
 
             .elgoogle-panel.theme-light {
@@ -2209,6 +2238,14 @@
                 --panel-border: rgba(100, 180, 255, 0.3);
                 --panel-shadow: 0 10px 40px rgba(0, 40, 80, 0.4);
                 --accent-color: #3b82f6;
+            }
+
+            .elgoogle-panel.theme-indigo {
+                --panel-bg: linear-gradient(145deg, #2b1f5a, #1a1440);
+                --panel-text: #ece8ff;
+                --panel-border: rgba(167, 139, 250, 0.35);
+                --panel-shadow: 0 10px 40px rgba(34, 20, 80, 0.45);
+                --accent-color: #a78bfa;
             }
 
             .elgoogle-panel.theme-olive {
@@ -2572,6 +2609,7 @@
             .theme-preview.dark { background: #1a1a1a; border: 1px solid #333; }
             .theme-preview.light { background: #f5f5f5; border: 1px solid #ddd; }
             .theme-preview.blue { background: linear-gradient(145deg, #1a2a4a, #0f1a2f); border: 1px solid rgba(100, 180, 255, 0.35); }
+            .theme-preview.indigo { background: linear-gradient(145deg, #2b1f5a, #1a1440); border: 1px solid rgba(167, 139, 250, 0.4); }
             .theme-preview.olive { background: linear-gradient(145deg, #2d3e2d, #1e2a1e); border: 1px solid rgba(180, 200, 100, 0.35); }
             .theme-preview.brown { background: linear-gradient(145deg, #3e2e1e, #2a1e12); border: 1px solid rgba(200, 150, 100, 0.35); }
 
