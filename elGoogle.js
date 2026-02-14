@@ -2163,7 +2163,7 @@
             }
 
             .elgoogle-panel.theme-dark {
-                --accent-color: #1a73e8;
+                --accent-color: #9aa0aa;
                 background: rgba(25, 25, 25, 0.95);
                 color: #fff; border: 1px solid rgba(255, 255, 255, 0.1);
                 box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
@@ -2201,14 +2201,13 @@
             }
 
             .elgoogle-panel.glass {
-                background: linear-gradient(140deg, rgba(80, 110, 255, 0.18), rgba(133, 79, 255, 0.12)), rgba(30, 30, 30, 0.65) !important;
-                backdrop-filter: blur(25px) saturate(2) !important;
-                -webkit-backdrop-filter: blur(25px) saturate(2) !important;
-                border: 1px solid rgba(255, 255, 255, 0.2) !important;
-                transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
-                           inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                           inset 0 -1px 0 rgba(0, 0, 0, 0.2) !important;
+                background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)), rgba(28, 28, 28, 0.72) !important;
+                backdrop-filter: blur(18px) saturate(1.2) contrast(0.95) !important;
+                -webkit-backdrop-filter: blur(18px) saturate(1.2) contrast(0.95) !important;
+                border: 1px solid rgba(255, 255, 255, 0.16) !important;
+                box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45),
+                           inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                           inset 0 -1px 0 rgba(0, 0, 0, 0.25) !important;
             }
 
             .elgoogle-panel.glass.glass-soft {
@@ -2537,9 +2536,15 @@
                 opacity: 0.9; font-weight: 500;
             }
 
-            .theme-buttons { display: flex; gap: 12px; margin-top: 12px; }
+            .theme-buttons {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+                margin-top: 12px;
+            }
             .theme-btn {
-                flex: 1; display: flex; flex-direction: column;
+                width: 100%;
+                display: flex; flex-direction: column;
                 align-items: center; gap: 8px; padding: 12px;
                 background: rgba(255, 255, 255, 0.05);
                 border: 2px solid transparent; border-radius: 10px;
