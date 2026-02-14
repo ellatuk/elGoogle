@@ -982,9 +982,17 @@
 
     function applyMenuGlass() {
         if (panel) {
+            panel.classList.remove('glass-soft', 'glass-hard');
+
             if (CONFIG.glassEffect) {
                 panel.classList.add('glass');
                 panel.classList.remove('no-glass');
+
+                if (CONFIG.menuTheme === 'light') {
+                    panel.classList.add('glass-soft');
+                } else {
+                    panel.classList.add('glass-hard');
+                }
             } else {
                 panel.classList.add('no-glass');
                 panel.classList.remove('glass');
@@ -1252,33 +1260,33 @@
         panel.style.left = CONFIG.panelLeft;
 
         panel.innerHTML = `
-            <div class="panel-header" id="elgoogle-drag-handle">
-                <div class="panel-title">
+            <div class="panel-header u-flex u-justify-between u-items-center u-px-5 u-py-4 u-border-b u-border-white-10 u-cursor-move" id="elgoogle-drag-handle">
+                <div class="panel-title u-flex u-items-center u-gap-2-5">
                     <div class="logo-icon"></div>
-                    <div class="title-text">
-                        <span class="title-main">elGoogle</span>
-                        <span class="title-version">v${SCRIPT_VERSION}</span>
+                    <div class="title-text u-flex u-items-baseline u-gap-1-5">
+                        <span class="title-main u-font-semibold u-text-lg">elGoogle</span>
+                        <span class="title-version u-text-xs u-opacity-60 u-font-normal u-tight">v${SCRIPT_VERSION}</span>
                     </div>
                 </div>
-                <button class="panel-close" title="Закрыть (Esc)">
+                <button class="panel-close u-btn-icon u-rounded-full u-bg-white-10 hover:u-bg-white-20" title="Закрыть (Esc)">
                     <svg class="el-icon"><use href="#i-close"></use></svg>
                 </button>
             </div>
 
-            <div class="tabs">
-                <button class="tab ${activeTab === 'general' ? 'active' : ''}" data-tab="general">
+            <div class="tabs u-flex u-px-4 u-border-b u-border-white-10 u-bg-black-15">
+                <button class="tab tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'general' ? 'active' : ''}" data-tab="general">
                     <svg class="el-icon"><use href="#i-sliders"></use></svg>
                     ${t.general}
                 </button>
-                <button class="tab ${activeTab === 'search' ? 'active' : ''}" data-tab="search">
+                <button class="tab tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'search' ? 'active' : ''}" data-tab="search">
                     <svg class="el-icon"><use href="#i-search"></use></svg>
                     ${t.search}
                 </button>
-                <button class="tab ${activeTab === 'menu' ? 'active' : ''}" data-tab="menu">
+                <button class="tab tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'menu' ? 'active' : ''}" data-tab="menu">
                     <svg class="el-icon"><use href="#i-menu"></use></svg>
                     ${t.menu}
                 </button>
-                <button class="tab ${activeTab === 'about' ? 'active' : ''}" data-tab="about">
+                <button class="tab tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'about' ? 'active' : ''}" data-tab="about">
                     <svg class="el-icon"><use href="#i-info"></use></svg>
                     <span class="tab-text">${t.about}</span>
                 </button>
@@ -1286,17 +1294,17 @@
 
             <div class="tab-content" id="tabContent"></div>
 
-            <div class="panel-footer">
-                <button class="footer-btn" id="exportBtn" title="${t.exportSettings}">
+            <div class="panel-footer u-flex u-items-center u-px-5 u-py-3 u-border-t u-border-white-10 u-bg-black-10">
+                <button class="footer-btn u-btn-icon u-rounded-md u-bg-white-10 hover:u-bg-white-20 u-mr-2" id="exportBtn" title="${t.exportSettings}">
                     <svg class="el-icon"><use href="#i-export"></use></svg>
                 </button>
-                <button class="footer-btn" id="importBtn" title="${t.importSettings}">
+                <button class="footer-btn u-btn-icon u-rounded-md u-bg-white-10 hover:u-bg-white-20 u-mr-2" id="importBtn" title="${t.importSettings}">
                     <svg class="el-icon"><use href="#i-import"></use></svg>
                 </button>
-                <button class="footer-btn" id="resetBtn" title="${t.resetSettings}">
+                <button class="footer-btn u-btn-icon u-rounded-md u-bg-white-10 hover:u-bg-white-20 u-mr-2" id="resetBtn" title="${t.resetSettings}">
                     <svg class="el-icon"><use href="#i-list-restart"></use></svg>
                 </button>
-                <div class="footer-status">
+                <div class="footer-status u-flex-1 u-text-right u-text-2xs u-opacity-70">
                     ${isCheckingUpdate ? t.checkingUpdates : t.f2Menu}
                 </div>
             </div>
@@ -1792,7 +1800,18 @@
                 activeTab = tab.dataset.tab;
                 panel.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-                renderActiveTab();
+
+                const content = document.getElementById('tabContent');
+                if (!content) {
+                    renderActiveTab();
+                    return;
+                }
+
+                content.classList.add('fade-out');
+                setTimeout(() => {
+                    renderActiveTab();
+                    content.classList.remove('fade-out');
+                }, 130);
             });
         });
 
@@ -1929,14 +1948,44 @@
     }
 
     function setupHotkeys() {
-        document.addEventListener('keydown', e => {
+        document.addEventListener('keydown', async e => {
+            const key = e.key.toLowerCase();
+
             if (e.key === 'F2' && !e.ctrlKey && !e.altKey && !e.metaKey) {
                 e.preventDefault();
                 togglePanel();
+                return;
             }
-            if (e.ctrlKey && e.altKey && e.key === 'r') {
+
+            if (e.ctrlKey && e.altKey && key === 'r') {
                 e.preventDefault();
                 location.reload();
+                return;
+            }
+
+            if (e.ctrlKey && e.shiftKey && !e.altKey && !e.metaKey) {
+                if (key === 'd') {
+                    e.preventDefault();
+                    CONFIG.darkMode = !CONFIG.darkMode;
+                    await saveConfig();
+                    applyAll();
+                    if (panel && !panel.classList.contains('hidden')) renderActiveTab();
+                    return;
+                }
+
+                if (key === 'l') {
+                    e.preventDefault();
+                    CONFIG.customLogo = !CONFIG.customLogo;
+                    await saveConfig();
+                    applyAll();
+                    if (panel && !panel.classList.contains('hidden')) renderActiveTab();
+                    return;
+                }
+
+                if (key === 'r') {
+                    e.preventDefault();
+                    resetSettings();
+                }
             }
         });
     }
@@ -2026,6 +2075,51 @@
 
     function getPanelStyles() {
         return `
+            /* Мини-утилиты в стиле UnoCSS */
+            .u-flex { display: flex; }
+            .u-flex-1 { flex: 1; }
+            .u-items-center { align-items: center; }
+            .u-items-baseline { align-items: baseline; }
+            .u-justify-between { justify-content: space-between; }
+            .u-justify-center { justify-content: center; }
+            .u-gap-2 { gap: 8px; }
+            .u-gap-2-5 { gap: 10px; }
+            .u-gap-1-5 { gap: 6px; }
+            .u-px-5 { padding-left: 20px; padding-right: 20px; }
+            .u-px-4 { padding-left: 16px; padding-right: 16px; }
+            .u-py-4 { padding-top: 16px; padding-bottom: 16px; }
+            .u-py-3 { padding-top: 12px; padding-bottom: 12px; }
+            .u-border-b { border-bottom-width: 1px; border-bottom-style: solid; }
+            .u-border-t { border-top-width: 1px; border-top-style: solid; }
+            .u-border-white-10 { border-color: rgba(255, 255, 255, 0.1); }
+            .u-cursor-move { cursor: move; }
+            .u-font-semibold { font-weight: 600; }
+            .u-font-normal { font-weight: 400; }
+            .u-text-lg { font-size: 18px; }
+            .u-text-xs { font-size: 13px; }
+            .u-text-2xs { font-size: 12px; }
+            .u-text-right { text-align: right; }
+            .u-opacity-60 { opacity: 0.6; }
+            .u-opacity-70 { opacity: 0.7; }
+            .u-tight { letter-spacing: -0.2px; }
+            .u-rounded-full { border-radius: 50%; }
+            .u-rounded-md { border-radius: 6px; }
+            .u-bg-white-10 { background: rgba(255, 255, 255, 0.1); }
+            .u-bg-black-15 { background: rgba(0, 0, 0, 0.15); }
+            .u-bg-black-10 { background: rgba(0, 0, 0, 0.1); }
+            .u-mr-2 { margin-right: 8px; }
+            .u-btn-icon {
+                border: none;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .hover\:u-bg-white-20:hover { background: rgba(255, 255, 255, 0.2); }
+
             .elgoogle-panel {
                 position: fixed; z-index: 999999;
                 min-width: 400px; max-width: 500px;
@@ -2041,25 +2135,46 @@
             }
 
             .elgoogle-panel.theme-dark {
-                background: rgba(25, 25, 25, 0.95);
-                color: #fff; border: 1px solid rgba(255, 255, 255, 0.1);
+                --panel-bg: rgba(25, 25, 25, 0.95);
+                --panel-text: #ffffff;
+                --panel-border: rgba(255, 255, 255, 0.1);
+                background: var(--panel-bg);
+                color: var(--panel-text);
+                border: 1px solid var(--panel-border);
                 box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             }
 
             .elgoogle-panel.theme-light {
-                background: rgba(255, 255, 255, 0.95);
-                color: #333; border: 1px solid rgba(0, 0, 0, 0.1);
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+                --panel-bg: rgba(250, 250, 255, 0.92);
+                --panel-text: #1e1e2f;
+                --panel-border: rgba(0, 0, 0, 0.1);
+                background: var(--panel-bg);
+                color: var(--panel-text);
+                border: 1px solid var(--panel-border);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
             }
 
             .elgoogle-panel.glass {
-                background: rgba(30, 30, 30, 0.65) !important;
+                background: linear-gradient(140deg, rgba(80, 110, 255, 0.18), rgba(133, 79, 255, 0.12)), rgba(30, 30, 30, 0.65) !important;
                 backdrop-filter: blur(25px) saturate(2) !important;
                 -webkit-backdrop-filter: blur(25px) saturate(2) !important;
                 border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
                            inset 0 1px 0 rgba(255, 255, 255, 0.1),
                            inset 0 -1px 0 rgba(0, 0, 0, 0.2) !important;
+            }
+
+            .elgoogle-panel.glass.glass-soft {
+                background: linear-gradient(140deg, rgba(109, 140, 255, 0.16), rgba(150, 110, 255, 0.1)), rgba(30, 30, 40, 0.4) !important;
+                backdrop-filter: blur(16px) saturate(1.5) !important;
+                -webkit-backdrop-filter: blur(16px) saturate(1.5) !important;
+            }
+
+            .elgoogle-panel.glass.glass-hard {
+                background: linear-gradient(140deg, rgba(66, 92, 211, 0.24), rgba(105, 72, 211, 0.2)), rgba(20, 20, 30, 0.7) !important;
+                backdrop-filter: blur(30px) saturate(2.5) !important;
+                -webkit-backdrop-filter: blur(30px) saturate(2.5) !important;
             }
 
             .elgoogle-panel.theme-dark.glass::before {
@@ -2069,13 +2184,13 @@
             }
 
             .elgoogle-panel.theme-light.glass {
-                background: rgba(255, 255, 255, 0.75) !important;
-                backdrop-filter: blur(25px) saturate(1.8) !important;
-                -webkit-backdrop-filter: blur(25px) saturate(1.8) !important;
-                border: 1px solid rgba(255, 255, 255, 0.3) !important;
+                background: linear-gradient(140deg, rgba(147, 174, 255, 0.22), rgba(195, 172, 255, 0.16)), rgba(255, 255, 255, 0.75) !important;
+                backdrop-filter: blur(22px) saturate(1.35) !important;
+                -webkit-backdrop-filter: blur(22px) saturate(1.35) !important;
+                border: 1px solid rgba(255, 255, 255, 0.35) !important;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
-                           inset 0 1px 0 rgba(255, 255, 255, 0.3),
-                           inset 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
+                           inset 0 1px 0 rgba(255, 255, 255, 0.35),
+                           inset 0 -1px 0 rgba(0, 0, 0, 0.08) !important;
             }
 
             .elgoogle-panel.theme-light.glass::before {
@@ -2094,36 +2209,13 @@
                 min-width: 320px; max-width: 380px;
             }
 
-            .elgoogle-panel.compact .panel-header { padding: 12px 16px; }
-            .elgoogle-panel.compact .tabs { padding: 0 12px; }
-            .elgoogle-panel.compact .tab { padding: 8px 12px; font-size: 13px; }
+            .elgoogle-panel.compact .u-px-5 { padding-left: 16px; padding-right: 16px; }
+            .elgoogle-panel.compact .u-px-4 { padding-left: 12px; padding-right: 12px; }
+            .elgoogle-panel.compact .tab-btn { padding: 8px 12px; font-size: 13px; }
             .elgoogle-panel.compact .tab-content { padding: 16px; }
-
-            .panel-header {
-                display: flex; justify-content: space-between;
-                align-items: center; padding: 16px 20px;
-                cursor: move; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
 
             .theme-light .panel-header {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            }
-
-            .panel-title {
-                display: flex; align-items: center; gap: 10px;
-            }
-
-            .title-text {
-                display: flex; align-items: baseline; gap: 6px;
-            }
-
-            .title-main {
-                font-weight: 600; font-size: 18px;
-            }
-
-            .title-version {
-                font-size: 13px; opacity: 0.6; font-weight: 400;
-                letter-spacing: -0.2px;
             }
 
             .logo-icon {
@@ -2144,26 +2236,13 @@
                 filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
             }
 
-            .panel-close {
-                background: rgba(255, 255, 255, 0.1); border: none;
-                border-radius: 50%; width: 32px; height: 32px;
-                display: flex; align-items: center; justify-content: center;
-                cursor: pointer; transition: background 0.2s, transform 0.2s;
-            }
-
             .theme-light .panel-close { background: rgba(0, 0, 0, 0.1); }
             .panel-close:hover {
-                background: rgba(255, 255, 255, 0.2);
                 transform: scale(1.05);
             }
             .theme-light .panel-close:hover { background: rgba(0, 0, 0, 0.2); }
 
-            .tabs {
-                display: flex; padding: 0 16px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                background: rgba(0, 0, 0, 0.15);
-                border-radius: 16px 16px 0 0;
-            }
+            .tabs { border-radius: 16px 16px 0 0; }
 
             .theme-light .tabs {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -2171,8 +2250,6 @@
             }
 
             .tab {
-                flex: 1; display: flex; align-items: center;
-                justify-content: center; gap: 8px; padding: 12px 16px;
                 background: none; border: none; color: inherit;
                 cursor: pointer; font-size: 14px; transition: all 0.2s;
                 border-bottom: 2px solid transparent; opacity: 0.7;
@@ -2197,6 +2274,11 @@
 
             .tab-content {
                 padding: 20px; max-height: 60vh; overflow-y: auto;
+                transition: opacity 0.2s ease, transform 0.2s ease;
+            }
+            .tab-content.fade-out {
+                opacity: 0;
+                transform: translateY(4px);
             }
 
             .tab-section h3 {
@@ -2247,7 +2329,7 @@
             }
 
             .control-description {
-                font-size: 12px; opacity: 0.7; margin-top: 2px;
+                font-size: 13px; opacity: 0.75; margin-top: 4px;
             }
 
             .el-icon {
@@ -2733,34 +2815,16 @@
             }
             .theme-light .about-footer { border-top: 1px solid rgba(0, 0, 0, 0.1); }
 
-            .panel-footer {
-                display: flex; align-items: center; padding: 12px 20px;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-                background: rgba(0, 0, 0, 0.1);
-                border-radius: 0 0 16px 16px;
-            }
+            .panel-footer { border-radius: 0 0 16px 16px; }
             .theme-light .panel-footer {
                 border-top: 1px solid rgba(0, 0, 0, 0.1);
                 background: rgba(0, 0, 0, 0.05);
             }
-
-            .footer-btn {
-                background: rgba(255, 255, 255, 0.1); border: none;
-                border-radius: 6px; width: 32px; height: 32px;
-                display: flex; align-items: center; justify-content: center;
-                cursor: pointer; margin-right: 8px; transition: all 0.2s;
-            }
             .theme-light .footer-btn { background: rgba(0, 0, 0, 0.1); }
             .footer-btn:hover {
-                background: rgba(255, 255, 255, 0.2);
                 transform: scale(1.05);
             }
             .theme-light .footer-btn:hover { background: rgba(0, 0, 0, 0.2); }
-
-            .footer-status {
-                flex: 1; text-align: right;
-                font-size: 12px; opacity: 0.7;
-            }
 
             /* Стили полосы прокрутки */
             .tab-content::-webkit-scrollbar {
@@ -2800,6 +2864,25 @@
 
             .theme-light .tab-content {
                 scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
+            }
+
+
+            @media (max-width: 640px) {
+                .elgoogle-panel {
+                    min-width: min(90vw, 360px);
+                    max-width: 90vw;
+                    left: 5vw !important;
+                }
+
+                .tab-content {
+                    max-height: 50vh;
+                }
+
+                .tab-btn {
+                    font-size: 12px;
+                    padding: 8px 10px;
+                    gap: 6px;
+                }
             }
         `;
     }
