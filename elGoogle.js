@@ -998,9 +998,17 @@
 
     function applyMenuGlass() {
         if (panel) {
+            panel.classList.remove('glass-soft', 'glass-hard');
+
             if (CONFIG.glassEffect) {
                 panel.classList.add('glass');
                 panel.classList.remove('no-glass');
+
+                if (CONFIG.menuTheme === 'light') {
+                    panel.classList.add('glass-soft');
+                } else {
+                    panel.classList.add('glass-hard');
+                }
             } else {
                 panel.classList.add('no-glass');
                 panel.classList.remove('glass');
@@ -2202,6 +2210,18 @@
                            inset 0 -1px 0 rgba(0, 0, 0, 0.25) !important;
             }
 
+            .elgoogle-panel.glass.glass-soft {
+                background: linear-gradient(140deg, rgba(109, 140, 255, 0.16), rgba(150, 110, 255, 0.1)), rgba(30, 30, 40, 0.4) !important;
+                backdrop-filter: blur(16px) saturate(1.5) !important;
+                -webkit-backdrop-filter: blur(16px) saturate(1.5) !important;
+            }
+
+            .elgoogle-panel.glass.glass-hard {
+                background: linear-gradient(140deg, rgba(66, 92, 211, 0.24), rgba(105, 72, 211, 0.2)), rgba(20, 20, 30, 0.7) !important;
+                backdrop-filter: blur(30px) saturate(2.5) !important;
+                -webkit-backdrop-filter: blur(30px) saturate(2.5) !important;
+            }
+
             .elgoogle-panel.theme-dark.glass::before {
                 content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
                 background: ${NOISE_TEXTURE}; opacity: 0.25; pointer-events: none;
@@ -2209,13 +2229,13 @@
             }
 
             .elgoogle-panel.theme-light.glass {
-                background: rgba(255, 255, 255, 0.75) !important;
-                backdrop-filter: blur(25px) saturate(1.8) !important;
-                -webkit-backdrop-filter: blur(25px) saturate(1.8) !important;
-                border: 1px solid rgba(255, 255, 255, 0.3) !important;
+                background: linear-gradient(140deg, rgba(147, 174, 255, 0.22), rgba(195, 172, 255, 0.16)), rgba(255, 255, 255, 0.75) !important;
+                backdrop-filter: blur(22px) saturate(1.35) !important;
+                -webkit-backdrop-filter: blur(22px) saturate(1.35) !important;
+                border: 1px solid rgba(255, 255, 255, 0.35) !important;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
-                           inset 0 1px 0 rgba(255, 255, 255, 0.3),
-                           inset 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
+                           inset 0 1px 0 rgba(255, 255, 255, 0.35),
+                           inset 0 -1px 0 rgba(0, 0, 0, 0.08) !important;
             }
 
             .elgoogle-panel.theme-light.glass::before {
