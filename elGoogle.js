@@ -982,9 +982,17 @@
 
     function applyMenuGlass() {
         if (panel) {
+            panel.classList.remove('glass-soft', 'glass-hard');
+
             if (CONFIG.glassEffect) {
                 panel.classList.add('glass');
                 panel.classList.remove('no-glass');
+
+                if (CONFIG.menuTheme === 'light') {
+                    panel.classList.add('glass-soft');
+                } else {
+                    panel.classList.add('glass-hard');
+                }
             } else {
                 panel.classList.add('no-glass');
                 panel.classList.remove('glass');
@@ -1792,7 +1800,18 @@
                 activeTab = tab.dataset.tab;
                 panel.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-                renderActiveTab();
+
+                const content = document.getElementById('tabContent');
+                if (!content) {
+                    renderActiveTab();
+                    return;
+                }
+
+                content.classList.add('fade-out');
+                setTimeout(() => {
+                    renderActiveTab();
+                    content.classList.remove('fade-out');
+                }, 130);
             });
         });
 
@@ -1929,14 +1948,44 @@
     }
 
     function setupHotkeys() {
-        document.addEventListener('keydown', e => {
+        document.addEventListener('keydown', async e => {
+            const key = e.key.toLowerCase();
+
             if (e.key === 'F2' && !e.ctrlKey && !e.altKey && !e.metaKey) {
                 e.preventDefault();
                 togglePanel();
+                return;
             }
-            if (e.ctrlKey && e.altKey && e.key === 'r') {
+
+            if (e.ctrlKey && e.altKey && key === 'r') {
                 e.preventDefault();
                 location.reload();
+                return;
+            }
+
+            if (e.ctrlKey && e.shiftKey && !e.altKey && !e.metaKey) {
+                if (key === 'd') {
+                    e.preventDefault();
+                    CONFIG.darkMode = !CONFIG.darkMode;
+                    await saveConfig();
+                    applyAll();
+                    if (panel && !panel.classList.contains('hidden')) renderActiveTab();
+                    return;
+                }
+
+                if (key === 'l') {
+                    e.preventDefault();
+                    CONFIG.customLogo = !CONFIG.customLogo;
+                    await saveConfig();
+                    applyAll();
+                    if (panel && !panel.classList.contains('hidden')) renderActiveTab();
+                    return;
+                }
+
+                if (key === 'r') {
+                    e.preventDefault();
+                    resetSettings();
+                }
             }
         });
     }
@@ -2086,25 +2135,46 @@
             }
 
             .elgoogle-panel.theme-dark {
-                background: rgba(25, 25, 25, 0.95);
-                color: #fff; border: 1px solid rgba(255, 255, 255, 0.1);
+                --panel-bg: rgba(25, 25, 25, 0.95);
+                --panel-text: #ffffff;
+                --panel-border: rgba(255, 255, 255, 0.1);
+                background: var(--panel-bg);
+                color: var(--panel-text);
+                border: 1px solid var(--panel-border);
                 box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             }
 
             .elgoogle-panel.theme-light {
-                background: rgba(255, 255, 255, 0.95);
-                color: #333; border: 1px solid rgba(0, 0, 0, 0.1);
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+                --panel-bg: rgba(250, 250, 255, 0.92);
+                --panel-text: #1e1e2f;
+                --panel-border: rgba(0, 0, 0, 0.1);
+                background: var(--panel-bg);
+                color: var(--panel-text);
+                border: 1px solid var(--panel-border);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
             }
 
             .elgoogle-panel.glass {
-                background: rgba(30, 30, 30, 0.65) !important;
+                background: linear-gradient(140deg, rgba(80, 110, 255, 0.18), rgba(133, 79, 255, 0.12)), rgba(30, 30, 30, 0.65) !important;
                 backdrop-filter: blur(25px) saturate(2) !important;
                 -webkit-backdrop-filter: blur(25px) saturate(2) !important;
                 border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
                            inset 0 1px 0 rgba(255, 255, 255, 0.1),
                            inset 0 -1px 0 rgba(0, 0, 0, 0.2) !important;
+            }
+
+            .elgoogle-panel.glass.glass-soft {
+                background: linear-gradient(140deg, rgba(109, 140, 255, 0.16), rgba(150, 110, 255, 0.1)), rgba(30, 30, 40, 0.4) !important;
+                backdrop-filter: blur(16px) saturate(1.5) !important;
+                -webkit-backdrop-filter: blur(16px) saturate(1.5) !important;
+            }
+
+            .elgoogle-panel.glass.glass-hard {
+                background: linear-gradient(140deg, rgba(66, 92, 211, 0.24), rgba(105, 72, 211, 0.2)), rgba(20, 20, 30, 0.7) !important;
+                backdrop-filter: blur(30px) saturate(2.5) !important;
+                -webkit-backdrop-filter: blur(30px) saturate(2.5) !important;
             }
 
             .elgoogle-panel.theme-dark.glass::before {
@@ -2114,13 +2184,13 @@
             }
 
             .elgoogle-panel.theme-light.glass {
-                background: rgba(255, 255, 255, 0.75) !important;
-                backdrop-filter: blur(25px) saturate(1.8) !important;
-                -webkit-backdrop-filter: blur(25px) saturate(1.8) !important;
-                border: 1px solid rgba(255, 255, 255, 0.3) !important;
+                background: linear-gradient(140deg, rgba(147, 174, 255, 0.22), rgba(195, 172, 255, 0.16)), rgba(255, 255, 255, 0.75) !important;
+                backdrop-filter: blur(22px) saturate(1.35) !important;
+                -webkit-backdrop-filter: blur(22px) saturate(1.35) !important;
+                border: 1px solid rgba(255, 255, 255, 0.35) !important;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
-                           inset 0 1px 0 rgba(255, 255, 255, 0.3),
-                           inset 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
+                           inset 0 1px 0 rgba(255, 255, 255, 0.35),
+                           inset 0 -1px 0 rgba(0, 0, 0, 0.08) !important;
             }
 
             .elgoogle-panel.theme-light.glass::before {
@@ -2204,6 +2274,11 @@
 
             .tab-content {
                 padding: 20px; max-height: 60vh; overflow-y: auto;
+                transition: opacity 0.2s ease, transform 0.2s ease;
+            }
+            .tab-content.fade-out {
+                opacity: 0;
+                transform: translateY(4px);
             }
 
             .tab-section h3 {
@@ -2254,7 +2329,7 @@
             }
 
             .control-description {
-                font-size: 12px; opacity: 0.7; margin-top: 2px;
+                font-size: 13px; opacity: 0.75; margin-top: 4px;
             }
 
             .el-icon {
@@ -2789,6 +2864,25 @@
 
             .theme-light .tab-content {
                 scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
+            }
+
+
+            @media (max-width: 640px) {
+                .elgoogle-panel {
+                    min-width: min(90vw, 360px);
+                    max-width: 90vw;
+                    left: 5vw !important;
+                }
+
+                .tab-content {
+                    max-height: 50vh;
+                }
+
+                .tab-btn {
+                    font-size: 12px;
+                    padding: 8px 10px;
+                    gap: 6px;
+                }
             }
         `;
     }
