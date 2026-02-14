@@ -84,12 +84,27 @@
             searchstyleliquidmetal: 'Жидкий Метал',
             searchstylemonochromecrt: 'Монохромный CRT',
             searchstylecyberpunkneon: 'Неоновый Киберпанк',
+            searchstyleaurorasoft: 'Мягкая Аурора',
+            searchstylegraphiteoutline: 'Графитовый Контур',
 
             // Тема панели
             searchStyle: 'Стиль строки поиска',
             theme: 'Тема панели',
             dark: 'Тёмная',
             light: 'Светлая',
+            themeBlue: 'Синяя',
+            themeIndigo: 'Индиго',
+            themeOlive: 'Оливковая',
+            themeBrown: 'Коричневая',
+            interfaceDensity: 'Плотность интерфейса',
+            densityNormal: 'Обычная',
+            densityCompact: 'Компактная',
+            densityDense: 'Очень компактная',
+            quickProfiles: 'Быстрые профили',
+            saveProfile: 'Сохранить',
+            loadProfile: 'Загрузить',
+            showHiddenNow: 'Показать скрытые элементы',
+            hiddenElementsNow: 'Сейчас скрыто:',
 
             // Настройки панели
             panelSettings: 'Настройки панели',
@@ -186,12 +201,27 @@
             searchstyleliquidmetal: 'Liquid Metal',
             searchstylemonochromecrt: 'Monochrome CRT',
             searchstylecyberpunkneon: 'Cyberpunk Neon',
+            searchstyleaurorasoft: 'Aurora Soft',
+            searchstylegraphiteoutline: 'Graphite Outline',
 
             // Panel theme
             searchStyle: 'Search Bar Style',
             theme: 'Panel Theme',
             dark: 'Dark',
             light: 'Light',
+            themeBlue: 'Blue',
+            themeIndigo: 'Indigo',
+            themeOlive: 'Olive',
+            themeBrown: 'Brown',
+            interfaceDensity: 'Interface Density',
+            densityNormal: 'Normal',
+            densityCompact: 'Compact',
+            densityDense: 'Very Compact',
+            quickProfiles: 'Quick Profiles',
+            saveProfile: 'Save',
+            loadProfile: 'Load',
+            showHiddenNow: 'Show hidden elements',
+            hiddenElementsNow: 'Hidden now:',
 
             // Panel settings
             panelSettings: 'Panel Settings',
@@ -264,7 +294,16 @@
         panelLeft: '20px',
         panelVisible: false,
         lastVersionCheck: 0,
-        menuLanguage: 'auto'  // По умолчанию автоматическое определение
+        menuLanguage: 'auto',
+        panelDensity: 'normal',
+        quickProfiles: {}  // Быстрые профили настроек
+    };
+
+    const createSearchStyle = (rules, extraCss = '') => {
+        const base = Object.entries(rules)
+            .map(([prop, value]) => `${prop}:${value}!important;`)
+            .join('');
+        return `.RNNXgb{${base}}${extraCss}`;
     };
 
     const createSearchStyle = (rules, extraCss = '') => {
@@ -297,9 +336,9 @@
             key: 'minimaldark',
             css: createSearchStyle({
                 'border-radius': '12px',
-                'background-color': '#0a0a0a',
-                border: '1px solid #2a2a2a',
-                'box-shadow': '0 1px 3px rgba(0,0,0,0.2)'
+                'background-color': '#0d1016',
+                border: '1px solid #2b3140',
+                'box-shadow': '0 2px 10px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.03)'
             })
         },
         'glass-frosted': {
@@ -307,8 +346,8 @@
             css: createSearchStyle({
                 'border-radius': '20px',
                 background: `linear-gradient(135deg,rgba(25,25,25,0.85)0%,rgba(35,35,35,0.8)100%),${NOISE_TEXTURE}`,
-                'backdrop-filter': 'blur(12px) saturate(2)',
-                '-webkit-backdrop-filter': 'blur(12px) saturate(2)',
+                'backdrop-filter': 'blur(10px) saturate(1.25)',
+                '-webkit-backdrop-filter': 'blur(10px) saturate(1.25)',
                 border: '1px solid rgba(255,255,255,0.2)',
                 'box-shadow': '0 4px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.15),inset 0 -1px 0 rgba(0,0,0,0.6)'
             }, `.RNNXgb::before{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:${NOISE_TEXTURE}!important;opacity:0.2!important;pointer-events:none!important;border-radius:inherit!important;mix-blend-mode:overlay!important;}`)
@@ -317,8 +356,8 @@
             key: 'roundedsoft',
             css: createSearchStyle({
                 'border-radius': '28px',
-                background: 'linear-gradient(135deg,#121212 0%,#1a1a1a 100%)',
-                border: '2px solid #2d2d2d',
+                background: 'linear-gradient(135deg,#141820 0%,#1b2432 100%)',
+                border: '1px solid #3a465f',
                 'box-shadow': '0 6px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05)'
             })
         },
@@ -361,8 +400,8 @@
             key: 'monochromecrt',
             css: createSearchStyle({
                 'border-radius': '4px',
-                background: 'radial-gradient(ellipse at center,rgba(200,200,200,0.1) 0%,rgba(0,0,0,0.95) 100%)',
-                border: '4px solid #b0b0b0',
+                background: 'radial-gradient(ellipse at center,rgba(180,200,240,0.08) 0%,rgba(4,6,10,0.95) 100%)',
+                border: '3px solid #8fa0bd',
                 'box-shadow': 'inset 0 0 60px rgba(255,255,255,0.2),0 0 40px rgba(255,255,255,0.3),0 0 0 3px rgba(200,200,200,0.4),inset 0 0 100px rgba(0,0,0,0.8)',
                 position: 'relative',
                 overflow: 'hidden',
@@ -373,13 +412,33 @@
             key: 'cyberpunkneon',
             css: createSearchStyle({
                 'border-radius': '18px',
-                background: 'linear-gradient(135deg,#0a0a0a 0%,#151515 100%)',
+                background: 'linear-gradient(135deg,#0b0e12 0%,#121824 100%)',
                 border: '1px solid transparent',
                 'box-shadow': '0 4px 25px rgba(0,0,0,0.7)',
                 position: 'relative',
                 overflow: 'hidden',
                 isolation: 'isolate'
             }, `.RNNXgb::before{content:''!important;position:absolute!important;top:-4px!important;left:-4px!important;right:-4px!important;bottom:-4px!important;background:linear-gradient(45deg,#eb08da 0%,#5fa5fb 25%,#08ffa2 50%,#e0fe4e 75%,#eb08da 100%)!important;border-radius:22px!important;z-index:-1!important;animation:cyber-glow-4colors 3s linear infinite!important;background-size:300% 300%!important;filter:blur(12px)!important;opacity:0.85!important;}.RNNXgb::after{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:linear-gradient(90deg,rgba(235,8,218,0.1) 0%,rgba(95,165,251,0.08) 25%,rgba(8,255,162,0.06) 50%,rgba(224,254,78,0.04) 75%,rgba(235,8,218,0.02) 100%),radial-gradient(circle at 80% 20%,rgba(235,8,218,0.15) 0%,transparent 60%),radial-gradient(circle at 20% 80%,rgba(8,255,162,0.15) 0%,transparent 60%)!important;border-radius:18px!important;pointer-events:none!important;animation:gradient-shift 8s ease-in-out infinite alternate!important;mix-blend-mode:screen!important;}@keyframes cyber-glow-4colors{0%{background-position:0% 50%;opacity:0.7;}25%{background-position:50% 100%;opacity:0.9;}50%{background-position:100% 50%;opacity:0.7;}75%{background-position:50% 0%;opacity:0.9;}100%{background-position:0% 50%;opacity:0.7;}}@keyframes gradient-shift{0%{background-position:0% 0%,80% 20%,20% 80%;opacity:0.8;}33%{background-position:100% 100%,60% 40%,40% 60%;opacity:0.9;}66%{background-position:0% 100%,90% 30%,10% 70%;opacity:0.85;}100%{background-position:100% 0%,70% 10%,30% 90%;opacity:0.8;}}.RNNXgb input{color:#ffffff!important;text-shadow:0 0 10px rgba(235,8,218,0.5),0 0 20px rgba(95,165,251,0.3),0 0 30px rgba(8,255,162,0.2)!important;background:transparent!important;}`)
+        },
+        'aurora-soft': {
+            key: 'aurorasoft',
+            css: createSearchStyle({
+                'border-radius': '22px',
+                background: 'linear-gradient(120deg,rgba(22,28,38,0.94),rgba(28,36,52,0.9))',
+                border: '1px solid rgba(120,170,255,0.35)',
+                'box-shadow': '0 8px 28px rgba(40,90,180,0.25), inset 0 1px 0 rgba(255,255,255,0.08)',
+                'backdrop-filter': 'blur(8px)',
+                '-webkit-backdrop-filter': 'blur(8px)'
+            })
+        },
+        'graphite-outline': {
+            key: 'graphiteoutline',
+            css: createSearchStyle({
+                'border-radius': '18px',
+                background: 'rgba(17,20,26,0.9)',
+                border: '1px solid rgba(140,150,170,0.45)',
+                'box-shadow': '0 0 0 1px rgba(70,80,100,0.35), 0 6px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04)'
+            })
         }
     };
 
@@ -464,19 +523,6 @@
         isCheckingUpdate: false,
         logoApplied: false
     };
-
-
-    function makeSafeTranslations(langPack) {
-        const fallback = LANGUAGES.en || {};
-        return new Proxy(langPack || {}, {
-            get(target, prop) {
-                if (typeof prop !== 'string') return target[prop];
-                if (target[prop] !== undefined) return target[prop];
-                if (fallback[prop] !== undefined) return fallback[prop];
-                return prop;
-            }
-        });
-    }
 
 
     function makeSafeTranslations(langPack) {
@@ -716,7 +762,9 @@
 
     function applyCompactMode() {
         if (state.panel) {
-            state.panel.classList.toggle('compact', CONFIG.compactMode);
+            const density = CONFIG.panelDensity || (CONFIG.compactMode ? 'compact' : 'normal');
+            state.panel.classList.toggle('compact', density === 'compact');
+            state.panel.classList.toggle('dense', density === 'dense');
         }
     }
 
@@ -1162,6 +1210,16 @@
                     </div>
                     <div class="preset-description">${getPresetDescription(CONFIG.preset)}</div>
                 </div>
+
+                <div class="control-group">
+                    <button id="showHiddenBtn" class="preset-btn custom-preset" type="button">${tt.showHiddenNow}</button>
+                    <div class="hidden-elements-summary">${tt.hiddenElementsNow} ${[
+                        CONFIG.removeAI ? t.removeAI : null,
+                        CONFIG.removeIcons ? t.removeIcons : null,
+                        CONFIG.removeImages ? t.removeImages : null,
+                        CONFIG.removeMail ? t.removeMail : null
+                    ].filter(Boolean).join(', ') || '— ничего —'}</div>
+                </div>
             </div>
         `;
 
@@ -1228,19 +1286,19 @@
                         </button>
                         <button class="theme-btn ${CONFIG.menuTheme === 'blue' ? 'active' : ''}" data-theme="blue">
                             <div class="theme-preview blue"></div>
-                            Blue
+                            ${tt.themeBlue}
                         </button>
                         <button class="theme-btn ${CONFIG.menuTheme === 'indigo' ? 'active' : ''}" data-theme="indigo">
                             <div class="theme-preview indigo"></div>
-                            Indigo
+                            ${tt.themeIndigo}
                         </button>
                         <button class="theme-btn ${CONFIG.menuTheme === 'olive' ? 'active' : ''}" data-theme="olive">
                             <div class="theme-preview olive"></div>
-                            Olive
+                            ${tt.themeOlive}
                         </button>
                         <button class="theme-btn ${CONFIG.menuTheme === 'brown' ? 'active' : ''}" data-theme="brown">
                             <div class="theme-preview brown"></div>
-                            Brown
+                            ${tt.themeBrown}
                         </button>
                     </div>
                 </div>
@@ -1263,6 +1321,25 @@
                     </div>
                 </div>
 
+
+                <div class="control-group">
+                    <h4><svg class="el-icon section-icon"><use href="#i-settings"></use></svg>${tt.interfaceDensity}</h4>
+                    <div class="density-buttons">
+                        <button class="density-btn ${CONFIG.panelDensity === 'normal' ? 'active' : ''}" data-density="normal">${tt.densityNormal}</button>
+                        <button class="density-btn ${CONFIG.panelDensity === 'compact' ? 'active' : ''}" data-density="compact">${tt.densityCompact}</button>
+                        <button class="density-btn ${CONFIG.panelDensity === 'dense' ? 'active' : ''}" data-density="dense">${tt.densityDense}</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><svg class="el-icon section-icon"><use href="#i-settings-2"></use></svg>${tt.quickProfiles}</h4>
+                    <div class="profile-grid">
+                        ${[1,2,3].map(slot => `
+                            <button class="profile-btn" data-profile="save-${slot}">${tt.saveProfile} ${slot}</button>
+                            <button class="profile-btn" data-profile="load-${slot}">${tt.loadProfile} ${slot}</button>
+                        `).join('')}
+                    </div>
+                </div>
                 <div class="control-group">
                     <div class="u-control-row ${CONFIG.compactMode ? 'active' : ''}" data-action="toggleCompact">
                         <div class="control-label">
@@ -1417,7 +1494,9 @@
             'glass-morph': 'background:rgba(255,255,255,0.04);border-radius:16px;border:1px solid rgba(255,255,255,0.02);backdrop-filter:blur(5.9px);',
             'liquid-metal': 'border-radius:16px;background:linear-gradient(135deg,#1a1a1a 0%,#2a2a2a 50%,#1a1a1a 100%);border:2px solid transparent;box-shadow:inset 0 2px 10px rgba(255,255,255,0.1),inset 0 -2px 10px rgba(0,0,0,0.5),0 5px 30px rgba(0,0,0,0.6);',
             'monochrome-crt': 'border-radius:4px;background:radial-gradient(ellipse at center,rgba(200,200,200,0.1)0%,rgba(0,0,0,0.95)100%);border:4px solid #b0b0b0;box-shadow:inset 0 0 60px rgba(255,255,255,0.2),0 0 40px rgba(255,255,255,0.3),0 0 0 3px rgba(200,200,200,0.4),inset 0 0 100px rgba(0,0,0,0.8);',
-            'cyberpunk-neon': 'border-radius:18px;background:linear-gradient(135deg,#0a0a0a 0%,#151515 100%);border:1px solid transparent;box-shadow:0 4px 25px rgba(0,0,0,0.7);position:relative;'
+            'cyberpunk-neon': 'border-radius:18px;background:linear-gradient(135deg,#0b0e12 0%,#121824 100%);border:1px solid transparent;box-shadow:0 4px 25px rgba(0,0,0,0.7);position:relative;',
+            'aurora-soft': 'border-radius:22px;background:linear-gradient(120deg,rgba(22,28,38,0.94),rgba(28,36,52,0.9));border:1px solid rgba(120,170,255,0.35);box-shadow:0 8px 28px rgba(40,90,180,0.25);',
+            'graphite-outline': 'border-radius:18px;background:rgba(17,20,26,0.9);border:1px solid rgba(140,150,170,0.45);box-shadow:0 0 0 1px rgba(70,80,100,0.35),0 6px 20px rgba(0,0,0,0.35);'
         };
         return styles[styleKey] || '';
     }
@@ -1434,7 +1513,7 @@
             toggleImages: (value) => { CONFIG.removeImages = value; },
             toggleMail: (value) => { CONFIG.removeMail = value; },
             toggleSearchStyle: (value) => { CONFIG.searchStyleEnabled = value; },
-            toggleCompact: (value) => { CONFIG.compactMode = value; },
+            toggleCompact: (value) => { CONFIG.compactMode = value; CONFIG.panelDensity = value ? 'compact' : 'normal'; },
             toggleGlass: (value) => { CONFIG.glassEffect = value; }
         };
 
@@ -1484,6 +1563,57 @@
                 applyMenuTheme();
                 renderActiveTab();
             });
+        });
+
+
+        container.querySelectorAll('.density-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                CONFIG.panelDensity = btn.dataset.density;
+                CONFIG.compactMode = CONFIG.panelDensity !== 'normal';
+                await saveConfig();
+                applyCompactMode();
+                renderActiveTab();
+            });
+        });
+
+        container.querySelectorAll('.profile-btn[data-profile]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const [mode, slot] = btn.dataset.profile.split('-');
+                CONFIG.quickProfiles = CONFIG.quickProfiles || {};
+
+                if (mode === 'save') {
+                    CONFIG.quickProfiles[slot] = {
+                        darkMode: CONFIG.darkMode,
+                        customLogo: CONFIG.customLogo,
+                        removeAI: CONFIG.removeAI,
+                        removeIcons: CONFIG.removeIcons,
+                        removeImages: CONFIG.removeImages,
+                        removeMail: CONFIG.removeMail,
+                        searchStyleEnabled: CONFIG.searchStyleEnabled,
+                        searchStyle: CONFIG.searchStyle,
+                        menuTheme: CONFIG.menuTheme,
+                        panelDensity: CONFIG.panelDensity,
+                        glassEffect: CONFIG.glassEffect
+                    };
+                    await saveConfig();
+                } else {
+                    const profile = CONFIG.quickProfiles?.[slot];
+                    if (!profile) return alert(`Профиль ${slot} пуст`);
+                    Object.assign(CONFIG, profile);
+                    await saveConfig();
+                    applyAll();
+                    renderActiveTab();
+                }
+            });
+        });
+
+        container.querySelector('#showHiddenBtn')?.addEventListener('click', () => {
+            const hidden = [];
+            if (CONFIG.removeAI) hidden.push(t.removeAI);
+            if (CONFIG.removeIcons) hidden.push(t.removeIcons);
+            if (CONFIG.removeImages) hidden.push(t.removeImages);
+            if (CONFIG.removeMail) hidden.push(t.removeMail);
+            alert(`${tt.hiddenElementsNow}\n• ${hidden.length ? hidden.join('\n• ') : '— ничего —'}`);
         });
 
         // Обработчики для кнопок выбора языка
@@ -1886,7 +2016,7 @@
         `;
     }
 
-    function getPanelStyles() {
+    function getThemeStyles() {
         return `
             /* Мини-утилиты в стиле UnoCSS */
             ${getUtilityStyles()}
@@ -1964,8 +2094,9 @@
             }
 
             .elgoogle-panel.glass {
-                backdrop-filter: blur(18px) saturate(1.12) contrast(0.94) !important;
-                -webkit-backdrop-filter: blur(18px) saturate(1.12) contrast(0.94) !important;
+                background: color-mix(in srgb, var(--panel-bg) 72%, transparent) !important;
+                backdrop-filter: blur(14px) saturate(1.08) contrast(0.97) !important;
+                -webkit-backdrop-filter: blur(14px) saturate(1.08) contrast(0.97) !important;
                 border-color: color-mix(in srgb, var(--panel-border) 65%, white 18%) !important;
                 box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45),
                            inset 0 1px 0 rgba(255, 255, 255, 0.08),
@@ -2002,6 +2133,11 @@
             .elgoogle-panel.compact .u-px-4 { padding-left: 12px; padding-right: 12px; }
             .elgoogle-panel.compact .u-tab-btn { padding: 8px 12px; font-size: 13px; }
             .elgoogle-panel.compact .tab-content { padding: 16px; }
+            .elgoogle-panel.dense { min-width: 300px; max-width: 340px; }
+            .elgoogle-panel.dense .u-px-5 { padding-left: 10px; padding-right: 10px; }
+            .elgoogle-panel.dense .u-px-4 { padding-left: 8px; padding-right: 8px; }
+            .elgoogle-panel.dense .u-tab-btn { padding: 7px 8px; font-size: 12px; }
+            .elgoogle-panel.dense .tab-content { padding: 12px; max-height: 52vh; }
 
             .theme-light .u-shell-header {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -2304,6 +2440,22 @@
                 border-color: var(--accent-color, #1a73e8); background: color-mix(in srgb, var(--accent-color, #1a73e8) 12%, transparent);
                 box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color, #1a73e8) 35%, transparent);
             }
+            .density-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+            .density-btn, .profile-btn {
+                padding: 8px 10px;
+                border: 1px solid rgba(255,255,255,0.2);
+                background: rgba(255,255,255,0.06);
+                color: inherit;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all .2s;
+                font-size: 12px;
+            }
+            .density-btn.active, .profile-btn:hover {
+                border-color: var(--accent-color, #1a73e8);
+                background: color-mix(in srgb, var(--accent-color, #1a73e8) 14%, transparent);
+            }
+            .profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
             .theme-preview { width: 60px; height: 40px; border-radius: 6px; }
             .theme-preview.dark { background: #1a1a1a; border: 1px solid #333; }
             .theme-preview.light { background: #f5f5f5; border: 1px solid #ddd; }
@@ -2634,6 +2786,51 @@
                 transform: scale(1.05);
             }
             .theme-light .u-footer-btn:hover { background: rgba(0, 0, 0, 0.2); }
+        `;
+    }
+
+    function getMediaStyles() {
+        return `
+            @media (max-width: 640px) {
+                .elgoogle-panel {
+                    min-width: min(90vw, 360px);
+                    max-width: 90vw;
+                    left: 5vw !important;
+                }
+
+                .tab-content {
+                    max-height: 50vh;
+                }
+
+                .u-tab-btn {
+                    font-size: 12px;
+                    padding: 8px 10px;
+                    gap: 6px;
+                }
+            }
+        `;
+    }
+
+    function getComponentStyles() {
+        return `
+            .density-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+            .density-btn, .profile-btn {
+                padding: 8px 10px; border-radius: 8px; border: 1px solid var(--panel-border);
+                background: rgba(255,255,255,0.06); color: var(--panel-text); cursor: pointer;
+                transition: all 0.2s ease; font-size: 12px;
+            }
+            .density-btn.active, .profile-btn:hover {
+                border-color: var(--accent-color);
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-color) 35%, transparent);
+                background: color-mix(in srgb, var(--accent-color) 18%, transparent);
+            }
+            .profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+            .hidden-elements-summary { margin-top: 10px; font-size: 12px; opacity: 0.85; line-height: 1.4; }
+        `;
+    }
+
+    function getScrollbarStyles() {
+        return `
 
             /* Стили полосы прокрутки */
             .tab-content::-webkit-scrollbar {
@@ -2675,25 +2872,11 @@
                 scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
             }
 
-
-            @media (max-width: 640px) {
-                .elgoogle-panel {
-                    min-width: min(90vw, 360px);
-                    max-width: 90vw;
-                    left: 5vw !important;
-                }
-
-                .tab-content {
-                    max-height: 50vh;
-                }
-
-                .u-tab-btn {
-                    font-size: 12px;
-                    padding: 8px 10px;
-                    gap: 6px;
-                }
-            }
         `;
+    }
+
+    function getPanelStyles() {
+        return `${getUtilityStyles()}${getThemeStyles()}${getComponentStyles()}${getScrollbarStyles()}${getMediaStyles()}`;
     }
 
     // ================== ЗАПУСК ==================
