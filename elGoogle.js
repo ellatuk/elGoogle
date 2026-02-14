@@ -1277,9 +1277,9 @@
 
         panel.innerHTML = `
             <div class="u-flex u-justify-between u-items-center u-px-5 u-py-4 u-border-b u-border-white-10 u-cursor-move u-shell-header" id="elgoogle-drag-handle">
-                <div class="panel-title u-flex u-items-center u-gap-2-5">
+                <div class="u-flex u-items-center u-gap-2-5">
                     <div class="logo-icon"></div>
-                    <div class="title-text u-flex u-items-baseline u-gap-1-5">
+                    <div class="u-flex u-items-baseline u-gap-1-5">
                         <span class="title-main u-font-semibold u-text-lg">elGoogle</span>
                         <span class="title-version u-text-xs u-opacity-60 u-font-normal u-tight">v${SCRIPT_VERSION}</span>
                     </div>
@@ -2149,12 +2149,22 @@
             .hover\:u-bg-white-20:hover { background: rgba(255, 255, 255, 0.2); }
 
             .elgoogle-panel {
+                --panel-bg: rgba(25, 25, 25, 0.95);
+                --panel-text: #ffffff;
+                --panel-border: rgba(255, 255, 255, 0.1);
+                --panel-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                --accent-color: #9aa0aa;
+
                 position: fixed; z-index: 999999;
                 min-width: 400px; max-width: 500px;
                 font-family: 'Segoe UI', system-ui, sans-serif;
                 user-select: none; border-radius: 16px;
                 transition: opacity 0.3s ease, transform 0.3s ease;
                 overflow: hidden;
+                background: var(--panel-bg);
+                color: var(--panel-text);
+                border: 1px solid var(--panel-border);
+                box-shadow: var(--panel-shadow);
             }
 
             .elgoogle-panel.hidden {
@@ -2163,63 +2173,52 @@
             }
 
             .elgoogle-panel.theme-dark {
+                --panel-bg: rgba(25, 25, 25, 0.95);
+                --panel-text: #ffffff;
+                --panel-border: rgba(255, 255, 255, 0.1);
+                --panel-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
                 --accent-color: #9aa0aa;
-                background: rgba(25, 25, 25, 0.95);
-                color: #fff; border: 1px solid rgba(255, 255, 255, 0.1);
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             }
 
             .elgoogle-panel.theme-light {
+                --panel-bg: rgba(248, 250, 255, 0.96);
+                --panel-text: #111827;
+                --panel-border: rgba(0, 0, 0, 0.08);
+                --panel-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
                 --accent-color: #2563eb;
-                background: rgba(248, 250, 255, 0.96);
-                color: #111827; border: 1px solid rgba(0, 0, 0, 0.08);
-                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
             }
 
             .elgoogle-panel.theme-blue {
+                --panel-bg: linear-gradient(145deg, #1a2a4a, #0f1a2f);
+                --panel-text: #e0f0ff;
+                --panel-border: rgba(100, 180, 255, 0.3);
+                --panel-shadow: 0 10px 40px rgba(0, 40, 80, 0.4);
                 --accent-color: #3b82f6;
-                background: linear-gradient(145deg, #1a2a4a, #0f1a2f);
-                color: #e0f0ff;
-                border: 1px solid rgba(100, 180, 255, 0.3);
-                box-shadow: 0 10px 40px rgba(0, 40, 80, 0.4);
             }
 
             .elgoogle-panel.theme-olive {
+                --panel-bg: linear-gradient(145deg, #2d3e2d, #1e2a1e);
+                --panel-text: #f0f5e0;
+                --panel-border: rgba(180, 200, 100, 0.3);
+                --panel-shadow: 0 10px 40px rgba(40, 60, 0, 0.4);
                 --accent-color: #84cc16;
-                background: linear-gradient(145deg, #2d3e2d, #1e2a1e);
-                color: #f0f5e0;
-                border: 1px solid rgba(180, 200, 100, 0.3);
-                box-shadow: 0 10px 40px rgba(40, 60, 0, 0.4);
             }
 
             .elgoogle-panel.theme-brown {
+                --panel-bg: linear-gradient(145deg, #3e2e1e, #2a1e12);
+                --panel-text: #f5e8d0;
+                --panel-border: rgba(200, 150, 100, 0.3);
+                --panel-shadow: 0 10px 40px rgba(80, 40, 0, 0.4);
                 --accent-color: #d97706;
-                background: linear-gradient(145deg, #3e2e1e, #2a1e12);
-                color: #f5e8d0;
-                border: 1px solid rgba(200, 150, 100, 0.3);
-                box-shadow: 0 10px 40px rgba(80, 40, 0, 0.4);
             }
 
             .elgoogle-panel.glass {
-                background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)), rgba(28, 28, 28, 0.72) !important;
-                backdrop-filter: blur(18px) saturate(1.2) contrast(0.95) !important;
-                -webkit-backdrop-filter: blur(18px) saturate(1.2) contrast(0.95) !important;
-                border: 1px solid rgba(255, 255, 255, 0.16) !important;
+                backdrop-filter: blur(18px) saturate(1.12) contrast(0.94) !important;
+                -webkit-backdrop-filter: blur(18px) saturate(1.12) contrast(0.94) !important;
+                border-color: color-mix(in srgb, var(--panel-border) 65%, white 18%) !important;
                 box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45),
                            inset 0 1px 0 rgba(255, 255, 255, 0.08),
                            inset 0 -1px 0 rgba(0, 0, 0, 0.25) !important;
-            }
-
-            .elgoogle-panel.glass.glass-soft {
-                background: linear-gradient(140deg, rgba(109, 140, 255, 0.16), rgba(150, 110, 255, 0.1)), rgba(30, 30, 40, 0.4) !important;
-                backdrop-filter: blur(16px) saturate(1.5) !important;
-                -webkit-backdrop-filter: blur(16px) saturate(1.5) !important;
-            }
-
-            .elgoogle-panel.glass.glass-hard {
-                background: linear-gradient(140deg, rgba(66, 92, 211, 0.24), rgba(105, 72, 211, 0.2)), rgba(20, 20, 30, 0.7) !important;
-                backdrop-filter: blur(30px) saturate(2.5) !important;
-                -webkit-backdrop-filter: blur(30px) saturate(2.5) !important;
             }
 
             .elgoogle-panel.theme-dark.glass::before {
@@ -2229,13 +2228,7 @@
             }
 
             .elgoogle-panel.theme-light.glass {
-                background: linear-gradient(140deg, rgba(147, 174, 255, 0.22), rgba(195, 172, 255, 0.16)), rgba(255, 255, 255, 0.75) !important;
-                backdrop-filter: blur(22px) saturate(1.35) !important;
-                -webkit-backdrop-filter: blur(22px) saturate(1.35) !important;
-                border: 1px solid rgba(255, 255, 255, 0.35) !important;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
-                           inset 0 1px 0 rgba(255, 255, 255, 0.35),
-                           inset 0 -1px 0 rgba(0, 0, 0, 0.08) !important;
+                border-color: rgba(255, 255, 255, 0.35) !important;
             }
 
             .elgoogle-panel.theme-light.glass::before {
