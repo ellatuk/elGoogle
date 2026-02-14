@@ -267,18 +267,40 @@
         menuLanguage: 'auto'  // По умолчанию автоматическое определение
     };
 
+    const createSearchStyle = (rules, extraCss = '') => {
+        const base = Object.entries(rules)
+            .map(([prop, value]) => `${prop}:${value}!important;`)
+            .join('');
+        return `.RNNXgb{${base}}${extraCss}`;
+    };
+
     const SEARCH_STYLES = {
         'google-default': {
             key: 'google',
-            css: `.RNNXgb{border-radius:24px!important;background-color:transparent!important;border:1px solid #5f6368!important;box-shadow:none!important;}`
+            css: createSearchStyle({
+                'border-radius': '24px',
+                'background-color': 'transparent',
+                border: '1px solid #5f6368',
+                'box-shadow': 'none'
+            })
         },
         'elgoogle-classic': {
             key: 'elgoogle',
-            css: `.RNNXgb{border-radius:34px 14px!important;background-color:#121212!important;border:3px solid #1c1d1d!important;box-shadow:0 2px 8px rgba(0,0,0,0.3)!important;}`
+            css: createSearchStyle({
+                'border-radius': '34px 14px',
+                'background-color': '#121212',
+                border: '3px solid #1c1d1d',
+                'box-shadow': '0 2px 8px rgba(0,0,0,0.3)'
+            })
         },
         'minimal-dark': {
             key: 'minimaldark',
-            css: `.RNNXgb{border-radius:12px!important;background-color:#0a0a0a!important;border:1px solid #2a2a2a!important;box-shadow:0 1px 3px rgba(0,0,0,0.2)!important;}`
+            css: createSearchStyle({
+                'border-radius': '12px',
+                'background-color': '#0a0a0a',
+                border: '1px solid #2a2a2a',
+                'box-shadow': '0 1px 3px rgba(0,0,0,0.2)'
+            })
         },
         'glass-frosted': {
             key: 'glassfrosted',
@@ -286,7 +308,12 @@
         },
         'rounded-soft': {
             key: 'roundedsoft',
-            css: `.RNNXgb{border-radius:28px!important;background:linear-gradient(135deg,#121212 0%,#1a1a1a 100%)!important;border:2px solid #2d2d2d!important;box-shadow:0 6px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05)!important;}`
+            css: createSearchStyle({
+                'border-radius': '28px',
+                background: 'linear-gradient(135deg,#121212 0%,#1a1a1a 100%)',
+                border: '2px solid #2d2d2d',
+                'box-shadow': '0 6px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05)'
+            })
         },
         'shadow-blur-white': {
             key: 'shadowblurwhite',
@@ -838,37 +865,24 @@
     // ================== ОПРЕДЕЛЕНИЕ ПРЕСЕТА ==================
 
     function updatePresetType() {
-        const currentSettings = {
+        const currentStr = JSON.stringify({
             darkMode: CONFIG.darkMode,
             customLogo: CONFIG.customLogo,
             removeAI: CONFIG.removeAI,
             removeIcons: CONFIG.removeIcons,
             removeImages: CONFIG.removeImages,
             removeMail: CONFIG.removeMail
-        };
-
-        let matchedPreset = 'custom';
+        });
 
         for (const [presetKey, preset] of Object.entries(PRESETS)) {
-            if (presetKey === 'custom') continue;
-
-            const presetValues = preset.values;
-            let isMatch = true;
-
-            for (const key in presetValues) {
-                if (currentSettings[key] !== presetValues[key]) {
-                    isMatch = false;
-                    break;
-                }
-            }
-
-            if (isMatch) {
-                matchedPreset = presetKey;
-                break;
+            if (!preset?.values) continue;
+            if (JSON.stringify(preset.values) === currentStr) {
+                CONFIG.preset = presetKey;
+                return;
             }
         }
 
-        CONFIG.preset = matchedPreset;
+        CONFIG.preset = 'custom';
     }
 
     function checkIfSettingsChanged() {
@@ -1717,27 +1731,28 @@
     }
 
     function setupControlHandlers(container) {
+        const actions = {
+            toggleDark: (value) => { CONFIG.darkMode = value; },
+            toggleLogo: (value) => {
+                CONFIG.customLogo = value;
+                logoApplied = false;
+            },
+            toggleAI: (value) => { CONFIG.removeAI = value; },
+            toggleIcons: (value) => { CONFIG.removeIcons = value; },
+            toggleImages: (value) => { CONFIG.removeImages = value; },
+            toggleMail: (value) => { CONFIG.removeMail = value; },
+            toggleSearchStyle: (value) => { CONFIG.searchStyleEnabled = value; },
+            toggleCompact: (value) => { CONFIG.compactMode = value; },
+            toggleGlass: (value) => { CONFIG.glassEffect = value; }
+        };
+
         container.querySelectorAll('[data-action]').forEach(row => {
             const action = row.dataset.action;
             const checkbox = row.querySelector('input[type="checkbox"]');
 
             checkbox?.addEventListener('change', async (e) => {
                 const value = e.target.checked;
-
-                switch (action) {
-                    case 'toggleDark': CONFIG.darkMode = value; break;
-                    case 'toggleLogo':
-                        CONFIG.customLogo = value;
-                        logoApplied = false;
-                        break;
-                    case 'toggleAI': CONFIG.removeAI = value; break;
-                    case 'toggleIcons': CONFIG.removeIcons = value; break;
-                    case 'toggleImages': CONFIG.removeImages = value; break;
-                    case 'toggleMail': CONFIG.removeMail = value; break;
-                    case 'toggleSearchStyle': CONFIG.searchStyleEnabled = value; break;
-                    case 'toggleCompact': CONFIG.compactMode = value; break;
-                    case 'toggleGlass': CONFIG.glassEffect = value; break;
-                }
+                actions[action]?.(value);
 
                 await saveConfig();
                 checkIfSettingsChanged();
@@ -1971,7 +1986,7 @@
                 }
             }, 300);
         });
-        observer.observe(document.body, { childList: true, subtree: true });
+        observer.observe(document.body, { childList: true, subtree: true, attributes: false, characterData: false });
         setTimeout(updateRemovedElements, 2000);
     }
 
