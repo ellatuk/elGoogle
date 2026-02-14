@@ -324,49 +324,16 @@
         },
         'shadow-blur-white': {
             key: 'shadowblurwhite',
-            css: `.RNNXgb{
-                border-radius: 20px!important;
-                background-color: rgba(18, 18, 18, 0.95)!important;
-                border: 1px solid rgba(255, 255, 255, 0.15)!important;
-                box-shadow:
-                    0 0 32px 8px rgba(255, 255, 255, 0.25)!important;
-                backdrop-filter: blur(10px)!important;
-                -webkit-backdrop-filter: blur(10px)!important;
-                position: relative!important;
-                overflow: hidden!important;
-            }
-            .RNNXgb::before{
-                content: ''!important;
-                position: absolute!important;
-                top: -8px!important;
-                left: -8px!important;
-                right: -8px!important;
-                bottom: -8px!important;
-                background: radial-gradient(
-                    circle at center,
-                    rgba(255, 255, 255, 0.15) 0%,
-                    rgba(255, 255, 255, 0.05) 40%,
-                    transparent 70%
-                )!important;
-                border-radius: 28px!important;
-                z-index: -1!important;
-                pointer-events: none!important;
-                filter: blur(16px)!important;
-            }
-            .RNNXgb::after{
-                content: ''!important;
-                position: absolute!important;
-                top: 0!important;
-                left: 0!important;
-                right: 0!important;
-                bottom: 0!important;
-                border-radius: 20px!important;
-                border: 1px solid rgba(255, 255, 255, 0.1)!important;
-                pointer-events: none!important;
-                box-shadow:
-                    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.2)!important;
-            }`
+            css: createSearchStyle({
+                'border-radius': '20px',
+                'background-color': 'rgba(18, 18, 18, 0.95)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                'box-shadow': '0 0 32px 8px rgba(255, 255, 255, 0.25)',
+                'backdrop-filter': 'blur(10px)',
+                '-webkit-backdrop-filter': 'blur(10px)',
+                position: 'relative',
+                overflow: 'hidden'
+            }, `.RNNXgb::before{content:''!important;position:absolute!important;top:-8px!important;left:-8px!important;right:-8px!important;bottom:-8px!important;background:radial-gradient(circle at center,rgba(255,255,255,0.15) 0%,rgba(255,255,255,0.05) 40%,transparent 70%)!important;border-radius:28px!important;z-index:-1!important;pointer-events:none!important;filter:blur(16px)!important;}.RNNXgb::after{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;border-radius:20px!important;border:1px solid rgba(255,255,255,0.1)!important;pointer-events:none!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05),inset 0 -1px 0 rgba(0,0,0,0.2)!important;}`)
         },
         'glass-morph': {
             key: 'glassmorph',
@@ -381,348 +348,38 @@
         },
         'liquid-metal': {
             key: 'liquidmetal',
-            css: `.RNNXgb{
-                border-radius: 16px!important;
-                background:
-                    linear-gradient(135deg,
-                        #1a1a1a 0%,
-                        #2a2a2a 50%,
-                        #1a1a1a 100%
-                    )!important;
-                border: 2px solid transparent!important;
-                box-shadow:
-                    inset 0 2px 10px rgba(255, 255, 255, 0.1),
-                    inset 0 -2px 10px rgba(0, 0, 0, 0.5),
-                    0 5px 30px rgba(0, 0, 0, 0.6)!important;
-                position: relative!important;
-                overflow: hidden!important;
-            }
-            .RNNXgb::before{
-                content: ''!important;
-                position: absolute!important;
-                top: 0!important;
-                left: 0!important;
-                right: 0!important;
-                bottom: 0!important;
-                background: linear-gradient(
-                    90deg,
-                    transparent 0%,
-                    rgba(255, 255, 255, 0.05) 50%,
-                    transparent 100%
-                )!important;
-                border-radius: 16px!important;
-                animation: metal-shine 4s ease-in-out infinite alternate!important;
-                z-index: 1!important;
-                pointer-events: none!important;
-            }
-            .RNNXgb::after{
-                content: ''!important;
-                position: absolute!important;
-                top: 2px!important;
-                left: 2px!important;
-                right: 2px!important;
-                bottom: 2px!important;
-                background:
-                    radial-gradient(
-                        circle at 30% 30%,
-                        rgba(200, 200, 200, 0.1) 0%,
-                        transparent 50%
-                    ),
-                    radial-gradient(
-                        circle at 70% 70%,
-                        rgba(150, 150, 150, 0.08) 0%,
-                        transparent 50%
-                    )!important;
-                border-radius: 14px!important;
-                border: 1px solid rgba(255, 255, 255, 0.08)!important;
-                box-shadow:
-                    inset 0 1px 0 rgba(255, 255, 255, 0.15),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.3)!important;
-                pointer-events: none!important;
-            }
-            /* Эффект металлической текстуры */
-            .RNNXgb > div {
-                position: relative!important;
-                z-index: 2!important;
-                background:
-                    repeating-linear-gradient(
-                        45deg,
-                        transparent,
-                        transparent 1px,
-                        rgba(255, 255, 255, 0.01) 1px,
-                        rgba(255, 255, 255, 0.01) 2px
-                    )!important;
-                border-radius: 14px!important;
-            }
-            @keyframes metal-shine {
-                0% {
-                    transform: translateX(-100%) rotate(45deg);
-                    opacity: 0.3;
-                }
-                50% {
-                    opacity: 0.6;
-                }
-                100% {
-                    transform: translateX(100%) rotate(45deg);
-                    opacity: 0.3;
-                }
-            }
-            /* Стиль для текста */
-            .RNNXgb input {
-                color: #e0e0e0!important;
-                text-shadow:
-                    0 1px 0 rgba(0, 0, 0, 0.5),
-                    0 -1px 0 rgba(255, 255, 255, 0.1)!important;
-                background: transparent!important;
-                font-weight: 500!important;
-            }`
+            css: createSearchStyle({
+                'border-radius': '16px',
+                background: 'linear-gradient(135deg,#1a1a1a 0%,#2a2a2a 50%,#1a1a1a 100%)',
+                border: '2px solid transparent',
+                'box-shadow': 'inset 0 2px 10px rgba(255,255,255,0.1),inset 0 -2px 10px rgba(0,0,0,0.5),0 5px 30px rgba(0,0,0,0.6)',
+                position: 'relative',
+                overflow: 'hidden'
+            }, `.RNNXgb::before{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.05) 50%,transparent 100%)!important;border-radius:16px!important;animation:metal-shine 4s ease-in-out infinite alternate!important;z-index:1!important;pointer-events:none!important;}.RNNXgb::after{content:''!important;position:absolute!important;top:2px!important;left:2px!important;right:2px!important;bottom:2px!important;background:radial-gradient(circle at 30% 30%,rgba(200,200,200,0.1) 0%,transparent 50%),radial-gradient(circle at 70% 70%,rgba(150,150,150,0.08) 0%,transparent 50%)!important;border-radius:14px!important;border:1px solid rgba(255,255,255,0.08)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.15),inset 0 -1px 0 rgba(0,0,0,0.3)!important;pointer-events:none!important;}.RNNXgb > div{position:relative!important;z-index:2!important;background:repeating-linear-gradient(45deg,transparent,transparent 1px,rgba(255,255,255,0.01) 1px,rgba(255,255,255,0.01) 2px)!important;border-radius:14px!important;}@keyframes metal-shine{0%{transform:translateX(-100%) rotate(45deg);opacity:0.3;}50%{opacity:0.6;}100%{transform:translateX(100%) rotate(45deg);opacity:0.3;}}.RNNXgb input{color:#e0e0e0!important;text-shadow:0 1px 0 rgba(0,0,0,0.5),0 -1px 0 rgba(255,255,255,0.1)!important;background:transparent!important;font-weight:500!important;}`)
         },
         'monochrome-crt': {
             key: 'monochromecrt',
-            css: `.RNNXgb{
-                border-radius: 4px!important;
-                background:
-                    radial-gradient(
-                        ellipse at center,
-                        rgba(200, 200, 200, 0.1) 0%,
-                        rgba(0, 0, 0, 0.95) 100%
-                    )!important;
-                border: 4px solid #b0b0b0!important;
-                box-shadow:
-                    inset 0 0 60px rgba(255, 255, 255, 0.2),
-                    0 0 40px rgba(255, 255, 255, 0.3),
-                    0 0 0 3px rgba(200, 200, 200, 0.4),
-                    inset 0 0 100px rgba(0, 0, 0, 0.8)!important;
-                position: relative!important;
-                overflow: hidden!important;
-                font-family: 'Courier New', monospace!important;
-            }
-            .RNNXgb::before{
-                content: ''!important;
-                position: absolute!important;
-                top: 0!important;
-                left: 0!important;
-                right: 0!important;
-                bottom: 0!important;
-                background: repeating-linear-gradient(
-                    0deg,
-                    rgba(255, 255, 255, 0.08) 0px,
-                    rgba(255, 255, 255, 0.08) 1px,
-                    transparent 1px,
-                    transparent 2px
-                ),
-                repeating-linear-gradient(
-                    90deg,
-                    rgba(255, 255, 255, 0.03) 0px,
-                    rgba(255, 255, 255, 0.03) 1px,
-                    transparent 1px,
-                    transparent 3px
-                )!important;
-                border-radius: 4px!important;
-                pointer-events: none!important;
-                animation: scanlines 0.08s linear infinite!important;
-                z-index: 1!important;
-                background-size: 100% 3px, 4px 100%!important;
-            }
-            .RNNXgb::after{
-                content: ''!important;
-                position: absolute!important;
-                top: 0!important;
-                left: 0!important;
-                right: 0!important;
-                bottom: 0!important;
-                background:
-                    radial-gradient(
-                        circle at 50% 0%,
-                        rgba(255, 255, 255, 0.25) 0%,
-                        transparent 60%
-                    ),
-                    radial-gradient(
-                        circle at 50% 100%,
-                        rgba(255, 255, 255, 0.15) 0%,
-                        transparent 60%
-                    ),
-                    radial-gradient(
-                        circle at 30% 50%,
-                        rgba(255, 255, 255, 0.1) 0%,
-                        transparent 50%
-                    ),
-                    radial-gradient(
-                        circle at 70% 50%,
-                        rgba(255, 255, 255, 0.1) 0%,
-                        transparent 50%
-                    )!important;
-                border-radius: 4px!important;
-                pointer-events: none!important;
-                animation: crt-flicker 5s infinite!important;
-                z-index: 0!important;
-            }
-            /* Эффект рельефной рамки */
-            .RNNXgb {
-                border-style: outset!important;
-                border-color: #808080 #404040 #404040 #808080!important;
-                border-width: 4px!important;
-            }
-            @keyframes scanlines {
-                0% { transform: translateY(0); }
-                100% { transform: translateY(3px); }
-            }
-            @keyframes crt-flicker {
-                0%, 100% { opacity: 1; }
-                1% { opacity: 0.97; }
-                2% { opacity: 1; }
-                10% { opacity: 0.99; }
-                11% { opacity: 1; }
-                20% { opacity: 0.98; }
-                21% { opacity: 1; }
-                30% { opacity: 0.99; }
-                31% { opacity: 1; }
-                40% { opacity: 0.97; }
-                41% { opacity: 1; }
-                50% { opacity: 0.99; }
-                51% { opacity: 1; }
-                60% { opacity: 0.98; }
-                61% { opacity: 1; }
-                70% { opacity: 0.99; }
-                71% { opacity: 1; }
-                80% { opacity: 0.97; }
-                81% { opacity: 1; }
-                90% { opacity: 0.99; }
-                91% { opacity: 1; }
-            }
-            /* Эффект текста CRT */
-            .RNNXgb input {
-                text-shadow:
-                    0 0 8px rgba(255, 255, 255, 0.9),
-                    0 0 15px rgba(255, 255, 255, 0.6),
-                    0 0 25px rgba(255, 255, 255, 0.3)!important;
-                color: #ffffff!important;
-                font-weight: bold!important;
-                letter-spacing: 1px!important;
-            }
-            /* Эффект зернистости */
-            .RNNXgb {
-                background-image:
-                    radial-gradient(circle at 20% 30%, rgba(255,255,255,0.05) 1px, transparent 2px),
-                    radial-gradient(circle at 80% 70%, rgba(255,255,255,0.05) 1px, transparent 2px),
-                    radial-gradient(circle at 40% 60%, rgba(255,255,255,0.05) 1px, transparent 2px)!important;
-                background-size: 200px 200px, 150px 150px, 180px 180px!important;
-            }`
+            css: createSearchStyle({
+                'border-radius': '4px',
+                background: 'radial-gradient(ellipse at center,rgba(200,200,200,0.1) 0%,rgba(0,0,0,0.95) 100%)',
+                border: '4px solid #b0b0b0',
+                'box-shadow': 'inset 0 0 60px rgba(255,255,255,0.2),0 0 40px rgba(255,255,255,0.3),0 0 0 3px rgba(200,200,200,0.4),inset 0 0 100px rgba(0,0,0,0.8)',
+                position: 'relative',
+                overflow: 'hidden',
+                'font-family': "'Courier New', monospace"
+            }, `.RNNXgb::before{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:repeating-linear-gradient(0deg,rgba(255,255,255,0.08) 0px,rgba(255,255,255,0.08) 1px,transparent 1px,transparent 2px),repeating-linear-gradient(90deg,rgba(255,255,255,0.03) 0px,rgba(255,255,255,0.03) 1px,transparent 1px,transparent 3px)!important;border-radius:4px!important;pointer-events:none!important;animation:scanlines 0.08s linear infinite!important;z-index:1!important;background-size:100% 3px,4px 100%!important;}.RNNXgb::after{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:radial-gradient(circle at 50% 0%,rgba(255,255,255,0.25) 0%,transparent 60%),radial-gradient(circle at 50% 100%,rgba(255,255,255,0.15) 0%,transparent 60%),radial-gradient(circle at 30% 50%,rgba(255,255,255,0.1) 0%,transparent 50%),radial-gradient(circle at 70% 50%,rgba(255,255,255,0.1) 0%,transparent 50%)!important;border-radius:4px!important;pointer-events:none!important;animation:crt-flicker 5s infinite!important;z-index:0!important;}.RNNXgb{border-style:outset!important;border-color:#808080 #404040 #404040 #808080!important;border-width:4px!important;}@keyframes scanlines{0%{transform:translateY(0);}100%{transform:translateY(3px);}}@keyframes crt-flicker{0%,100%{opacity:1;}1%{opacity:0.97;}2%{opacity:1;}10%{opacity:0.99;}11%{opacity:1;}20%{opacity:0.98;}21%{opacity:1;}30%{opacity:0.99;}31%{opacity:1;}40%{opacity:0.97;}41%{opacity:1;}50%{opacity:0.99;}51%{opacity:1;}60%{opacity:0.98;}61%{opacity:1;}70%{opacity:0.99;}71%{opacity:1;}80%{opacity:0.97;}81%{opacity:1;}90%{opacity:0.99;}91%{opacity:1;}}.RNNXgb input{text-shadow:0 0 8px rgba(255,255,255,0.9),0 0 15px rgba(255,255,255,0.6),0 0 25px rgba(255,255,255,0.3)!important;color:#ffffff!important;font-weight:bold!important;letter-spacing:1px!important;}.RNNXgb{background-image:radial-gradient(circle at 20% 30%,rgba(255,255,255,0.05) 1px,transparent 2px),radial-gradient(circle at 80% 70%,rgba(255,255,255,0.05) 1px,transparent 2px),radial-gradient(circle at 40% 60%,rgba(255,255,255,0.05) 1px,transparent 2px)!important;background-size:200px 200px,150px 150px,180px 180px!important;}`)
         },
         'cyberpunk-neon': {
             key: 'cyberpunkneon',
-            css: `.RNNXgb{
-                border-radius: 18px!important;
-                background: linear-gradient(135deg, #0a0a0a 0%, #151515 100%)!important;
-                border: 1px solid transparent!important;
-                box-shadow:
-                    0 4px 25px rgba(0, 0, 0, 0.7)!important;
-                position: relative!important;
-                overflow: hidden!important;
-                isolation: isolate!important;
-            }
-            .RNNXgb::before{
-                content: ''!important;
-                position: absolute!important;
-                top: -4px!important;
-                left: -4px!important;
-                right: -4px!important;
-                bottom: -4px!important;
-                background: linear-gradient(
-                    45deg,
-                    #eb08da 0%,
-                    #5fa5fb 25%,
-                    #08ffa2 50%,
-                    #e0fe4e 75%,
-                    #eb08da 100%
-                )!important;
-                border-radius: 22px!important;
-                z-index: -1!important;
-                animation: cyber-glow-4colors 3s linear infinite!important;
-                background-size: 300% 300%!important;
-                filter: blur(12px)!important;
-                opacity: 0.85!important;
-            }
-            .RNNXgb::after{
-                content: ''!important;
-                position: absolute!important;
-                top: 0!important;
-                left: 0!important;
-                right: 0!important;
-                bottom: 0!important;
-                background:
-                    linear-gradient(
-                        90deg,
-                        rgba(235, 8, 218, 0.1) 0%,
-                        rgba(95, 165, 251, 0.08) 25%,
-                        rgba(8, 255, 162, 0.06) 50%,
-                        rgba(224, 254, 78, 0.04) 75%,
-                        rgba(235, 8, 218, 0.02) 100%
-                    ),
-                    radial-gradient(
-                        circle at 80% 20%,
-                        rgba(235, 8, 218, 0.15) 0%,
-                        transparent 60%
-                    ),
-                    radial-gradient(
-                        circle at 20% 80%,
-                        rgba(8, 255, 162, 0.15) 0%,
-                        transparent 60%
-                    )!important;
-                border-radius: 18px!important;
-                pointer-events: none!important;
-                animation: gradient-shift 8s ease-in-out infinite alternate!important;
-                mix-blend-mode: screen!important;
-            }
-            @keyframes cyber-glow-4colors {
-                0% {
-                    background-position: 0% 50%;
-                    opacity: 0.7;
-                }
-                25% {
-                    background-position: 50% 100%;
-                    opacity: 0.9;
-                }
-                50% {
-                    background-position: 100% 50%;
-                    opacity: 0.7;
-                }
-                75% {
-                    background-position: 50% 0%;
-                    opacity: 0.9;
-                }
-                100% {
-                    background-position: 0% 50%;
-                    opacity: 0.7;
-                }
-            }
-            @keyframes gradient-shift {
-                0% {
-                    background-position: 0% 0%, 80% 20%, 20% 80%;
-                    opacity: 0.8;
-                }
-                33% {
-                    background-position: 100% 100%, 60% 40%, 40% 60%;
-                    opacity: 0.9;
-                }
-                66% {
-                    background-position: 0% 100%, 90% 30%, 10% 70%;
-                    opacity: 0.85;
-                }
-                100% {
-                    background-position: 100% 0%, 70% 10%, 30% 90%;
-                    opacity: 0.8;
-                }
-            }
-            /* Эффект для текста */
-            .RNNXgb input {
-                color: #ffffff!important;
-                text-shadow:
-                    0 0 10px rgba(235, 8, 218, 0.5),
-                    0 0 20px rgba(95, 165, 251, 0.3),
-                    0 0 30px rgba(8, 255, 162, 0.2)!important;
-                background: transparent!important;
-            }`
+            css: createSearchStyle({
+                'border-radius': '18px',
+                background: 'linear-gradient(135deg,#0a0a0a 0%,#151515 100%)',
+                border: '1px solid transparent',
+                'box-shadow': '0 4px 25px rgba(0,0,0,0.7)',
+                position: 'relative',
+                overflow: 'hidden',
+                isolation: 'isolate'
+            }, `.RNNXgb::before{content:''!important;position:absolute!important;top:-4px!important;left:-4px!important;right:-4px!important;bottom:-4px!important;background:linear-gradient(45deg,#eb08da 0%,#5fa5fb 25%,#08ffa2 50%,#e0fe4e 75%,#eb08da 100%)!important;border-radius:22px!important;z-index:-1!important;animation:cyber-glow-4colors 3s linear infinite!important;background-size:300% 300%!important;filter:blur(12px)!important;opacity:0.85!important;}.RNNXgb::after{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:linear-gradient(90deg,rgba(235,8,218,0.1) 0%,rgba(95,165,251,0.08) 25%,rgba(8,255,162,0.06) 50%,rgba(224,254,78,0.04) 75%,rgba(235,8,218,0.02) 100%),radial-gradient(circle at 80% 20%,rgba(235,8,218,0.15) 0%,transparent 60%),radial-gradient(circle at 20% 80%,rgba(8,255,162,0.15) 0%,transparent 60%)!important;border-radius:18px!important;pointer-events:none!important;animation:gradient-shift 8s ease-in-out infinite alternate!important;mix-blend-mode:screen!important;}@keyframes cyber-glow-4colors{0%{background-position:0% 50%;opacity:0.7;}25%{background-position:50% 100%;opacity:0.9;}50%{background-position:100% 50%;opacity:0.7;}75%{background-position:50% 0%;opacity:0.9;}100%{background-position:0% 50%;opacity:0.7;}}@keyframes gradient-shift{0%{background-position:0% 0%,80% 20%,20% 80%;opacity:0.8;}33%{background-position:100% 100%,60% 40%,40% 60%;opacity:0.9;}66%{background-position:0% 100%,90% 30%,10% 70%;opacity:0.85;}100%{background-position:100% 0%,70% 10%,30% 90%;opacity:0.8;}}.RNNXgb input{color:#ffffff!important;text-shadow:0 0 10px rgba(235,8,218,0.5),0 0 20px rgba(95,165,251,0.3),0 0 30px rgba(8,255,162,0.2)!important;background:transparent!important;}`)
         }
     };
 
@@ -2145,9 +1802,14 @@
 
     // ================== СТИЛИ ПАНЕЛИ ==================
 
-    function getPanelStyles() {
+    function getUtilityStyles() {
+        const spacing = { 2: '8px', 3: '12px', 4: '16px', 5: '20px' };
+        const spacingCss = Object.entries(spacing).map(([k, v]) => `
+            .u-px-${k} { padding-left: ${v}; padding-right: ${v}; }
+            .u-py-${k} { padding-top: ${v}; padding-bottom: ${v}; }
+        `).join('');
+
         return `
-            /* Мини-утилиты в стиле UnoCSS */
             .u-flex { display: flex; }
             .u-flex-1 { flex: 1; }
             .u-items-center { align-items: center; }
@@ -2157,10 +1819,7 @@
             .u-gap-2 { gap: 8px; }
             .u-gap-2-5 { gap: 10px; }
             .u-gap-1-5 { gap: 6px; }
-            .u-px-5 { padding-left: 20px; padding-right: 20px; }
-            .u-px-4 { padding-left: 16px; padding-right: 16px; }
-            .u-py-4 { padding-top: 16px; padding-bottom: 16px; }
-            .u-py-3 { padding-top: 12px; padding-bottom: 12px; }
+            ${spacingCss}
             .u-border-b { border-bottom-width: 1px; border-bottom-style: solid; }
             .u-border-t { border-top-width: 1px; border-top-style: solid; }
             .u-border-white-10 { border-color: rgba(255, 255, 255, 0.1); }
@@ -2191,6 +1850,13 @@
                 transition: all 0.2s;
             }
             .hover\:u-bg-white-20:hover { background: rgba(255, 255, 255, 0.2); }
+        `;
+    }
+
+    function getPanelStyles() {
+        return `
+            /* Мини-утилиты в стиле UnoCSS */
+            ${getUtilityStyles()}
 
             .elgoogle-panel {
                 --panel-bg: rgba(25, 25, 25, 0.95);
