@@ -676,9 +676,17 @@
 
     function applyMenuGlass() {
         if (panel) {
+            panel.classList.remove('glass-soft', 'glass-hard');
+
             if (CONFIG.glassEffect) {
                 panel.classList.add('glass');
                 panel.classList.remove('no-glass');
+
+                if (CONFIG.menuTheme === 'light') {
+                    panel.classList.add('glass-soft');
+                } else {
+                    panel.classList.add('glass-hard');
+                }
             } else {
                 panel.classList.add('no-glass');
                 panel.classList.remove('glass');
