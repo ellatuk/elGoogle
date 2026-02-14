@@ -3,7 +3,7 @@
 // @name:ru-RU        elГугал
 // @namespace         https://github.com/ellatuk/elGoogle/releases
 // @icon              https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elGoogleLogo.ico
-// @version           1.2
+// @version           1.3
 // @description       Makes the Google Search home page better. Better "Gygale Search"
 // @description:ru-RU Делает гугл поиск лучше. Лучший "Гугал поиск"
 // @author            ellatuk
@@ -244,7 +244,7 @@
 
     // ================== КОНСТАНТЫ И КОНФИГУРАЦИЯ ==================
 
-    const SCRIPT_VERSION = GM_info?.script?.version || '1.2.3';
+    const SCRIPT_VERSION = GM_info?.script?.version || '1.3';
     const NOISE_TEXTURE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.12'/%3E%3C/svg%3E")`;
 
     const DEFAULT_CONFIG = {
@@ -383,6 +383,17 @@
         }
     };
 
+
+    const GM_API = {
+        getValue: (typeof GM !== 'undefined' && typeof GM.getValue === 'function') ? GM.getValue.bind(GM) : null,
+        setValue: (typeof GM !== 'undefined' && typeof GM.setValue === 'function') ? GM.setValue.bind(GM) : null,
+        registerMenuCommand:
+            (typeof GM !== 'undefined' && typeof GM.registerMenuCommand === 'function')
+                ? GM.registerMenuCommand.bind(GM)
+                : (typeof GM_registerMenuCommand === 'function' ? GM_registerMenuCommand : null),
+        xmlHttpRequest: (typeof GM !== 'undefined' && typeof GM.xmlHttpRequest === 'function') ? GM.xmlHttpRequest.bind(GM) : null
+    };
+
     const PRESETS = {
         minimal: {
             name: 'minimal',
@@ -446,11 +457,26 @@
     // ================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==================
 
     let CONFIG = { ...DEFAULT_CONFIG };
-    let panel = null;
-    let activeTab = 'general';
-    let lastReleaseInfo = null;
-    let isCheckingUpdate = false;
-    let logoApplied = false;
+    const state = {
+        panel: null,
+        activeTab: 'general',
+        lastReleaseInfo: null,
+        isCheckingUpdate: false,
+        logoApplied: false
+    };
+
+
+    function makeSafeTranslations(langPack) {
+        const fallback = LANGUAGES.en || {};
+        return new Proxy(langPack || {}, {
+            get(target, prop) {
+                if (typeof prop !== 'string') return target[prop];
+                if (target[prop] !== undefined) return target[prop];
+                if (fallback[prop] !== undefined) return fallback[prop];
+                return prop;
+            }
+        });
+    }
 
 
     function makeSafeTranslations(langPack) {
@@ -506,7 +532,8 @@
 
     async function loadConfig() {
         try {
-            const saved = await GM.getValue('elGoogle_config');
+            if (!GM_API.getValue) throw new Error('GM.getValue недоступен');
+            const saved = await GM_API.getValue('elGoogle_config');
             if (saved) {
                 CONFIG = { ...DEFAULT_CONFIG, ...saved };
                 if (!PRESETS[CONFIG.preset]) {
@@ -520,7 +547,8 @@
 
     async function saveConfig() {
         try {
-            await GM.setValue('elGoogle_config', CONFIG);
+            if (!GM_API.setValue) throw new Error('GM.setValue недоступен');
+            await GM_API.setValue('elGoogle_config', CONFIG);
         } catch (e) {
             console.warn('[elGoogle] Ошибка сохранения настроек:', e);
         }
@@ -581,7 +609,7 @@
     }
 
     function applyLogo() {
-        if (logoApplied && CONFIG.customLogo) return;
+        if (state.logoApplied && CONFIG.customLogo) return;
 
         StyleManager.remove('elgoogle-logo-style');
         const originalLogo = document.querySelector('.lnXdpd');
@@ -642,11 +670,11 @@
                     logoContainer.appendChild(customLogo);
                     logoElement.parentNode.insertBefore(logoContainer, logoElement);
 
-                    logoApplied = true;
+                    state.logoApplied = true;
                 }
             }, 150);
         } else {
-            logoApplied = false;
+            state.logoApplied = false;
             if (originalLogo) {
                 originalLogo.style.display = '';
                 originalLogo.style.visibility = '';
@@ -668,35 +696,27 @@
     }
 
     function applyMenuTheme() {
-        if (panel) {
-            panel.classList.remove('theme-dark', 'theme-light', 'theme-blue', 'theme-olive', 'theme-brown', 'theme-indigo');
-            panel.classList.add(`theme-${CONFIG.menuTheme}`);
+        if (state.panel) {
+            state.panel.classList.remove('theme-dark', 'theme-light', 'theme-blue', 'theme-olive', 'theme-brown', 'theme-indigo');
+            state.panel.classList.add(`theme-${CONFIG.menuTheme}`);
         }
     }
 
     function applyMenuGlass() {
-        if (panel) {
-            panel.classList.remove('glass-soft', 'glass-hard');
-
+        if (state.panel) {
             if (CONFIG.glassEffect) {
-                panel.classList.add('glass');
-                panel.classList.remove('no-glass');
-
-                if (CONFIG.menuTheme === 'light') {
-                    panel.classList.add('glass-soft');
-                } else {
-                    panel.classList.add('glass-hard');
-                }
+                state.panel.classList.add('glass');
+                state.panel.classList.remove('no-glass');
             } else {
-                panel.classList.add('no-glass');
-                panel.classList.remove('glass');
+                state.panel.classList.add('no-glass');
+                state.panel.classList.remove('glass');
             }
         }
     }
 
     function applyCompactMode() {
-        if (panel) {
-            panel.classList.toggle('compact', CONFIG.compactMode);
+        if (state.panel) {
+            state.panel.classList.toggle('compact', CONFIG.compactMode);
         }
     }
 
@@ -946,14 +966,14 @@
     // ================== ПАНЕЛЬ УПРАВЛЕНИЯ ==================
 
     function createControlPanel() {
-        if (panel) panel.remove();
+        if (state.panel) state.panel.remove();
 
-        panel = document.createElement('div');
-        panel.className = `elgoogle-panel ${CONFIG.panelVisible ? '' : 'hidden'}`;
-        panel.style.top = CONFIG.panelTop;
-        panel.style.left = CONFIG.panelLeft;
+        state.panel = document.createElement('div');
+        state.panel.className = `elgoogle-panel ${CONFIG.panelVisible ? '' : 'hidden'}`;
+        state.panel.style.top = CONFIG.panelTop;
+        state.panel.style.left = CONFIG.panelLeft;
 
-        panel.innerHTML = `
+        state.panel.innerHTML = `
             <div class="u-flex u-justify-between u-items-center u-px-5 u-py-4 u-border-b u-border-white-10 u-cursor-move u-shell-header" id="elgoogle-drag-handle">
                 <div class="u-flex u-items-center u-gap-2-5">
                     <div class="logo-icon"></div>
@@ -968,19 +988,19 @@
             </div>
 
             <div class="u-flex u-px-4 u-border-b u-border-white-10 u-bg-black-15 u-shell-tabs">
-                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'general' ? 'is-active' : ''}" data-tab="general">
+                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${state.activeTab === 'general' ? 'is-active' : ''}" data-tab="general">
                     <svg class="el-icon"><use href="#i-sliders"></use></svg>
                     ${tt.general}
                 </button>
-                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'search' ? 'is-active' : ''}" data-tab="search">
+                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${state.activeTab === 'search' ? 'is-active' : ''}" data-tab="search">
                     <svg class="el-icon"><use href="#i-search"></use></svg>
                     ${tt.search}
                 </button>
-                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'menu' ? 'is-active' : ''}" data-tab="menu">
+                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${state.activeTab === 'menu' ? 'is-active' : ''}" data-tab="menu">
                     <svg class="el-icon"><use href="#i-menu"></use></svg>
                     ${tt.menu}
                 </button>
-                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'about' ? 'is-active' : ''}" data-tab="about">
+                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${state.activeTab === 'about' ? 'is-active' : ''}" data-tab="about">
                     <svg class="el-icon"><use href="#i-info"></use></svg>
                     <span class="tab-text">${tt.about}</span>
                 </button>
@@ -999,12 +1019,12 @@
                     <svg class="el-icon"><use href="#i-list-restart"></use></svg>
                 </button>
                 <div class="u-flex-1 u-text-right u-text-2xs u-opacity-70 u-footer-status">
-                    ${isCheckingUpdate ? t.checkingUpdates : t.f2Menu}
+                    ${state.isCheckingUpdate ? t.checkingUpdates : t.f2Menu}
                 </div>
             </div>
         `;
 
-        document.body.appendChild(panel);
+        document.body.appendChild(state.panel);
         renderActiveTab();
         setupPanelEvents();
         makePanelDraggable();
@@ -1022,7 +1042,7 @@
             about: renderAboutTab
         };
 
-        renderers[activeTab]?.(content);
+        renderers[state.activeTab]?.(content);
     }
 
     function renderGeneralTab(container) {
@@ -1280,11 +1300,11 @@
 
     function renderAboutTab(container) {
         let versionStatus = '';
-        if (lastReleaseInfo) {
-            if (compareVersions(SCRIPT_VERSION, lastReleaseInfo.version) >= 0) {
+        if (state.lastReleaseInfo) {
+            if (compareVersions(SCRIPT_VERSION, state.lastReleaseInfo.version) >= 0) {
                 versionStatus = `<span class="status-good">${t.upToDate}</span>`;
             } else {
-                versionStatus = `<span class="status-warning">${t.updateAvailable} ${lastReleaseInfo.version}</span>`;
+                versionStatus = `<span class="status-warning">${t.updateAvailable} ${state.lastReleaseInfo.version}</span>`;
             }
         } else {
             versionStatus = `<span class="status-neutral">${t.checkFailed}</span>`;
@@ -1299,9 +1319,9 @@
                         <strong>${t.currentVersion}</strong> ${SCRIPT_VERSION}
                     </div>
                     <div class="info-item">
-                        <strong>${t.latestVersion}</strong> ${lastReleaseInfo ? lastReleaseInfo.version : '...'}
-                        <button class="check-update-btn" id="checkUpdateBtn" ${isCheckingUpdate ? 'disabled' : ''}>
-                            ${isCheckingUpdate ? t.checking : t.checkNow}
+                        <strong>${t.latestVersion}</strong> ${state.lastReleaseInfo ? state.lastReleaseInfo.version : '...'}
+                        <button class="check-update-btn" id="checkUpdateBtn" ${state.isCheckingUpdate ? 'disabled' : ''}>
+                            ${state.isCheckingUpdate ? t.checking : t.checkNow}
                         </button>
                     </div>
                     <div class="info-item">
@@ -1334,6 +1354,10 @@
                             <a href="https://simpleicons.org" target="_blank" class="tech-card" title="Simple Icons">
                                 <svg class="tech-icon"><use href="#i-simpleicons"></use></svg>
                                 <span class="tech-name">Simple Icons</span>
+                            </a>
+                            <a href="https://unocss.dev" target="_blank" class="tech-card" title="UnoCSS">
+                                <svg class="tech-icon"><use href="#i-simpleicons"></use></svg>
+                                <span class="tech-name">UnoCSS</span>
                             </a>
                         </div>
                     </div>
@@ -1403,7 +1427,7 @@
             toggleDark: (value) => { CONFIG.darkMode = value; },
             toggleLogo: (value) => {
                 CONFIG.customLogo = value;
-                logoApplied = false;
+                state.logoApplied = false;
             },
             toggleAI: (value) => { CONFIG.removeAI = value; },
             toggleIcons: (value) => { CONFIG.removeIcons = value; },
@@ -1482,9 +1506,9 @@
     }
 
     function updateUILanguage() {
-        if (!panel) return;
+        if (!state.panel) return;
 
-        panel.querySelectorAll('[data-tab]').forEach(tab => {
+        state.panel.querySelectorAll('[data-tab]').forEach(tab => {
             const tabName = tab.dataset.tab;
             if (tabName === 'general') {
                 tab.innerHTML = `<svg class="el-icon"><use href="#i-sliders"></use></svg>${tt.general}`;
@@ -1497,12 +1521,12 @@
             }
         });
 
-        const status = panel.querySelector('.u-footer-status');
-        if (status) status.textContent = isCheckingUpdate ? tt.checkingUpdates : tt.f2Menu;
+        const status = state.panel.querySelector('.u-footer-status');
+        if (status) status.textContent = state.isCheckingUpdate ? tt.checkingUpdates : tt.f2Menu;
 
-        const exportBtn = panel.querySelector('#exportBtn');
-        const importBtn = panel.querySelector('#importBtn');
-        const resetBtn = panel.querySelector('#resetBtn');
+        const exportBtn = state.panel.querySelector('#exportBtn');
+        const importBtn = state.panel.querySelector('#importBtn');
+        const resetBtn = state.panel.querySelector('#resetBtn');
         if (exportBtn) exportBtn.title = tt.exportSettings;
         if (importBtn) importBtn.title = tt.importSettings;
         if (resetBtn) resetBtn.title = tt.resetSettings;
@@ -1511,12 +1535,12 @@
     // ================== СОБЫТИЯ ПАНЕЛИ ==================
 
     function setupPanelEvents() {
-        panel.querySelector('.panel-close').addEventListener('click', togglePanel);
+        state.panel.querySelector('.panel-close').addEventListener('click', togglePanel);
 
-        panel.querySelectorAll('[data-tab]').forEach(tab => {
+        state.panel.querySelectorAll('[data-tab]').forEach(tab => {
             tab.addEventListener('click', () => {
-                activeTab = tab.dataset.tab;
-                panel.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('is-active'));
+                state.activeTab = tab.dataset.tab;
+                state.panel.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('is-active'));
                 tab.classList.add('is-active');
 
                 const content = document.getElementById('tabContent');
@@ -1533,68 +1557,74 @@
             });
         });
 
-        panel.querySelector('#exportBtn').addEventListener('click', exportSettings);
-        panel.querySelector('#importBtn').addEventListener('click', importSettings);
-        panel.querySelector('#resetBtn').addEventListener('click', resetSettings);
+        state.panel.querySelector('#exportBtn').addEventListener('click', exportSettings);
+        state.panel.querySelector('#importBtn').addEventListener('click', importSettings);
+        state.panel.querySelector('#resetBtn').addEventListener('click', resetSettings);
 
         document.addEventListener('keydown', e => {
-            if (e.key === 'Escape' && !panel.classList.contains('hidden')) {
+            if (e.key === 'Escape' && !state.panel.classList.contains('hidden')) {
                 togglePanel();
             }
         });
     }
 
     function makePanelDraggable() {
-        const dragHandle = panel.querySelector('#elgoogle-drag-handle');
+        const dragHandle = state.panel.querySelector('#elgoogle-drag-handle');
         let isDragging = false;
         let offsetX, offsetY;
+        let rafId = null;
 
         dragHandle.addEventListener('mousedown', startDrag);
 
         function startDrag(e) {
             if (e.target.closest('button')) return;
             isDragging = true;
-            const rect = panel.getBoundingClientRect();
+            const rect = state.panel.getBoundingClientRect();
             offsetX = e.clientX - rect.left;
             offsetY = e.clientY - rect.top;
             document.addEventListener('mousemove', onDrag);
             document.addEventListener('mouseup', stopDrag);
-            panel.style.transition = 'none';
+            state.panel.style.transition = 'none';
             e.preventDefault();
         }
 
         function onDrag(e) {
             if (!isDragging) return;
-            const x = e.clientX - offsetX;
-            const y = e.clientY - offsetY;
-            const maxX = window.innerWidth - panel.offsetWidth;
-            const maxY = window.innerHeight - panel.offsetHeight;
-            panel.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
-            panel.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+            if (rafId) cancelAnimationFrame(rafId);
+            rafId = requestAnimationFrame(() => {
+                const x = e.clientX - offsetX;
+                const y = e.clientY - offsetY;
+                const maxX = window.innerWidth - state.panel.offsetWidth;
+                const maxY = window.innerHeight - state.panel.offsetHeight;
+                state.panel.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
+                state.panel.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+                rafId = null;
+            });
         }
 
         function stopDrag() {
             if (!isDragging) return;
             isDragging = false;
-            panel.style.transition = '';
-            CONFIG.panelTop = panel.style.top;
-            CONFIG.panelLeft = panel.style.left;
+            state.panel.style.transition = '';
+            CONFIG.panelTop = state.panel.style.top;
+            CONFIG.panelLeft = state.panel.style.left;
             saveConfig();
+            if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
             document.removeEventListener('mousemove', onDrag);
             document.removeEventListener('mouseup', stopDrag);
         }
     }
 
     function togglePanel() {
-        if (!panel) {
+        if (!state.panel) {
             CONFIG.panelVisible = true;
             createControlPanel();
             saveConfig();
             return;
         }
 
-        const isHidden = panel.classList.contains('hidden');
-        panel.classList.toggle('hidden', !isHidden);
+        const isHidden = state.panel.classList.contains('hidden');
+        state.panel.classList.toggle('hidden', !isHidden);
         CONFIG.panelVisible = isHidden;
         saveConfig();
     }
@@ -1662,7 +1692,7 @@
             clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
                 updateRemovedElements();
-                if (CONFIG.customLogo && !logoApplied) {
+                if (CONFIG.customLogo && !state.logoApplied) {
                     applyLogo();
                 }
             }, 300);
@@ -1693,7 +1723,7 @@
                     CONFIG.darkMode = !CONFIG.darkMode;
                     await saveConfig();
                     applyAll();
-                    if (panel && !panel.classList.contains('hidden')) renderActiveTab();
+                    if (state.panel && !state.panel.classList.contains('hidden')) renderActiveTab();
                     return;
                 }
 
@@ -1702,7 +1732,7 @@
                     CONFIG.customLogo = !CONFIG.customLogo;
                     await saveConfig();
                     applyAll();
-                    if (panel && !panel.classList.contains('hidden')) renderActiveTab();
+                    if (state.panel && !state.panel.classList.contains('hidden')) renderActiveTab();
                     return;
                 }
 
@@ -1715,12 +1745,15 @@
     }
 
     function setupUserScriptMenu() {
-        if (typeof GM_registerMenuCommand === 'undefined') return;
+        if (!GM_API.registerMenuCommand) {
+            console.warn('[elGoogle] GM.registerMenuCommand недоступен, меню скрипта отключено');
+            return;
+        }
         try {
-            GM_registerMenuCommand('🎨 Открыть панель elGoogle', togglePanel, 'f2');
-            GM_registerMenuCommand('🔄 Проверить обновления', () => checkForUpdates());
-            GM_registerMenuCommand('📋 Экспорт настроек', exportSettings);
-            GM_registerMenuCommand('🗑️ Сбросить все настройки', resetSettings);
+            GM_API.registerMenuCommand('🎨 Открыть панель elGoogle', togglePanel, 'f2');
+            GM_API.registerMenuCommand('🔄 Проверить обновления', () => checkForUpdates());
+            GM_API.registerMenuCommand('📋 Экспорт настроек', exportSettings);
+            GM_API.registerMenuCommand('🗑️ Сбросить все настройки', resetSettings);
         } catch (e) {
             console.warn('[elGoogle] Ошибка создания меню:', e);
         }
@@ -1729,7 +1762,7 @@
     // ================== ПРОВЕРКА ОБНОВЛЕНИЙ ==================
 
     async function checkForUpdates(silent = false) {
-        if (isCheckingUpdate) return;
+        if (state.isCheckingUpdate) return;
 
         const now = Date.now();
         const oneDay = 24 * 60 * 60 * 1000;
@@ -1739,11 +1772,11 @@
             return;
         }
 
-        isCheckingUpdate = true;
+        state.isCheckingUpdate = true;
 
         try {
             const latestRelease = await getLatestRelease();
-            lastReleaseInfo = latestRelease;
+            state.lastReleaseInfo = latestRelease;
             CONFIG.lastVersionCheck = now;
             await saveConfig();
 
@@ -1752,18 +1785,18 @@
             console.warn('[elGoogle] Ошибка проверки обновлений:', error);
             if (!silent) alert('Не удалось проверить обновления. Попробуйте позже.');
         } finally {
-            isCheckingUpdate = false;
+            state.isCheckingUpdate = false;
         }
     }
 
     function getLatestRelease() {
         return new Promise((resolve, reject) => {
-            if (typeof GM === 'undefined' || typeof GM.xmlHttpRequest !== 'function') {
+            if (!GM_API.xmlHttpRequest) {
                 reject(new Error('GM.xmlHttpRequest недоступен в этом окружении'));
                 return;
             }
 
-            GM.xmlHttpRequest({
+            GM_API.xmlHttpRequest({
                 method: 'GET',
                 url: 'https://api.github.com/repos/ellatuk/elGoogle/releases/latest',
                 headers: { 'Accept': 'application/vnd.github.v3+json' },
@@ -2076,7 +2109,7 @@
             }
 
             .control-label {
-                display: flex; align-items: center; gap: 12px;
+                display: flex; align-items: center; gap: 10px;
                 flex: 1;
             }
 
@@ -2097,13 +2130,13 @@
             }
 
             .tech-icon {
-                width: 35px; height: 35px;
+                width: 30px; height: 30px;
                 fill: currentColor;
                 stroke: none;
             }
 
             .tech-name {
-                font-size: 11px;
+                font-size: 10px;
                 text-align: center;
                 white-space: normal;
                 word-break: break-word;
@@ -2315,8 +2348,8 @@
             }
 
             .language-btn.active {
-                border-color: #1a73e8;
-                background: rgba(26, 115, 232, 0.1);
+                border-color: var(--accent-color, #1a73e8);
+                background: color-mix(in srgb, var(--accent-color, #1a73e8) 12%, transparent);
                 box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color, #1a73e8) 35%, transparent);
             }
 
@@ -2376,7 +2409,7 @@
 
             .tech-stack {
                 display: grid;
-                grid-template-columns: repeat(4, minmax(70px, 1fr));
+                grid-template-columns: repeat(5, minmax(0, 1fr));
                 gap: 12px;
                 margin-top: 10px;
             }
@@ -2387,14 +2420,14 @@
                 align-items: center;
                 justify-content: center;
                 gap: 8px;
-                padding: 16px 12px;
+                padding: 12px 8px;
                 background: rgba(255, 255, 255, 0.05);
                 border-radius: 10px;
                 text-decoration: none;
                 color: #fff !important;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 border: 1px solid rgba(255, 255, 255, 0.1);
-                min-height: 90px;
+                min-height: 80px;
                 position: relative;
                 overflow: hidden;
             }
@@ -2465,6 +2498,16 @@
                 background: rgba(0, 0, 0, 0.2);
                 border-color: rgba(0, 0, 0, 0.8);
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            }
+
+            .tech-card:nth-child(5) {
+                border-color: rgba(167, 139, 250, 0.35);
+            }
+
+            .tech-card:nth-child(5):hover {
+                background: rgba(167, 139, 250, 0.2);
+                border-color: rgba(167, 139, 250, 0.8);
+                box-shadow: 0 8px 32px rgba(167, 139, 250, 0.45);
             }
 
             .check-update-btn {
