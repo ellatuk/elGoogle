@@ -306,6 +306,13 @@
         return `.RNNXgb{${base}}${extraCss}`;
     };
 
+    const createSearchStyle = (rules, extraCss = '') => {
+        const base = Object.entries(rules)
+            .map(([prop, value]) => `${prop}:${value}!important;`)
+            .join('');
+        return `.RNNXgb{${base}}${extraCss}`;
+    };
+
     const SEARCH_STYLES = {
         'google-default': {
             key: 'google',
@@ -2011,6 +2018,9 @@
 
     function getThemeStyles() {
         return `
+            /* Мини-утилиты в стиле UnoCSS */
+            ${getUtilityStyles()}
+
             .elgoogle-panel {
                 --panel-bg: rgba(25, 25, 25, 0.95);
                 --panel-text: #ffffff;
