@@ -478,6 +478,19 @@
         });
     }
 
+
+    function makeSafeTranslations(langPack) {
+        const fallback = LANGUAGES.en || {};
+        return new Proxy(langPack || {}, {
+            get(target, prop) {
+                if (typeof prop !== 'string') return target[prop];
+                if (target[prop] !== undefined) return target[prop];
+                if (fallback[prop] !== undefined) return fallback[prop];
+                return prop;
+            }
+        });
+    }
+
     // ================== ИНИЦИАЛИЗАЦИЯ ==================
 
     async function init() {
