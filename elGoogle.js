@@ -240,6 +240,7 @@
     // Инициализируем переводы с дефолтным языком (будет переопределено после загрузки конфига)
     let currentLang = browserLang;
     let t = LANGUAGES[currentLang];
+    let tt = t;
 
     // ================== КОНСТАНТЫ И КОНФИГУРАЦИЯ ==================
 
@@ -760,6 +761,19 @@
     let isCheckingUpdate = false;
     let logoApplied = false;
 
+
+    function makeSafeTranslations(langPack) {
+        const fallback = LANGUAGES.en || {};
+        return new Proxy(langPack || {}, {
+            get(target, prop) {
+                if (typeof prop !== 'string') return target[prop];
+                if (target[prop] !== undefined) return target[prop];
+                if (fallback[prop] !== undefined) return fallback[prop];
+                return prop;
+            }
+        });
+    }
+
     // ================== ИНИЦИАЛИЗАЦИЯ ==================
 
     async function init() {
@@ -793,8 +807,10 @@
         }
 
         // Устанавливаем переводы
-        t = LANGUAGES[currentLang];
-        window.t = t;
+        t = LANGUAGES[currentLang] || LANGUAGES.en;
+        tt = makeSafeTranslations(t);
+        t = tt;
+        window.t = tt;
     }
 
     async function loadConfig() {
@@ -975,7 +991,7 @@
 
     function applyMenuTheme() {
         if (panel) {
-            panel.classList.remove('theme-dark', 'theme-light');
+            panel.classList.remove('theme-dark', 'theme-light', 'theme-blue', 'theme-olive', 'theme-brown');
             panel.classList.add(`theme-${CONFIG.menuTheme}`);
         }
     }
@@ -1252,51 +1268,51 @@
         panel.style.left = CONFIG.panelLeft;
 
         panel.innerHTML = `
-            <div class="panel-header" id="elgoogle-drag-handle">
-                <div class="panel-title">
+            <div class="u-flex u-justify-between u-items-center u-px-5 u-py-4 u-border-b u-border-white-10 u-cursor-move u-shell-header" id="elgoogle-drag-handle">
+                <div class="panel-title u-flex u-items-center u-gap-2-5">
                     <div class="logo-icon"></div>
-                    <div class="title-text">
-                        <span class="title-main">elGoogle</span>
-                        <span class="title-version">v${SCRIPT_VERSION}</span>
+                    <div class="title-text u-flex u-items-baseline u-gap-1-5">
+                        <span class="title-main u-font-semibold u-text-lg">elGoogle</span>
+                        <span class="title-version u-text-xs u-opacity-60 u-font-normal u-tight">v${SCRIPT_VERSION}</span>
                     </div>
                 </div>
-                <button class="panel-close" title="Закрыть (Esc)">
+                <button class="panel-close u-btn-icon u-rounded-full u-bg-white-10 hover:u-bg-white-20" title="Закрыть (Esc)">
                     <svg class="el-icon"><use href="#i-close"></use></svg>
                 </button>
             </div>
 
-            <div class="tabs">
-                <button class="tab ${activeTab === 'general' ? 'active' : ''}" data-tab="general">
+            <div class="u-flex u-px-4 u-border-b u-border-white-10 u-bg-black-15 u-shell-tabs">
+                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'general' ? 'is-active' : ''}" data-tab="general">
                     <svg class="el-icon"><use href="#i-sliders"></use></svg>
-                    ${t.general}
+                    ${tt.general}
                 </button>
-                <button class="tab ${activeTab === 'search' ? 'active' : ''}" data-tab="search">
+                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'search' ? 'is-active' : ''}" data-tab="search">
                     <svg class="el-icon"><use href="#i-search"></use></svg>
-                    ${t.search}
+                    ${tt.search}
                 </button>
-                <button class="tab ${activeTab === 'menu' ? 'active' : ''}" data-tab="menu">
+                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'menu' ? 'is-active' : ''}" data-tab="menu">
                     <svg class="el-icon"><use href="#i-menu"></use></svg>
-                    ${t.menu}
+                    ${tt.menu}
                 </button>
-                <button class="tab ${activeTab === 'about' ? 'active' : ''}" data-tab="about">
+                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'about' ? 'is-active' : ''}" data-tab="about">
                     <svg class="el-icon"><use href="#i-info"></use></svg>
-                    <span class="tab-text">${t.about}</span>
+                    <span class="tab-text">${tt.about}</span>
                 </button>
             </div>
 
             <div class="tab-content" id="tabContent"></div>
 
-            <div class="panel-footer">
-                <button class="footer-btn" id="exportBtn" title="${t.exportSettings}">
+            <div class="u-flex u-items-center u-px-5 u-py-3 u-border-t u-border-white-10 u-bg-black-10 u-shell-footer">
+                <button class="u-btn-icon u-rounded-md u-bg-white-10 hover:u-bg-white-20 u-mr-2 u-footer-btn" id="exportBtn" title="${tt.exportSettings}">
                     <svg class="el-icon"><use href="#i-export"></use></svg>
                 </button>
-                <button class="footer-btn" id="importBtn" title="${t.importSettings}">
+                <button class="u-btn-icon u-rounded-md u-bg-white-10 hover:u-bg-white-20 u-mr-2 u-footer-btn" id="importBtn" title="${tt.importSettings}">
                     <svg class="el-icon"><use href="#i-import"></use></svg>
                 </button>
-                <button class="footer-btn" id="resetBtn" title="${t.resetSettings}">
+                <button class="u-btn-icon u-rounded-md u-bg-white-10 hover:u-bg-white-20 u-mr-2 u-footer-btn" id="resetBtn" title="${tt.resetSettings}">
                     <svg class="el-icon"><use href="#i-list-restart"></use></svg>
                 </button>
-                <div class="footer-status">
+                <div class="u-flex-1 u-text-right u-text-2xs u-opacity-70 u-footer-status">
                     ${isCheckingUpdate ? t.checkingUpdates : t.f2Menu}
                 </div>
             </div>
@@ -1326,10 +1342,10 @@
     function renderGeneralTab(container) {
         container.innerHTML = `
             <div class="tab-section">
-                <h3><svg class="el-icon section-icon"><use href="#i-settings-2"></use></svg>${t.general}</h3>
+                <h3><svg class="el-icon section-icon"><use href="#i-settings-2"></use></svg>${tt.general}</h3>
 
                 <div class="control-group">
-                    <div class="control-row ${CONFIG.darkMode ? 'active' : ''}" data-action="toggleDark">
+                    <div class="u-control-row ${CONFIG.darkMode ? 'active' : ''}" data-action="toggleDark">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-theme"></use></svg>
                             <div>
@@ -1343,7 +1359,7 @@
                         </label>
                     </div>
 
-                    <div class="control-row ${CONFIG.customLogo ? 'active' : ''}" data-action="toggleLogo">
+                    <div class="u-control-row ${CONFIG.customLogo ? 'active' : ''}" data-action="toggleLogo">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-wrench"></use></svg>
                             <div>
@@ -1361,7 +1377,7 @@
                 <div class="control-group">
                     <h4><svg class="el-icon section-icon"><use href="#i-ai"></use></svg>${t.cleaninginterface}</h4>
 
-                    <div class="control-row ${CONFIG.removeAI ? 'active' : ''}" data-action="toggleAI">
+                    <div class="u-control-row ${CONFIG.removeAI ? 'active' : ''}" data-action="toggleAI">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-ai"></use></svg>
                             <div>
@@ -1375,7 +1391,7 @@
                         </label>
                     </div>
 
-                    <div class="control-row ${CONFIG.removeIcons ? 'active' : ''}" data-action="toggleIcons">
+                    <div class="u-control-row ${CONFIG.removeIcons ? 'active' : ''}" data-action="toggleIcons">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-icon"></use></svg>
                             <div>
@@ -1389,7 +1405,7 @@
                         </label>
                     </div>
 
-                    <div class="control-row ${CONFIG.removeImages ? 'active' : ''}" data-action="toggleImages">
+                    <div class="u-control-row ${CONFIG.removeImages ? 'active' : ''}" data-action="toggleImages">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-image-off"></use></svg>
                             <div>
@@ -1403,7 +1419,7 @@
                         </label>
                     </div>
 
-                    <div class="control-row ${CONFIG.removeMail ? 'active' : ''}" data-action="toggleMail">
+                    <div class="u-control-row ${CONFIG.removeMail ? 'active' : ''}" data-action="toggleMail">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-mail-x"></use></svg>
                             <div>
@@ -1452,7 +1468,7 @@
                 <h3><svg class="el-icon section-icon"><use href="#i-search"></use></svg>${t.searchStyle}</h3>
 
                 <div class="control-group">
-                    <div class="control-row ${CONFIG.searchStyleEnabled ? 'active' : ''}" data-action="toggleSearchStyle">
+                    <div class="u-control-row ${CONFIG.searchStyleEnabled ? 'active' : ''}" data-action="toggleSearchStyle">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-check"></use></svg>
                             <div>
@@ -1491,33 +1507,45 @@
 
         container.innerHTML = `
             <div class="tab-section">
-                <h3><svg class="el-icon section-icon"><use href="#i-menu"></use></svg>${t.panelSettings}</h3>
+                <h3><svg class="el-icon section-icon"><use href="#i-menu"></use></svg>${tt.panelSettings}</h3>
 
                 <div class="control-group">
-                    <h4><svg class="el-icon section-icon"><use href="#i-theme"></use></svg>${t.theme}</h4>
+                    <h4><svg class="el-icon section-icon"><use href="#i-theme"></use></svg>${tt.theme}</h4>
                     <div class="theme-buttons">
                         <button class="theme-btn ${CONFIG.menuTheme === 'dark' ? 'active' : ''}" data-theme="dark">
                             <div class="theme-preview dark"></div>
-                            ${t.dark}
+                            ${tt.dark}
                         </button>
                         <button class="theme-btn ${CONFIG.menuTheme === 'light' ? 'active' : ''}" data-theme="light">
                             <div class="theme-preview light"></div>
-                            ${t.light}
+                            ${tt.light}
+                        </button>
+                        <button class="theme-btn ${CONFIG.menuTheme === 'blue' ? 'active' : ''}" data-theme="blue">
+                            <div class="theme-preview blue"></div>
+                            Blue
+                        </button>
+                        <button class="theme-btn ${CONFIG.menuTheme === 'olive' ? 'active' : ''}" data-theme="olive">
+                            <div class="theme-preview olive"></div>
+                            Olive
+                        </button>
+                        <button class="theme-btn ${CONFIG.menuTheme === 'brown' ? 'active' : ''}" data-theme="brown">
+                            <div class="theme-preview brown"></div>
+                            Brown
                         </button>
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <h4><svg class="el-icon section-icon"><use href="#i-languages"></use></svg>${t.menuLanguage}</h4>
+                    <h4><svg class="el-icon section-icon"><use href="#i-languages"></use></svg>${tt.menuLanguage}</h4>
                     <div class="language-buttons">
                         <button class="language-btn ${isAuto ? 'active' : ''}" data-language="auto">
-                            ${t.auto}
+                            ${tt.auto}
                         </button>
                         <button class="language-btn ${isRu ? 'active' : ''}" data-language="ru">
-                            ${t.russian}
+                            ${tt.russian}
                         </button>
                         <button class="language-btn ${isEn ? 'active' : ''}" data-language="en">
-                            ${t.english}
+                            ${tt.english}
                         </button>
                     </div>
                     <div class="language-description">
@@ -1526,12 +1554,12 @@
                 </div>
 
                 <div class="control-group">
-                    <div class="control-row ${CONFIG.compactMode ? 'active' : ''}" data-action="toggleCompact">
+                    <div class="u-control-row ${CONFIG.compactMode ? 'active' : ''}" data-action="toggleCompact">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-check"></use></svg>
                             <div>
-                                <div class="control-title">${t.compactMode}</div>
-                                <div class="control-description">${t.compactModeDesc}</div>
+                                <div class="control-title">${tt.compactMode}</div>
+                                <div class="control-description">${tt.compactModeDesc}</div>
                             </div>
                         </div>
                         <label class="switch">
@@ -1540,12 +1568,12 @@
                         </label>
                     </div>
 
-                    <div class="control-row ${CONFIG.glassEffect ? 'active' : ''}" data-action="toggleGlass">
+                    <div class="u-control-row ${CONFIG.glassEffect ? 'active' : ''}" data-action="toggleGlass">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-check"></use></svg>
                             <div>
-                                <div class="control-title">${t.glassEffect}</div>
-                                <div class="control-description">${t.glassEffectDesc}</div>
+                                <div class="control-title">${tt.glassEffect}</div>
+                                <div class="control-description">${tt.glassEffectDesc}</div>
                             </div>
                         </div>
                         <label class="switch">
@@ -1574,7 +1602,7 @@
 
         container.innerHTML = `
             <div class="tab-section">
-                <h3><svg class="el-icon section-icon"><use href="#i-info"></use></svg>${t.about}</h3>
+                <h3><svg class="el-icon section-icon"><use href="#i-info"></use></svg>${tt.about}</h3>
 
                 <div class="about-info">
                     <div class="info-item">
@@ -1681,7 +1709,7 @@
     }
 
     function setupControlHandlers(container) {
-        container.querySelectorAll('.control-row[data-action]').forEach(row => {
+        container.querySelectorAll('[data-action]').forEach(row => {
             const action = row.dataset.action;
             const checkbox = row.querySelector('input[type="checkbox"]');
 
@@ -1757,16 +1785,16 @@
                     renderActiveTab();
 
                     // Обновляем заголовки вкладок
-                    panel.querySelectorAll('.tab').forEach(tab => {
+                    panel.querySelectorAll('[data-tab]').forEach(tab => {
                         const tabName = tab.dataset.tab;
                         if (tabName === 'general') {
-                            tab.innerHTML = `<svg class="el-icon"><use href="#i-sliders"></use></svg>${t.general}`;
+                            tab.innerHTML = `<svg class="el-icon"><use href="#i-sliders"></use></svg>${tt.general}`;
                         } else if (tabName === 'search') {
-                            tab.innerHTML = `<svg class="el-icon"><use href="#i-search"></use></svg>${t.search}`;
+                            tab.innerHTML = `<svg class="el-icon"><use href="#i-search"></use></svg>${tt.search}`;
                         } else if (tabName === 'menu') {
-                            tab.innerHTML = `<svg class="el-icon"><use href="#i-menu"></use></svg>${t.menu}`;
+                            tab.innerHTML = `<svg class="el-icon"><use href="#i-menu"></use></svg>${tt.menu}`;
                         } else if (tabName === 'about') {
-                            tab.innerHTML = `<svg class="el-icon"><use href="#i-info"></use></svg><span class="tab-text">${t.about}</span>`;
+                            tab.innerHTML = `<svg class="el-icon"><use href="#i-info"></use></svg><span class="tab-text">${tt.about}</span>`;
                         }
                     });
 
@@ -1787,12 +1815,23 @@
     function setupPanelEvents() {
         panel.querySelector('.panel-close').addEventListener('click', togglePanel);
 
-        panel.querySelectorAll('.tab').forEach(tab => {
+        panel.querySelectorAll('[data-tab]').forEach(tab => {
             tab.addEventListener('click', () => {
                 activeTab = tab.dataset.tab;
-                panel.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                renderActiveTab();
+                panel.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('is-active'));
+                tab.classList.add('is-active');
+
+                const content = document.getElementById('tabContent');
+                if (!content) {
+                    renderActiveTab();
+                    return;
+                }
+
+                content.classList.add('fade-out');
+                setTimeout(() => {
+                    renderActiveTab();
+                    content.classList.remove('fade-out');
+                }, 170);
             });
         });
 
@@ -1929,14 +1968,44 @@
     }
 
     function setupHotkeys() {
-        document.addEventListener('keydown', e => {
+        document.addEventListener('keydown', async e => {
+            const key = e.key.toLowerCase();
+
             if (e.key === 'F2' && !e.ctrlKey && !e.altKey && !e.metaKey) {
                 e.preventDefault();
                 togglePanel();
+                return;
             }
-            if (e.ctrlKey && e.altKey && e.key === 'r') {
+
+            if (e.ctrlKey && e.altKey && key === 'r') {
                 e.preventDefault();
                 location.reload();
+                return;
+            }
+
+            if (e.ctrlKey && e.shiftKey && !e.altKey && !e.metaKey) {
+                if (key === 'd') {
+                    e.preventDefault();
+                    CONFIG.darkMode = !CONFIG.darkMode;
+                    await saveConfig();
+                    applyAll();
+                    if (panel && !panel.classList.contains('hidden')) renderActiveTab();
+                    return;
+                }
+
+                if (key === 'l') {
+                    e.preventDefault();
+                    CONFIG.customLogo = !CONFIG.customLogo;
+                    await saveConfig();
+                    applyAll();
+                    if (panel && !panel.classList.contains('hidden')) renderActiveTab();
+                    return;
+                }
+
+                if (key === 'r') {
+                    e.preventDefault();
+                    resetSettings();
+                }
             }
         });
     }
@@ -2026,6 +2095,51 @@
 
     function getPanelStyles() {
         return `
+            /* Мини-утилиты в стиле UnoCSS */
+            .u-flex { display: flex; }
+            .u-flex-1 { flex: 1; }
+            .u-items-center { align-items: center; }
+            .u-items-baseline { align-items: baseline; }
+            .u-justify-between { justify-content: space-between; }
+            .u-justify-center { justify-content: center; }
+            .u-gap-2 { gap: 8px; }
+            .u-gap-2-5 { gap: 10px; }
+            .u-gap-1-5 { gap: 6px; }
+            .u-px-5 { padding-left: 20px; padding-right: 20px; }
+            .u-px-4 { padding-left: 16px; padding-right: 16px; }
+            .u-py-4 { padding-top: 16px; padding-bottom: 16px; }
+            .u-py-3 { padding-top: 12px; padding-bottom: 12px; }
+            .u-border-b { border-bottom-width: 1px; border-bottom-style: solid; }
+            .u-border-t { border-top-width: 1px; border-top-style: solid; }
+            .u-border-white-10 { border-color: rgba(255, 255, 255, 0.1); }
+            .u-cursor-move { cursor: move; }
+            .u-font-semibold { font-weight: 600; }
+            .u-font-normal { font-weight: 400; }
+            .u-text-lg { font-size: 18px; }
+            .u-text-xs { font-size: 13px; }
+            .u-text-2xs { font-size: 12px; }
+            .u-text-right { text-align: right; }
+            .u-opacity-60 { opacity: 0.6; }
+            .u-opacity-70 { opacity: 0.7; }
+            .u-tight { letter-spacing: -0.2px; }
+            .u-rounded-full { border-radius: 50%; }
+            .u-rounded-md { border-radius: 6px; }
+            .u-bg-white-10 { background: rgba(255, 255, 255, 0.1); }
+            .u-bg-black-15 { background: rgba(0, 0, 0, 0.15); }
+            .u-bg-black-10 { background: rgba(0, 0, 0, 0.1); }
+            .u-mr-2 { margin-right: 8px; }
+            .u-btn-icon {
+                border: none;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .hover\:u-bg-white-20:hover { background: rgba(255, 255, 255, 0.2); }
+
             .elgoogle-panel {
                 position: fixed; z-index: 999999;
                 min-width: 400px; max-width: 500px;
@@ -2041,15 +2155,41 @@
             }
 
             .elgoogle-panel.theme-dark {
+                --accent-color: #1a73e8;
                 background: rgba(25, 25, 25, 0.95);
                 color: #fff; border: 1px solid rgba(255, 255, 255, 0.1);
                 box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             }
 
             .elgoogle-panel.theme-light {
-                background: rgba(255, 255, 255, 0.95);
-                color: #333; border: 1px solid rgba(0, 0, 0, 0.1);
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+                --accent-color: #2563eb;
+                background: rgba(248, 250, 255, 0.96);
+                color: #111827; border: 1px solid rgba(0, 0, 0, 0.08);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            }
+
+            .elgoogle-panel.theme-blue {
+                --accent-color: #3b82f6;
+                background: linear-gradient(145deg, #1a2a4a, #0f1a2f);
+                color: #e0f0ff;
+                border: 1px solid rgba(100, 180, 255, 0.3);
+                box-shadow: 0 10px 40px rgba(0, 40, 80, 0.4);
+            }
+
+            .elgoogle-panel.theme-olive {
+                --accent-color: #84cc16;
+                background: linear-gradient(145deg, #2d3e2d, #1e2a1e);
+                color: #f0f5e0;
+                border: 1px solid rgba(180, 200, 100, 0.3);
+                box-shadow: 0 10px 40px rgba(40, 60, 0, 0.4);
+            }
+
+            .elgoogle-panel.theme-brown {
+                --accent-color: #d97706;
+                background: linear-gradient(145deg, #3e2e1e, #2a1e12);
+                color: #f5e8d0;
+                border: 1px solid rgba(200, 150, 100, 0.3);
+                box-shadow: 0 10px 40px rgba(80, 40, 0, 0.4);
             }
 
             .elgoogle-panel.glass {
@@ -2094,36 +2234,13 @@
                 min-width: 320px; max-width: 380px;
             }
 
-            .elgoogle-panel.compact .panel-header { padding: 12px 16px; }
-            .elgoogle-panel.compact .tabs { padding: 0 12px; }
-            .elgoogle-panel.compact .tab { padding: 8px 12px; font-size: 13px; }
+            .elgoogle-panel.compact .u-px-5 { padding-left: 16px; padding-right: 16px; }
+            .elgoogle-panel.compact .u-px-4 { padding-left: 12px; padding-right: 12px; }
+            .elgoogle-panel.compact .u-tab-btn { padding: 8px 12px; font-size: 13px; }
             .elgoogle-panel.compact .tab-content { padding: 16px; }
 
-            .panel-header {
-                display: flex; justify-content: space-between;
-                align-items: center; padding: 16px 20px;
-                cursor: move; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-
-            .theme-light .panel-header {
+            .theme-light .u-shell-header {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            }
-
-            .panel-title {
-                display: flex; align-items: center; gap: 10px;
-            }
-
-            .title-text {
-                display: flex; align-items: baseline; gap: 6px;
-            }
-
-            .title-main {
-                font-weight: 600; font-size: 18px;
-            }
-
-            .title-version {
-                font-size: 13px; opacity: 0.6; font-weight: 400;
-                letter-spacing: -0.2px;
             }
 
             .logo-icon {
@@ -2135,7 +2252,7 @@
                 transition: transform 0.3s ease, filter 0.3s ease;
             }
 
-            .panel-header:hover .logo-icon {
+            .u-shell-header:hover .logo-icon {
                 transform: scale(1.1);
                 filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
             }
@@ -2144,35 +2261,20 @@
                 filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
             }
 
-            .panel-close {
-                background: rgba(255, 255, 255, 0.1); border: none;
-                border-radius: 50%; width: 32px; height: 32px;
-                display: flex; align-items: center; justify-content: center;
-                cursor: pointer; transition: background 0.2s, transform 0.2s;
-            }
-
             .theme-light .panel-close { background: rgba(0, 0, 0, 0.1); }
             .panel-close:hover {
-                background: rgba(255, 255, 255, 0.2);
                 transform: scale(1.05);
             }
             .theme-light .panel-close:hover { background: rgba(0, 0, 0, 0.2); }
 
-            .tabs {
-                display: flex; padding: 0 16px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                background: rgba(0, 0, 0, 0.15);
-                border-radius: 16px 16px 0 0;
-            }
+            .u-shell-tabs { border-radius: 16px 16px 0 0; }
 
-            .theme-light .tabs {
+            .theme-light .u-shell-tabs {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
                 background: rgba(0, 0, 0, 0.05);
             }
 
-            .tab {
-                flex: 1; display: flex; align-items: center;
-                justify-content: center; gap: 8px; padding: 12px 16px;
+            .u-tab-btn {
                 background: none; border: none; color: inherit;
                 cursor: pointer; font-size: 14px; transition: all 0.2s;
                 border-bottom: 2px solid transparent; opacity: 0.7;
@@ -2183,20 +2285,25 @@
                 display: inline-block;
             }
 
-            .tab:hover {
+            .u-tab-btn:hover {
                 opacity: 1; background: rgba(255, 255, 255, 0.08);
                 transform: translateY(-1px);
             }
 
-            .theme-light .tab:hover { background: rgba(0, 0, 0, 0.08); }
+            .theme-light .u-tab-btn:hover { background: rgba(0, 0, 0, 0.08); }
 
-            .tab.active {
-                opacity: 1; border-bottom-color: #1a73e8;
-                background: rgba(26, 115, 232, 0.15);
+            .u-tab-btn.is-active {
+                opacity: 1; border-bottom-color: var(--accent-color, #1a73e8);
+                background: color-mix(in srgb, var(--accent-color, #1a73e8) 18%, transparent);
             }
 
             .tab-content {
                 padding: 20px; max-height: 60vh; overflow-y: auto;
+                transition: opacity 0.2s ease, transform 0.2s ease;
+            }
+            .tab-content.fade-out {
+                opacity: 0;
+                transform: translateY(4px);
             }
 
             .tab-section h3 {
@@ -2211,7 +2318,7 @@
 
             .control-group { margin-bottom: 24px; }
 
-            .control-row {
+            .u-control-row {
                 display: flex; justify-content: space-between;
                 align-items: center; padding: 12px 0;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -2220,21 +2327,21 @@
                 padding-left: 12px; padding-right: 12px;
             }
 
-            .theme-light .control-row {
+            .theme-light .u-control-row {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             }
 
-            .control-row:hover {
+            .u-control-row:hover {
                 background: rgba(255, 255, 255, 0.08);
                 transform: translateX(2px);
             }
 
-            .theme-light .control-row:hover {
+            .theme-light .u-control-row:hover {
                 background: rgba(0, 0, 0, 0.08);
             }
 
-            .control-row.active {
-                background: color-mix(in srgb, #1a73e8 18%, transparent);
+            .u-control-row.active {
+                background: color-mix(in srgb, var(--accent-color, #1a73e8) 18%, transparent);
             }
 
             .control-label {
@@ -2247,7 +2354,7 @@
             }
 
             .control-description {
-                font-size: 12px; opacity: 0.7; margin-top: 2px;
+                font-size: 13px; opacity: 0.75; margin-top: 4px;
             }
 
             .el-icon {
@@ -2313,7 +2420,7 @@
                 transition: transform .2s cubic-bezier(.4,0,.2,1);
             }
 
-            input:checked + .slider { background-color: #1a73e8; }
+            input:checked + .slider { background-color: var(--accent-color, #1a73e8); }
 
             input:checked + .slider:before {
                 transform: translateX(26px);
@@ -2364,10 +2471,10 @@
             }
 
             .preset-btn.active {
-                background: #1a73e8;
-                border-color: #1a73e8;
+                background: var(--accent-color, #1a73e8);
+                border-color: var(--accent-color, #1a73e8);
                 color: white;
-                box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+                box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color, #1a73e8) 45%, transparent);
             }
 
             .preset-description {
@@ -2376,12 +2483,12 @@
                 padding: 8px;
                 background: rgba(255, 255, 255, 0.05);
                 border-radius: 6px;
-                border-left: 3px solid #1a73e8;
+                border-left: 3px solid var(--accent-color, #1a73e8);
             }
 
             .theme-light .preset-description {
                 background: rgba(0, 0, 0, 0.05);
-                border-left: 3px solid rgba(26, 115, 232, 0.5);
+                border-left: 3px solid color-mix(in srgb, var(--accent-color, #1a73e8) 55%, transparent);
             }
 
             .style-preview-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px; }
@@ -2396,8 +2503,8 @@
             }
             .theme-light .style-preview:hover { background: rgba(0, 0, 0, 0.1); }
             .style-preview.active {
-                border-color: #1a73e8; background: rgba(26, 115, 232, 0.1);
-                box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+                border-color: var(--accent-color, #1a73e8); background: color-mix(in srgb, var(--accent-color, #1a73e8) 12%, transparent);
+                box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color, #1a73e8) 35%, transparent);
             }
             .preview-box {
                 width: 100%; height: 40px; border-radius: 8px;
@@ -2424,12 +2531,15 @@
             }
             .theme-light .theme-btn:hover { background: rgba(0, 0, 0, 0.1); }
             .theme-btn.active {
-                border-color: #1a73e8; background: rgba(26, 115, 232, 0.1);
-                box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+                border-color: var(--accent-color, #1a73e8); background: color-mix(in srgb, var(--accent-color, #1a73e8) 12%, transparent);
+                box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color, #1a73e8) 35%, transparent);
             }
             .theme-preview { width: 60px; height: 40px; border-radius: 6px; }
             .theme-preview.dark { background: #1a1a1a; border: 1px solid #333; }
             .theme-preview.light { background: #f5f5f5; border: 1px solid #ddd; }
+            .theme-preview.blue { background: linear-gradient(145deg, #1a2a4a, #0f1a2f); border: 1px solid rgba(100, 180, 255, 0.35); }
+            .theme-preview.olive { background: linear-gradient(145deg, #2d3e2d, #1e2a1e); border: 1px solid rgba(180, 200, 100, 0.35); }
+            .theme-preview.brown { background: linear-gradient(145deg, #3e2e1e, #2a1e12); border: 1px solid rgba(200, 150, 100, 0.35); }
 
             .language-buttons {
                 display: grid;
@@ -2469,7 +2579,7 @@
             .language-btn.active {
                 border-color: #1a73e8;
                 background: rgba(26, 115, 232, 0.1);
-                box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+                box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color, #1a73e8) 35%, transparent);
             }
 
             .language-description {
@@ -2478,13 +2588,13 @@
                 padding: 8px;
                 background: rgba(255, 255, 255, 0.05);
                 border-radius: 6px;
-                border-left: 3px solid #1a73e8;
+                border-left: 3px solid var(--accent-color, #1a73e8);
                 margin-top: 8px;
             }
 
             .theme-light .language-description {
                 background: rgba(0, 0, 0, 0.05);
-                border-left: 3px solid rgba(26, 115, 232, 0.5);
+                border-left: 3px solid color-mix(in srgb, var(--accent-color, #1a73e8) 55%, transparent);
             }
 
             .about-info {
@@ -2733,34 +2843,16 @@
             }
             .theme-light .about-footer { border-top: 1px solid rgba(0, 0, 0, 0.1); }
 
-            .panel-footer {
-                display: flex; align-items: center; padding: 12px 20px;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-                background: rgba(0, 0, 0, 0.1);
-                border-radius: 0 0 16px 16px;
-            }
-            .theme-light .panel-footer {
+            .u-shell-footer { border-radius: 0 0 16px 16px; }
+            .theme-light .u-shell-footer {
                 border-top: 1px solid rgba(0, 0, 0, 0.1);
                 background: rgba(0, 0, 0, 0.05);
             }
-
-            .footer-btn {
-                background: rgba(255, 255, 255, 0.1); border: none;
-                border-radius: 6px; width: 32px; height: 32px;
-                display: flex; align-items: center; justify-content: center;
-                cursor: pointer; margin-right: 8px; transition: all 0.2s;
-            }
-            .theme-light .footer-btn { background: rgba(0, 0, 0, 0.1); }
-            .footer-btn:hover {
-                background: rgba(255, 255, 255, 0.2);
+            .theme-light .u-footer-btn { background: rgba(0, 0, 0, 0.1); }
+            .u-footer-btn:hover {
                 transform: scale(1.05);
             }
-            .theme-light .footer-btn:hover { background: rgba(0, 0, 0, 0.2); }
-
-            .footer-status {
-                flex: 1; text-align: right;
-                font-size: 12px; opacity: 0.7;
-            }
+            .theme-light .u-footer-btn:hover { background: rgba(0, 0, 0, 0.2); }
 
             /* Стили полосы прокрутки */
             .tab-content::-webkit-scrollbar {
@@ -2800,6 +2892,25 @@
 
             .theme-light .tab-content {
                 scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
+            }
+
+
+            @media (max-width: 640px) {
+                .elgoogle-panel {
+                    min-width: min(90vw, 360px);
+                    max-width: 90vw;
+                    left: 5vw !important;
+                }
+
+                .tab-content {
+                    max-height: 50vh;
+                }
+
+                .u-tab-btn {
+                    font-size: 12px;
+                    padding: 8px 10px;
+                    gap: 6px;
+                }
             }
         `;
     }
