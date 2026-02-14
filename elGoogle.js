@@ -1252,33 +1252,33 @@
         panel.style.left = CONFIG.panelLeft;
 
         panel.innerHTML = `
-            <div class="panel-header" id="elgoogle-drag-handle">
-                <div class="panel-title">
+            <div class="panel-header u-flex u-justify-between u-items-center u-px-5 u-py-4 u-border-b u-border-white-10 u-cursor-move" id="elgoogle-drag-handle">
+                <div class="panel-title u-flex u-items-center u-gap-2-5">
                     <div class="logo-icon"></div>
-                    <div class="title-text">
-                        <span class="title-main">elGoogle</span>
-                        <span class="title-version">v${SCRIPT_VERSION}</span>
+                    <div class="title-text u-flex u-items-baseline u-gap-1-5">
+                        <span class="title-main u-font-semibold u-text-lg">elGoogle</span>
+                        <span class="title-version u-text-xs u-opacity-60 u-font-normal u-tight">v${SCRIPT_VERSION}</span>
                     </div>
                 </div>
-                <button class="panel-close" title="Закрыть (Esc)">
+                <button class="panel-close u-btn-icon u-rounded-full u-bg-white-10 hover:u-bg-white-20" title="Закрыть (Esc)">
                     <svg class="el-icon"><use href="#i-close"></use></svg>
                 </button>
             </div>
 
-            <div class="tabs">
-                <button class="tab ${activeTab === 'general' ? 'active' : ''}" data-tab="general">
+            <div class="tabs u-flex u-px-4 u-border-b u-border-white-10 u-bg-black-15">
+                <button class="tab tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'general' ? 'active' : ''}" data-tab="general">
                     <svg class="el-icon"><use href="#i-sliders"></use></svg>
                     ${t.general}
                 </button>
-                <button class="tab ${activeTab === 'search' ? 'active' : ''}" data-tab="search">
+                <button class="tab tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'search' ? 'active' : ''}" data-tab="search">
                     <svg class="el-icon"><use href="#i-search"></use></svg>
                     ${t.search}
                 </button>
-                <button class="tab ${activeTab === 'menu' ? 'active' : ''}" data-tab="menu">
+                <button class="tab tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'menu' ? 'active' : ''}" data-tab="menu">
                     <svg class="el-icon"><use href="#i-menu"></use></svg>
                     ${t.menu}
                 </button>
-                <button class="tab ${activeTab === 'about' ? 'active' : ''}" data-tab="about">
+                <button class="tab tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${activeTab === 'about' ? 'active' : ''}" data-tab="about">
                     <svg class="el-icon"><use href="#i-info"></use></svg>
                     <span class="tab-text">${t.about}</span>
                 </button>
@@ -1286,17 +1286,17 @@
 
             <div class="tab-content" id="tabContent"></div>
 
-            <div class="panel-footer">
-                <button class="footer-btn" id="exportBtn" title="${t.exportSettings}">
+            <div class="panel-footer u-flex u-items-center u-px-5 u-py-3 u-border-t u-border-white-10 u-bg-black-10">
+                <button class="footer-btn u-btn-icon u-rounded-md u-bg-white-10 hover:u-bg-white-20 u-mr-2" id="exportBtn" title="${t.exportSettings}">
                     <svg class="el-icon"><use href="#i-export"></use></svg>
                 </button>
-                <button class="footer-btn" id="importBtn" title="${t.importSettings}">
+                <button class="footer-btn u-btn-icon u-rounded-md u-bg-white-10 hover:u-bg-white-20 u-mr-2" id="importBtn" title="${t.importSettings}">
                     <svg class="el-icon"><use href="#i-import"></use></svg>
                 </button>
-                <button class="footer-btn" id="resetBtn" title="${t.resetSettings}">
+                <button class="footer-btn u-btn-icon u-rounded-md u-bg-white-10 hover:u-bg-white-20 u-mr-2" id="resetBtn" title="${t.resetSettings}">
                     <svg class="el-icon"><use href="#i-list-restart"></use></svg>
                 </button>
-                <div class="footer-status">
+                <div class="footer-status u-flex-1 u-text-right u-text-2xs u-opacity-70">
                     ${isCheckingUpdate ? t.checkingUpdates : t.f2Menu}
                 </div>
             </div>
@@ -2026,6 +2026,51 @@
 
     function getPanelStyles() {
         return `
+            /* Мини-утилиты в стиле UnoCSS */
+            .u-flex { display: flex; }
+            .u-flex-1 { flex: 1; }
+            .u-items-center { align-items: center; }
+            .u-items-baseline { align-items: baseline; }
+            .u-justify-between { justify-content: space-between; }
+            .u-justify-center { justify-content: center; }
+            .u-gap-2 { gap: 8px; }
+            .u-gap-2-5 { gap: 10px; }
+            .u-gap-1-5 { gap: 6px; }
+            .u-px-5 { padding-left: 20px; padding-right: 20px; }
+            .u-px-4 { padding-left: 16px; padding-right: 16px; }
+            .u-py-4 { padding-top: 16px; padding-bottom: 16px; }
+            .u-py-3 { padding-top: 12px; padding-bottom: 12px; }
+            .u-border-b { border-bottom-width: 1px; border-bottom-style: solid; }
+            .u-border-t { border-top-width: 1px; border-top-style: solid; }
+            .u-border-white-10 { border-color: rgba(255, 255, 255, 0.1); }
+            .u-cursor-move { cursor: move; }
+            .u-font-semibold { font-weight: 600; }
+            .u-font-normal { font-weight: 400; }
+            .u-text-lg { font-size: 18px; }
+            .u-text-xs { font-size: 13px; }
+            .u-text-2xs { font-size: 12px; }
+            .u-text-right { text-align: right; }
+            .u-opacity-60 { opacity: 0.6; }
+            .u-opacity-70 { opacity: 0.7; }
+            .u-tight { letter-spacing: -0.2px; }
+            .u-rounded-full { border-radius: 50%; }
+            .u-rounded-md { border-radius: 6px; }
+            .u-bg-white-10 { background: rgba(255, 255, 255, 0.1); }
+            .u-bg-black-15 { background: rgba(0, 0, 0, 0.15); }
+            .u-bg-black-10 { background: rgba(0, 0, 0, 0.1); }
+            .u-mr-2 { margin-right: 8px; }
+            .u-btn-icon {
+                border: none;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .hover\:u-bg-white-20:hover { background: rgba(255, 255, 255, 0.2); }
+
             .elgoogle-panel {
                 position: fixed; z-index: 999999;
                 min-width: 400px; max-width: 500px;
@@ -2094,36 +2139,13 @@
                 min-width: 320px; max-width: 380px;
             }
 
-            .elgoogle-panel.compact .panel-header { padding: 12px 16px; }
-            .elgoogle-panel.compact .tabs { padding: 0 12px; }
-            .elgoogle-panel.compact .tab { padding: 8px 12px; font-size: 13px; }
+            .elgoogle-panel.compact .u-px-5 { padding-left: 16px; padding-right: 16px; }
+            .elgoogle-panel.compact .u-px-4 { padding-left: 12px; padding-right: 12px; }
+            .elgoogle-panel.compact .tab-btn { padding: 8px 12px; font-size: 13px; }
             .elgoogle-panel.compact .tab-content { padding: 16px; }
-
-            .panel-header {
-                display: flex; justify-content: space-between;
-                align-items: center; padding: 16px 20px;
-                cursor: move; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
 
             .theme-light .panel-header {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            }
-
-            .panel-title {
-                display: flex; align-items: center; gap: 10px;
-            }
-
-            .title-text {
-                display: flex; align-items: baseline; gap: 6px;
-            }
-
-            .title-main {
-                font-weight: 600; font-size: 18px;
-            }
-
-            .title-version {
-                font-size: 13px; opacity: 0.6; font-weight: 400;
-                letter-spacing: -0.2px;
             }
 
             .logo-icon {
@@ -2144,26 +2166,13 @@
                 filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
             }
 
-            .panel-close {
-                background: rgba(255, 255, 255, 0.1); border: none;
-                border-radius: 50%; width: 32px; height: 32px;
-                display: flex; align-items: center; justify-content: center;
-                cursor: pointer; transition: background 0.2s, transform 0.2s;
-            }
-
             .theme-light .panel-close { background: rgba(0, 0, 0, 0.1); }
             .panel-close:hover {
-                background: rgba(255, 255, 255, 0.2);
                 transform: scale(1.05);
             }
             .theme-light .panel-close:hover { background: rgba(0, 0, 0, 0.2); }
 
-            .tabs {
-                display: flex; padding: 0 16px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                background: rgba(0, 0, 0, 0.15);
-                border-radius: 16px 16px 0 0;
-            }
+            .tabs { border-radius: 16px 16px 0 0; }
 
             .theme-light .tabs {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -2171,8 +2180,6 @@
             }
 
             .tab {
-                flex: 1; display: flex; align-items: center;
-                justify-content: center; gap: 8px; padding: 12px 16px;
                 background: none; border: none; color: inherit;
                 cursor: pointer; font-size: 14px; transition: all 0.2s;
                 border-bottom: 2px solid transparent; opacity: 0.7;
@@ -2733,34 +2740,16 @@
             }
             .theme-light .about-footer { border-top: 1px solid rgba(0, 0, 0, 0.1); }
 
-            .panel-footer {
-                display: flex; align-items: center; padding: 12px 20px;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-                background: rgba(0, 0, 0, 0.1);
-                border-radius: 0 0 16px 16px;
-            }
+            .panel-footer { border-radius: 0 0 16px 16px; }
             .theme-light .panel-footer {
                 border-top: 1px solid rgba(0, 0, 0, 0.1);
                 background: rgba(0, 0, 0, 0.05);
             }
-
-            .footer-btn {
-                background: rgba(255, 255, 255, 0.1); border: none;
-                border-radius: 6px; width: 32px; height: 32px;
-                display: flex; align-items: center; justify-content: center;
-                cursor: pointer; margin-right: 8px; transition: all 0.2s;
-            }
             .theme-light .footer-btn { background: rgba(0, 0, 0, 0.1); }
             .footer-btn:hover {
-                background: rgba(255, 255, 255, 0.2);
                 transform: scale(1.05);
             }
             .theme-light .footer-btn:hover { background: rgba(0, 0, 0, 0.2); }
-
-            .footer-status {
-                flex: 1; text-align: right;
-                font-size: 12px; opacity: 0.7;
-            }
 
             /* Стили полосы прокрутки */
             .tab-content::-webkit-scrollbar {
