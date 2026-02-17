@@ -306,13 +306,6 @@
         return `.RNNXgb{${base}}${extraCss}`;
     };
 
-    const createSearchStyle = (rules, extraCss = '') => {
-        const base = Object.entries(rules)
-            .map(([prop, value]) => `${prop}:${value}!important;`)
-            .join('');
-        return `.RNNXgb{${base}}${extraCss}`;
-    };
-
     const SEARCH_STYLES = {
         'google-default': {
             key: 'google',
@@ -521,7 +514,8 @@
         activeTab: 'general',
         lastReleaseInfo: null,
         isCheckingUpdate: false,
-        logoApplied: false
+        logoApplied: false,
+        tabCacheKeys: {}
     };
 
 
@@ -1079,9 +1073,30 @@
         applyAll();
     }
 
-    function renderActiveTab() {
+    function getTabCacheKey(tabName) {
+        const base = `${tabName}|${currentLang}|${CONFIG.preset}|${CONFIG.menuTheme}|${CONFIG.panelDensity}|${CONFIG.compactMode}|${CONFIG.glassEffect}`;
+        if (tabName === 'general') {
+            return `${base}|${CONFIG.darkMode}|${CONFIG.customLogo}|${CONFIG.removeAI}|${CONFIG.removeIcons}|${CONFIG.removeImages}|${CONFIG.removeMail}`;
+        }
+        if (tabName === 'search') {
+            return `${base}|${CONFIG.searchStyleEnabled}|${CONFIG.searchStyle}`;
+        }
+        if (tabName === 'menu') {
+            return `${base}|${CONFIG.menuLanguage}|${JSON.stringify(CONFIG.quickProfiles || {})}`;
+        }
+        if (tabName === 'about') {
+            return `${base}|${state.isCheckingUpdate}|${state.lastReleaseInfo?.version || ''}`;
+        }
+        return base;
+    }
+
+    function renderActiveTab(force = false) {
         const content = document.getElementById('tabContent');
         if (!content) return;
+
+        const tabName = state.activeTab;
+        const nextKey = getTabCacheKey(tabName);
+        if (!force && state.tabCacheKeys[tabName] === nextKey) return;
 
         const renderers = {
             general: renderGeneralTab,
@@ -1090,7 +1105,8 @@
             about: renderAboutTab
         };
 
-        renderers[state.activeTab]?.(content);
+        renderers[tabName]?.(content);
+        state.tabCacheKeys[tabName] = nextKey;
     }
 
     function renderGeneralTab(container) {
@@ -1517,68 +1533,63 @@
             toggleGlass: (value) => { CONFIG.glassEffect = value; }
         };
 
-        container.querySelectorAll('[data-action]').forEach(row => {
-            const action = row.dataset.action;
-            const checkbox = row.querySelector('input[type="checkbox"]');
+        container.onchange = async (e) => {
+            const checkbox = e.target.closest('[data-action] input[type="checkbox"]');
+            if (!checkbox) return;
 
-            checkbox?.addEventListener('change', async (e) => {
-                const value = e.target.checked;
-                actions[action]?.(value);
+            const row = checkbox.closest('[data-action]');
+            const action = row?.dataset.action;
+            actions[action]?.(checkbox.checked);
 
-                await saveConfig();
-                checkIfSettingsChanged();
-                applyAll();
-                renderActiveTab();
-            });
-        });
+            await saveConfig();
+            checkIfSettingsChanged();
+            applyAll();
+            renderActiveTab(true);
+        };
 
-        container.querySelectorAll('.preset-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                const preset = btn.dataset.preset;
+        container.onclick = async (e) => {
+            const presetBtn = e.target.closest('.preset-btn[data-preset]');
+            if (presetBtn) {
+                const preset = presetBtn.dataset.preset;
                 CONFIG.preset = preset;
-
-                if (preset !== 'custom') {
-                    Object.assign(CONFIG, PRESETS[preset].values);
-                }
-
+                if (preset !== 'custom') Object.assign(CONFIG, PRESETS[preset].values);
                 await saveConfig();
                 applyAll();
-                renderActiveTab();
-            });
-        });
+                renderActiveTab(true);
+                return;
+            }
 
-        container.querySelectorAll('.style-preview').forEach(preview => {
-            preview.addEventListener('click', async () => {
-                CONFIG.searchStyle = preview.dataset.style;
+            const stylePreview = e.target.closest('.style-preview[data-style]');
+            if (stylePreview) {
+                CONFIG.searchStyle = stylePreview.dataset.style;
                 await saveConfig();
                 applySearchStyles();
-                renderActiveTab();
-            });
-        });
+                renderActiveTab(true);
+                return;
+            }
 
-        container.querySelectorAll('.theme-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                CONFIG.menuTheme = btn.dataset.theme;
+            const themeBtn = e.target.closest('.theme-btn[data-theme]');
+            if (themeBtn) {
+                CONFIG.menuTheme = themeBtn.dataset.theme;
                 await saveConfig();
                 applyMenuTheme();
-                renderActiveTab();
-            });
-        });
+                renderActiveTab(true);
+                return;
+            }
 
-
-        container.querySelectorAll('.density-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                CONFIG.panelDensity = btn.dataset.density;
+            const densityBtn = e.target.closest('.density-btn[data-density]');
+            if (densityBtn) {
+                CONFIG.panelDensity = densityBtn.dataset.density;
                 CONFIG.compactMode = CONFIG.panelDensity !== 'normal';
                 await saveConfig();
                 applyCompactMode();
-                renderActiveTab();
-            });
-        });
+                renderActiveTab(true);
+                return;
+            }
 
-        container.querySelectorAll('.profile-btn[data-profile]').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                const [mode, slot] = btn.dataset.profile.split('-');
+            const profileBtn = e.target.closest('.profile-btn[data-profile]');
+            if (profileBtn) {
+                const [mode, slot] = profileBtn.dataset.profile.split('-');
                 CONFIG.quickProfiles = CONFIG.quickProfiles || {};
 
                 if (mode === 'save') {
@@ -1598,41 +1609,70 @@
                     await saveConfig();
                 } else {
                     const profile = CONFIG.quickProfiles?.[slot];
-                    if (!profile) return alert(`Профиль ${slot} пуст`);
+                    if (!profile) {
+                        alert(`Профиль ${slot} пуст`);
+                        return;
+                    }
                     Object.assign(CONFIG, profile);
                     await saveConfig();
                     applyAll();
-                    renderActiveTab();
                 }
-            });
-        });
+                renderActiveTab(true);
+                return;
+            }
 
-        container.querySelector('#showHiddenBtn')?.addEventListener('click', () => {
-            const hidden = [];
-            if (CONFIG.removeAI) hidden.push(t.removeAI);
-            if (CONFIG.removeIcons) hidden.push(t.removeIcons);
-            if (CONFIG.removeImages) hidden.push(t.removeImages);
-            if (CONFIG.removeMail) hidden.push(t.removeMail);
-            alert(`${tt.hiddenElementsNow}\n• ${hidden.length ? hidden.join('\n• ') : '— ничего —'}`);
-        });
+            const hiddenBtn = e.target.closest('#showHiddenBtn');
+            if (hiddenBtn) {
+                const hidden = [];
+                if (CONFIG.removeAI) hidden.push(t.removeAI);
+                if (CONFIG.removeIcons) hidden.push(t.removeIcons);
+                if (CONFIG.removeImages) hidden.push(t.removeImages);
+                if (CONFIG.removeMail) hidden.push(t.removeMail);
+                alert(`${tt.hiddenElementsNow}\n• ${hidden.length ? hidden.join('\n• ') : '— ничего —'}`);
+                return;
+            }
 
-        // Обработчики для кнопок выбора языка
-        container.querySelectorAll('.language-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                const lang = btn.dataset.language;
+            const languageBtn = e.target.closest('.language-btn[data-language]');
+            if (languageBtn) {
+                const lang = languageBtn.dataset.language;
                 if (CONFIG.menuLanguage !== lang) {
                     CONFIG.menuLanguage = lang;
                     await saveConfig();
-
-                    // Обновляем активный язык и перерисовываем панель
                     updateActiveLanguage();
                     updatePresetNames();
-                    renderActiveTab();
-
+                    renderActiveTab(true);
                     updateUILanguage();
                 }
-            });
+            }
+        };
+    }
+
+    function updateUILanguage() {
+
+        if (!state.panel) return;
+
+        state.panel.querySelectorAll('[data-tab]').forEach(tab => {
+            const tabName = tab.dataset.tab;
+            if (tabName === 'general') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-sliders"></use></svg>${tt.general}`;
+            } else if (tabName === 'search') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-search"></use></svg>${tt.search}`;
+            } else if (tabName === 'menu') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-menu"></use></svg>${tt.menu}`;
+            } else if (tabName === 'about') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-info"></use></svg><span class="tab-text">${tt.about}</span>`;
+            }
         });
+
+        const status = state.panel.querySelector('.u-footer-status');
+        if (status) status.textContent = state.isCheckingUpdate ? tt.checkingUpdates : tt.f2Menu;
+
+        const exportBtn = state.panel.querySelector('#exportBtn');
+        const importBtn = state.panel.querySelector('#importBtn');
+        const resetBtn = state.panel.querySelector('#resetBtn');
+        if (exportBtn) exportBtn.title = tt.exportSettings;
+        if (importBtn) importBtn.title = tt.importSettings;
+        if (resetBtn) resetBtn.title = tt.resetSettings;
     }
 
     function updateUILanguage() {
@@ -1997,6 +2037,51 @@
             .u-opacity-70 { opacity: 0.7; }
             .u-tight { letter-spacing: -0.2px; }
             .u-rounded-full { border-radius: 50%; }
+            .u-rounded-md { border-radius: var(--radius-sm, 6px); }
+            .u-bg-white-10 { background: rgba(255, 255, 255, 0.1); }
+            .u-bg-black-15 { background: rgba(0, 0, 0, 0.15); }
+            .u-bg-black-10 { background: rgba(0, 0, 0, 0.1); }
+            .u-mr-2 { margin-right: 8px; }
+            .u-btn-icon {
+                border: none;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .hover\:u-bg-white-20:hover { background: rgba(255, 255, 255, 0.2); }
+        `;
+    }
+
+    function getThemeStyles() {
+        return `
+            .u-flex { display: flex; }
+            .u-flex-1 { flex: 1; }
+            .u-items-center { align-items: center; }
+            .u-items-baseline { align-items: baseline; }
+            .u-justify-between { justify-content: space-between; }
+            .u-justify-center { justify-content: center; }
+            .u-gap-2 { gap: 8px; }
+            .u-gap-2-5 { gap: 10px; }
+            .u-gap-1-5 { gap: 6px; }
+            ${spacingCss}
+            .u-border-b { border-bottom-width: 1px; border-bottom-style: solid; }
+            .u-border-t { border-top-width: 1px; border-top-style: solid; }
+            .u-border-white-10 { border-color: rgba(255, 255, 255, 0.1); }
+            .u-cursor-move { cursor: move; }
+            .u-font-semibold { font-weight: 600; }
+            .u-font-normal { font-weight: 400; }
+            .u-text-lg { font-size: 18px; }
+            .u-text-xs { font-size: 13px; }
+            .u-text-2xs { font-size: 12px; }
+            .u-text-right { text-align: right; }
+            .u-opacity-60 { opacity: 0.6; }
+            .u-opacity-70 { opacity: 0.7; }
+            .u-tight { letter-spacing: -0.2px; }
+            .u-rounded-full { border-radius: 50%; }
             .u-rounded-md { border-radius: 6px; }
             .u-bg-white-10 { background: rgba(255, 255, 255, 0.1); }
             .u-bg-black-15 { background: rgba(0, 0, 0, 0.15); }
@@ -2027,11 +2112,14 @@
                 --panel-border: rgba(255, 255, 255, 0.1);
                 --panel-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
                 --accent-color: #3b82f6;
+                --radius-lg: 16px;
+                --radius-sm: 8px;
+                --space-md: 20px;
 
                 position: fixed; z-index: 999999;
                 min-width: 400px; max-width: 500px;
                 font-family: 'Segoe UI', system-ui, sans-serif;
-                user-select: none; border-radius: 16px;
+                user-select: none; border-radius: var(--radius-lg);
                 transition: opacity 0.3s ease, transform 0.3s ease;
                 overflow: hidden;
                 background: var(--panel-bg);
@@ -2776,7 +2864,7 @@
             }
             .theme-light .about-footer { border-top: 1px solid rgba(0, 0, 0, 0.1); }
 
-            .u-shell-footer { border-radius: 0 0 16px 16px; }
+            .u-shell-footer { border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
             .theme-light .u-shell-footer {
                 border-top: 1px solid rgba(0, 0, 0, 0.1);
                 background: rgba(0, 0, 0, 0.05);
