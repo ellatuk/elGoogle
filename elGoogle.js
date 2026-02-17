@@ -33,6 +33,7 @@
             general: 'Общие',
             search: 'Поиск',
             menu: 'Меню',
+            page: 'Страница',
             about: 'О плагине',
 
             // Тема и внешний вид
@@ -106,6 +107,25 @@
             showHiddenNow: 'Показать скрытые элементы',
             hiddenElementsNow: 'Сейчас скрыто:',
 
+            pageAppearance: 'Внешний вид страницы',
+            removeIconsDetailed: 'Иконки поиска',
+            removeAllSearchIcons: 'Убрать все иконки поиска',
+            removeVoiceIcon: 'Удалить иконку голосового поиска',
+            removeImageIcon: 'Удалить иконку поиска по картинке',
+            removeKeyboardIcon: 'Удалить иконку экранной клавиатуры',
+            replaceIconsLucide: 'Заменить иконки на Lucide',
+            pageTheme: 'Тема страницы',
+            pageThemeDark: 'Тёмная классика',
+            pageThemeAurora: 'Мягкая Аурора',
+            pageThemeDusk: 'Пыльный закат',
+            pageThemeForest: 'Лесной туман',
+            pageThemeSlate: 'Графитовый градиент',
+            pageGrain: 'Зерно фона',
+            grainOff: 'Без зерна',
+            grainSmall: 'Мелкое',
+            grainMedium: 'Среднее',
+            grainLarge: 'Крупное',
+
             // Настройки панели
             panelSettings: 'Настройки панели',
 
@@ -150,6 +170,7 @@
             general: 'General',
             search: 'Search',
             menu: 'Menu',
+            page: 'Page',
             about: 'About',
 
             // Theme and appearance
@@ -223,6 +244,25 @@
             showHiddenNow: 'Show hidden elements',
             hiddenElementsNow: 'Hidden now:',
 
+            pageAppearance: 'Page Appearance',
+            removeIconsDetailed: 'Search icons',
+            removeAllSearchIcons: 'Hide all search icons',
+            removeVoiceIcon: 'Hide voice search icon',
+            removeImageIcon: 'Hide image search icon',
+            removeKeyboardIcon: 'Hide on-screen keyboard icon',
+            replaceIconsLucide: 'Replace icons with Lucide',
+            pageTheme: 'Page theme',
+            pageThemeDark: 'Dark Classic',
+            pageThemeAurora: 'Soft Aurora',
+            pageThemeDusk: 'Dusty Dusk',
+            pageThemeForest: 'Forest Mist',
+            pageThemeSlate: 'Slate Gradient',
+            pageGrain: 'Background grain',
+            grainOff: 'No grain',
+            grainSmall: 'Small',
+            grainMedium: 'Medium',
+            grainLarge: 'Large',
+
             // Panel settings
             panelSettings: 'Panel Settings',
 
@@ -282,6 +322,10 @@
         customLogo: true,
         removeAI: true,
         removeIcons: true,
+        removeVoiceIcon: false,
+        removeImageIcon: false,
+        removeKeyboardIcon: false,
+        replaceSearchIcons: false,
         removeImages: false,
         removeMail: false,
         preset: 'full',
@@ -296,7 +340,9 @@
         lastVersionCheck: 0,
         menuLanguage: 'auto',
         panelDensity: 'normal',
-        quickProfiles: {}  // Быстрые профили настроек
+        quickProfiles: {},  // Быстрые профили настроек
+        pageTheme: 'dark',
+        pageGrain: 'off'
     };
 
     const createSearchStyle = (rules, extraCss = '') => {
@@ -626,6 +672,7 @@
 
     function applyAll() {
         applyDarkTheme();
+        applyPageTheme();
         applyLogo();
         applySearchStyles();
         applyPanelStyles();
@@ -633,6 +680,7 @@
         applyMenuGlass();
         applyCompactMode();
         updateRemovedElements();
+        applySearchIconReplacement();
     }
 
     // ================== ФУНКЦИИ ПРИМЕНЕНИЯ НАСТРОЕК ==================
@@ -645,6 +693,85 @@
             `);
         } else {
             StyleManager.remove('elgoogle-dark-theme');
+        }
+    }
+
+
+    function applyPageTheme() {
+        const themes = {
+            dark: 'radial-gradient(circle at 20% 20%, #1f2937 0%, #111827 45%, #0a0f1a 100%)',
+            aurora: 'radial-gradient(circle at 15% 20%, rgba(88,132,255,0.28) 0%, transparent 35%), radial-gradient(circle at 80% 25%, rgba(120,255,214,0.22) 0%, transparent 35%), linear-gradient(140deg, #111827 0%, #1b2940 45%, #101827 100%)',
+            dusk: 'radial-gradient(circle at 20% 20%, rgba(255,170,120,0.25) 0%, transparent 35%), radial-gradient(circle at 80% 10%, rgba(196,133,255,0.2) 0%, transparent 30%), linear-gradient(140deg, #201526 0%, #2a1f38 45%, #1a2234 100%)',
+            forest: 'radial-gradient(circle at 15% 30%, rgba(123,211,137,0.2) 0%, transparent 35%), radial-gradient(circle at 80% 15%, rgba(111,173,252,0.16) 0%, transparent 30%), linear-gradient(140deg, #0f1a16 0%, #13291f 45%, #102028 100%)',
+            slate: 'linear-gradient(145deg, #1b202a 0%, #232b3a 50%, #1a2230 100%)'
+        };
+        const grainMap = {
+            off: '0',
+            small: '0.06',
+            medium: '0.1',
+            large: '0.14'
+        };
+        const bg = themes[CONFIG.pageTheme] || themes.dark;
+        const grain = grainMap[CONFIG.pageGrain] || '0';
+        StyleManager.apply('elgoogle-page-theme', `
+            body {
+                background: ${bg} !important;
+                background-attachment: fixed !important;
+            }
+            body::before {
+                content: '';
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                background-image: ${NOISE_TEXTURE};
+                opacity: ${grain};
+                z-index: 0;
+            }
+            #gb, .o3j99 { background: transparent !important; }
+        `);
+    }
+
+    function findSearchIconButtons() {
+        const buttons = Array.from(document.querySelectorAll('button[aria-label], div[role="button"][aria-label]'));
+        const byLabel = (parts) => buttons.filter(el => {
+            const label = (el.getAttribute('aria-label') || '').toLowerCase();
+            return parts.some(p => label.includes(p));
+        });
+        return {
+            voice: byLabel(['voice', 'голос']),
+            image: byLabel(['image', 'картин', 'объектив']),
+            keyboard: byLabel(['keyboard', 'клавиат'])
+        };
+    }
+
+    function updateSearchIconVisibility() {
+        const icons = findSearchIconButtons();
+        const hideAll = CONFIG.removeIcons;
+        const hideVoice = hideAll || CONFIG.removeVoiceIcon;
+        const hideImage = hideAll || CONFIG.removeImageIcon;
+        const hideKeyboard = hideAll || CONFIG.removeKeyboardIcon;
+        icons.voice.forEach(el => el.style.display = hideVoice ? 'none' : '');
+        icons.image.forEach(el => el.style.display = hideImage ? 'none' : '');
+        icons.keyboard.forEach(el => el.style.display = hideKeyboard ? 'none' : '');
+    }
+
+    function applySearchIconReplacement() {
+        const icons = findSearchIconButtons();
+        const map = {
+            voice: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>',
+            image: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>',
+            keyboard: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h8M16 14h2"/></svg>'
+        };
+
+        for (const [type, list] of Object.entries(icons)) {
+            list.forEach(el => {
+                if (!el.dataset.egOriginalHtml) el.dataset.egOriginalHtml = el.innerHTML;
+                if (CONFIG.replaceSearchIcons && el.style.display !== 'none') {
+                    el.innerHTML = map[type];
+                } else if (el.dataset.egOriginalHtml) {
+                    el.innerHTML = el.dataset.egOriginalHtml;
+                }
+            });
         }
     }
 
@@ -766,9 +893,7 @@
         const aiButton = document.querySelector('button[jsname="B6rgad"]');
         if (aiButton) aiButton.style.display = CONFIG.removeAI ? 'none' : '';
 
-        document.querySelectorAll('div[jsname="UdfVXc"].WC2Die').forEach(el => {
-            el.style.display = CONFIG.removeIcons ? 'none' : '';
-        });
+        updateSearchIconVisibility();
 
         const imagesLink = document.querySelector('a.gb_Z[data-pid="2"], a[aria-label*="картинк" i], a[href*="imghp"]');
         if (imagesLink) {
@@ -1042,6 +1167,10 @@
                     <svg class="el-icon"><use href="#i-menu"></use></svg>
                     ${tt.menu}
                 </button>
+                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${state.activeTab === 'page' ? 'is-active' : ''}" data-tab="page">
+                    <svg class="el-icon"><use href="#i-layout-list"></use></svg>
+                    ${tt.page}
+                </button>
                 <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${state.activeTab === 'about' ? 'is-active' : ''}" data-tab="about">
                     <svg class="el-icon"><use href="#i-info"></use></svg>
                     <span class="tab-text">${tt.about}</span>
@@ -1084,6 +1213,9 @@
         if (tabName === 'menu') {
             return `${base}|${CONFIG.menuLanguage}|${JSON.stringify(CONFIG.quickProfiles || {})}`;
         }
+        if (tabName === 'page') {
+            return `${base}|${CONFIG.removeIcons}|${CONFIG.removeVoiceIcon}|${CONFIG.removeImageIcon}|${CONFIG.removeKeyboardIcon}|${CONFIG.replaceSearchIcons}|${CONFIG.pageTheme}|${CONFIG.pageGrain}`;
+        }
         if (tabName === 'about') {
             return `${base}|${state.isCheckingUpdate}|${state.lastReleaseInfo?.version || ''}`;
         }
@@ -1102,6 +1234,7 @@
             general: renderGeneralTab,
             search: renderSearchTab,
             menu: renderMenuTab,
+            page: renderPageTab,
             about: renderAboutTab
         };
 
@@ -1391,6 +1524,66 @@
         setupControlHandlers(container);
     }
 
+
+    function renderPageTab(container) {
+        const themes = [
+            ['dark', tt.pageThemeDark],
+            ['aurora', tt.pageThemeAurora],
+            ['dusk', tt.pageThemeDusk],
+            ['forest', tt.pageThemeForest],
+            ['slate', tt.pageThemeSlate]
+        ];
+
+        container.innerHTML = `
+            <div class="tab-section">
+                <h3><svg class="el-icon section-icon"><use href="#i-layout-list"></use></svg>${tt.pageAppearance}</h3>
+
+                <div class="control-group">
+                    <h4><svg class="el-icon section-icon"><use href="#i-search"></use></svg>${tt.removeIconsDetailed}</h4>
+                    <div class="u-control-row ${CONFIG.removeIcons ? 'active' : ''}" data-action="toggleIcons">
+                        <div class="control-label"><svg class="el-icon"><use href="#i-check"></use></svg><div><div class="control-title">${tt.removeAllSearchIcons}</div></div></div>
+                        <label class="switch"><input type="checkbox" ${CONFIG.removeIcons ? 'checked' : ''}><span class="slider"></span></label>
+                    </div>
+                    <div class="u-control-row ${CONFIG.removeVoiceIcon ? 'active' : ''}" data-action="toggleVoiceIcon">
+                        <div class="control-label"><svg class="el-icon"><use href="#i-check"></use></svg><div><div class="control-title">${tt.removeVoiceIcon}</div></div></div>
+                        <label class="switch"><input type="checkbox" ${CONFIG.removeVoiceIcon ? 'checked' : ''}><span class="slider"></span></label>
+                    </div>
+                    <div class="u-control-row ${CONFIG.removeImageIcon ? 'active' : ''}" data-action="toggleImageIcon">
+                        <div class="control-label"><svg class="el-icon"><use href="#i-check"></use></svg><div><div class="control-title">${tt.removeImageIcon}</div></div></div>
+                        <label class="switch"><input type="checkbox" ${CONFIG.removeImageIcon ? 'checked' : ''}><span class="slider"></span></label>
+                    </div>
+                    <div class="u-control-row ${CONFIG.removeKeyboardIcon ? 'active' : ''}" data-action="toggleKeyboardIcon">
+                        <div class="control-label"><svg class="el-icon"><use href="#i-check"></use></svg><div><div class="control-title">${tt.removeKeyboardIcon}</div></div></div>
+                        <label class="switch"><input type="checkbox" ${CONFIG.removeKeyboardIcon ? 'checked' : ''}><span class="slider"></span></label>
+                    </div>
+                    <div class="u-control-row ${CONFIG.replaceSearchIcons ? 'active' : ''}" data-action="toggleReplaceSearchIcons">
+                        <div class="control-label"><svg class="el-icon"><use href="#i-check"></use></svg><div><div class="control-title">${tt.replaceIconsLucide}</div></div></div>
+                        <label class="switch"><input type="checkbox" ${CONFIG.replaceSearchIcons ? 'checked' : ''}><span class="slider"></span></label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><svg class="el-icon section-icon"><use href="#i-theme"></use></svg>${tt.pageTheme}</h4>
+                    <div class="theme-buttons page-theme-buttons">
+                        ${themes.map(([k,name]) => `<button class="theme-btn ${CONFIG.pageTheme === k ? 'active' : ''}" data-page-theme="${k}">${name}</button>`).join('')}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><svg class="el-icon section-icon"><use href="#i-settings"></use></svg>${tt.pageGrain}</h4>
+                    <div class="density-buttons">
+                        <button class="density-btn ${CONFIG.pageGrain === 'off' ? 'active' : ''}" data-grain="off">${tt.grainOff}</button>
+                        <button class="density-btn ${CONFIG.pageGrain === 'small' ? 'active' : ''}" data-grain="small">${tt.grainSmall}</button>
+                        <button class="density-btn ${CONFIG.pageGrain === 'medium' ? 'active' : ''}" data-grain="medium">${tt.grainMedium}</button>
+                        <button class="density-btn ${CONFIG.pageGrain === 'large' ? 'active' : ''}" data-grain="large">${tt.grainLarge}</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        setupControlHandlers(container);
+    }
+
     function renderAboutTab(container) {
         let versionStatus = '';
         if (state.lastReleaseInfo) {
@@ -1526,6 +1719,10 @@
             },
             toggleAI: (value) => { CONFIG.removeAI = value; },
             toggleIcons: (value) => { CONFIG.removeIcons = value; },
+            toggleVoiceIcon: (value) => { CONFIG.removeVoiceIcon = value; },
+            toggleImageIcon: (value) => { CONFIG.removeImageIcon = value; },
+            toggleKeyboardIcon: (value) => { CONFIG.removeKeyboardIcon = value; },
+            toggleReplaceSearchIcons: (value) => { CONFIG.replaceSearchIcons = value; },
             toggleImages: (value) => { CONFIG.removeImages = value; },
             toggleMail: (value) => { CONFIG.removeMail = value; },
             toggleSearchStyle: (value) => { CONFIG.searchStyleEnabled = value; },
@@ -1598,13 +1795,19 @@
                         customLogo: CONFIG.customLogo,
                         removeAI: CONFIG.removeAI,
                         removeIcons: CONFIG.removeIcons,
+                        removeVoiceIcon: CONFIG.removeVoiceIcon,
+                        removeImageIcon: CONFIG.removeImageIcon,
+                        removeKeyboardIcon: CONFIG.removeKeyboardIcon,
+                        replaceSearchIcons: CONFIG.replaceSearchIcons,
                         removeImages: CONFIG.removeImages,
                         removeMail: CONFIG.removeMail,
                         searchStyleEnabled: CONFIG.searchStyleEnabled,
                         searchStyle: CONFIG.searchStyle,
                         menuTheme: CONFIG.menuTheme,
                         panelDensity: CONFIG.panelDensity,
-                        glassEffect: CONFIG.glassEffect
+                        glassEffect: CONFIG.glassEffect,
+                        pageTheme: CONFIG.pageTheme,
+                        pageGrain: CONFIG.pageGrain
                     };
                     await saveConfig();
                 } else {
@@ -1617,6 +1820,24 @@
                     await saveConfig();
                     applyAll();
                 }
+                renderActiveTab(true);
+                return;
+            }
+
+            const pageThemeBtn = e.target.closest('.theme-btn[data-page-theme]');
+            if (pageThemeBtn) {
+                CONFIG.pageTheme = pageThemeBtn.dataset.pageTheme;
+                await saveConfig();
+                applyPageTheme();
+                renderActiveTab(true);
+                return;
+            }
+
+            const grainBtn = e.target.closest('[data-grain]');
+            if (grainBtn) {
+                CONFIG.pageGrain = grainBtn.dataset.grain;
+                await saveConfig();
+                applyPageTheme();
                 renderActiveTab(true);
                 return;
             }
@@ -1659,33 +1880,8 @@
                 tab.innerHTML = `<svg class="el-icon"><use href="#i-search"></use></svg>${tt.search}`;
             } else if (tabName === 'menu') {
                 tab.innerHTML = `<svg class="el-icon"><use href="#i-menu"></use></svg>${tt.menu}`;
-            } else if (tabName === 'about') {
-                tab.innerHTML = `<svg class="el-icon"><use href="#i-info"></use></svg><span class="tab-text">${tt.about}</span>`;
-            }
-        });
-
-        const status = state.panel.querySelector('.u-footer-status');
-        if (status) status.textContent = state.isCheckingUpdate ? tt.checkingUpdates : tt.f2Menu;
-
-        const exportBtn = state.panel.querySelector('#exportBtn');
-        const importBtn = state.panel.querySelector('#importBtn');
-        const resetBtn = state.panel.querySelector('#resetBtn');
-        if (exportBtn) exportBtn.title = tt.exportSettings;
-        if (importBtn) importBtn.title = tt.importSettings;
-        if (resetBtn) resetBtn.title = tt.resetSettings;
-    }
-
-    function updateUILanguage() {
-        if (!state.panel) return;
-
-        state.panel.querySelectorAll('[data-tab]').forEach(tab => {
-            const tabName = tab.dataset.tab;
-            if (tabName === 'general') {
-                tab.innerHTML = `<svg class="el-icon"><use href="#i-sliders"></use></svg>${tt.general}`;
-            } else if (tabName === 'search') {
-                tab.innerHTML = `<svg class="el-icon"><use href="#i-search"></use></svg>${tt.search}`;
-            } else if (tabName === 'menu') {
-                tab.innerHTML = `<svg class="el-icon"><use href="#i-menu"></use></svg>${tt.menu}`;
+            } else if (tabName === 'page') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-layout-list"></use></svg>${tt.page}`;
             } else if (tabName === 'about') {
                 tab.innerHTML = `<svg class="el-icon"><use href="#i-info"></use></svg><span class="tab-text">${tt.about}</span>`;
             }
@@ -1715,13 +1911,13 @@
 
                 const content = document.getElementById('tabContent');
                 if (!content) {
-                    renderActiveTab();
+                    renderActiveTab(true);
                     return;
                 }
 
                 content.classList.add('fade-out');
                 setTimeout(() => {
-                    renderActiveTab();
+                    renderActiveTab(true);
                     content.classList.remove('fade-out');
                 }, 170);
             });
@@ -1862,6 +2058,7 @@
             clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
                 updateRemovedElements();
+        applySearchIconReplacement();
                 if (CONFIG.customLogo && !state.logoApplied) {
                     applyLogo();
                 }
@@ -2038,51 +2235,6 @@
             .u-tight { letter-spacing: -0.2px; }
             .u-rounded-full { border-radius: 50%; }
             .u-rounded-md { border-radius: var(--radius-sm, 6px); }
-            .u-bg-white-10 { background: rgba(255, 255, 255, 0.1); }
-            .u-bg-black-15 { background: rgba(0, 0, 0, 0.15); }
-            .u-bg-black-10 { background: rgba(0, 0, 0, 0.1); }
-            .u-mr-2 { margin-right: 8px; }
-            .u-btn-icon {
-                border: none;
-                width: 32px;
-                height: 32px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                transition: all 0.2s;
-            }
-            .hover\:u-bg-white-20:hover { background: rgba(255, 255, 255, 0.2); }
-        `;
-    }
-
-    function getThemeStyles() {
-        return `
-            .u-flex { display: flex; }
-            .u-flex-1 { flex: 1; }
-            .u-items-center { align-items: center; }
-            .u-items-baseline { align-items: baseline; }
-            .u-justify-between { justify-content: space-between; }
-            .u-justify-center { justify-content: center; }
-            .u-gap-2 { gap: 8px; }
-            .u-gap-2-5 { gap: 10px; }
-            .u-gap-1-5 { gap: 6px; }
-            ${spacingCss}
-            .u-border-b { border-bottom-width: 1px; border-bottom-style: solid; }
-            .u-border-t { border-top-width: 1px; border-top-style: solid; }
-            .u-border-white-10 { border-color: rgba(255, 255, 255, 0.1); }
-            .u-cursor-move { cursor: move; }
-            .u-font-semibold { font-weight: 600; }
-            .u-font-normal { font-weight: 400; }
-            .u-text-lg { font-size: 18px; }
-            .u-text-xs { font-size: 13px; }
-            .u-text-2xs { font-size: 12px; }
-            .u-text-right { text-align: right; }
-            .u-opacity-60 { opacity: 0.6; }
-            .u-opacity-70 { opacity: 0.7; }
-            .u-tight { letter-spacing: -0.2px; }
-            .u-rounded-full { border-radius: 50%; }
-            .u-rounded-md { border-radius: 6px; }
             .u-bg-white-10 { background: rgba(255, 255, 255, 0.1); }
             .u-bg-black-15 { background: rgba(0, 0, 0, 0.15); }
             .u-bg-black-10 { background: rgba(0, 0, 0, 0.1); }
@@ -2544,6 +2696,7 @@
                 background: color-mix(in srgb, var(--accent-color, #1a73e8) 14%, transparent);
             }
             .profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+            .page-theme-buttons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .theme-preview { width: 60px; height: 40px; border-radius: 6px; }
             .theme-preview.dark { background: #1a1a1a; border: 1px solid #333; }
             .theme-preview.light { background: #f5f5f5; border: 1px solid #ddd; }
@@ -2913,6 +3066,7 @@
                 background: color-mix(in srgb, var(--accent-color) 18%, transparent);
             }
             .profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+            .page-theme-buttons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .hidden-elements-summary { margin-top: 10px; font-size: 12px; opacity: 0.85; line-height: 1.4; }
         `;
     }
