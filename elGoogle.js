@@ -3,7 +3,7 @@
 // @name:ru-RU        elГугал
 // @namespace         https://github.com/ellatuk/elGoogle/releases
 // @icon              https://raw.githubusercontent.com/ellatuk/elGoogle/refs/heads/main/xlam/elGoogleLogo.ico
-// @version           1.2
+// @version           1.3
 // @description       Makes the Google Search home page better. Better "Gygale Search"
 // @description:ru-RU Делает гугл поиск лучше. Лучший "Гугал поиск"
 // @author            ellatuk
@@ -33,6 +33,7 @@
             general: 'Общие',
             search: 'Поиск',
             menu: 'Меню',
+            page: 'Страница',
             about: 'О плагине',
 
             // Тема и внешний вид
@@ -84,12 +85,53 @@
             searchstyleliquidmetal: 'Жидкий Метал',
             searchstylemonochromecrt: 'Монохромный CRT',
             searchstylecyberpunkneon: 'Неоновый Киберпанк',
+            searchstyleaurorasoft: 'Мягкая Аурора',
+            searchstylegraphiteoutline: 'Графитовый Контур',
 
             // Тема панели
             searchStyle: 'Стиль строки поиска',
             theme: 'Тема панели',
             dark: 'Тёмная',
             light: 'Светлая',
+            themeBlue: 'Синяя',
+            themeIndigo: 'Индиго',
+            themeOlive: 'Оливковая',
+            themeBrown: 'Коричневая',
+            interfaceDensity: 'Плотность интерфейса',
+            densityNormal: 'Обычная',
+            densityCompact: 'Компактная',
+            densityDense: 'Очень компактная',
+            quickProfiles: 'Быстрые профили',
+            saveProfile: 'Сохранить',
+            loadProfile: 'Загрузить',
+            profileLabel: 'Профиль',
+            deleteProfile: 'Удалить профиль',
+            showHiddenNow: 'Показать скрытые элементы',
+            hiddenElementsNow: 'Сейчас скрыто:',
+
+            pageAppearance: 'Внешний вид страницы',
+            removeIconsDetailed: 'Иконки поиска',
+            removeAllSearchIcons: 'Убрать все иконки поиска',
+            removeVoiceIcon: 'Удалить иконку голосового поиска',
+            removeImageIcon: 'Удалить иконку поиска по картинке',
+            removeKeyboardIcon: 'Удалить иконку экранной клавиатуры',
+            replaceIconsLucide: 'Заменить иконки на Lucide',
+            pageTheme: 'Тема страницы',
+            pageThemeOff: 'Без темы',
+            pageThemeDark: 'Тёмная классика',
+            pageThemeCarbon: 'Угольно-графитовая',
+            pageThemeAurora: 'Мягкая Аурора',
+            pageThemeDusk: 'Пыльный закат',
+            pageThemeForest: 'Лесной туман',
+            pageThemeSlate: 'Графитовый градиент',
+            pageThemeOcean: 'Ночной океан',
+            pageThemeRose: 'Тихий розовый вечер',
+            pageGrain: 'Зерно фона',
+            liveBackground: 'Живой фон',
+            grainOff: 'Без зерна',
+            grainSmall: 'Мелкое',
+            grainMedium: 'Среднее',
+            grainLarge: 'Крупное',
 
             // Настройки панели
             panelSettings: 'Настройки панели',
@@ -135,6 +177,7 @@
             general: 'General',
             search: 'Search',
             menu: 'Menu',
+            page: 'Page',
             about: 'About',
 
             // Theme and appearance
@@ -186,12 +229,53 @@
             searchstyleliquidmetal: 'Liquid Metal',
             searchstylemonochromecrt: 'Monochrome CRT',
             searchstylecyberpunkneon: 'Cyberpunk Neon',
+            searchstyleaurorasoft: 'Aurora Soft',
+            searchstylegraphiteoutline: 'Graphite Outline',
 
             // Panel theme
             searchStyle: 'Search Bar Style',
             theme: 'Panel Theme',
             dark: 'Dark',
             light: 'Light',
+            themeBlue: 'Blue',
+            themeIndigo: 'Indigo',
+            themeOlive: 'Olive',
+            themeBrown: 'Brown',
+            interfaceDensity: 'Interface Density',
+            densityNormal: 'Normal',
+            densityCompact: 'Compact',
+            densityDense: 'Very Compact',
+            quickProfiles: 'Quick Profiles',
+            saveProfile: 'Save',
+            loadProfile: 'Load',
+            profileLabel: 'Profile',
+            deleteProfile: 'Delete profile',
+            showHiddenNow: 'Show hidden elements',
+            hiddenElementsNow: 'Hidden now:',
+
+            pageAppearance: 'Page Appearance',
+            removeIconsDetailed: 'Search icons',
+            removeAllSearchIcons: 'Hide all search icons',
+            removeVoiceIcon: 'Hide voice search icon',
+            removeImageIcon: 'Hide image search icon',
+            removeKeyboardIcon: 'Hide on-screen keyboard icon',
+            replaceIconsLucide: 'Replace icons with Lucide',
+            pageTheme: 'Page theme',
+            pageThemeOff: 'No theme',
+            pageThemeDark: 'Dark Classic',
+            pageThemeCarbon: 'Carbon Graphite',
+            pageThemeAurora: 'Soft Aurora',
+            pageThemeDusk: 'Dusty Dusk',
+            pageThemeForest: 'Forest Mist',
+            pageThemeSlate: 'Slate Gradient',
+            pageThemeOcean: 'Night Ocean',
+            pageThemeRose: 'Calm Rose Dusk',
+            pageGrain: 'Background grain',
+            liveBackground: 'Live background',
+            grainOff: 'No grain',
+            grainSmall: 'Small',
+            grainMedium: 'Medium',
+            grainLarge: 'Large',
 
             // Panel settings
             panelSettings: 'Panel Settings',
@@ -240,10 +324,11 @@
     // Инициализируем переводы с дефолтным языком (будет переопределено после загрузки конфига)
     let currentLang = browserLang;
     let t = LANGUAGES[currentLang];
+    let tt = t;
 
     // ================== КОНСТАНТЫ И КОНФИГУРАЦИЯ ==================
 
-    const SCRIPT_VERSION = GM_info?.script?.version || '1.2.3';
+    const SCRIPT_VERSION = GM_info?.script?.version || '1.3';
     const NOISE_TEXTURE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.12'/%3E%3C/svg%3E")`;
 
     const DEFAULT_CONFIG = {
@@ -251,6 +336,10 @@
         customLogo: true,
         removeAI: true,
         removeIcons: true,
+        removeVoiceIcon: false,
+        removeImageIcon: false,
+        removeKeyboardIcon: false,
+        replaceSearchIcons: false,
         removeImages: false,
         removeMail: false,
         preset: 'full',
@@ -263,432 +352,160 @@
         panelLeft: '20px',
         panelVisible: false,
         lastVersionCheck: 0,
-        menuLanguage: 'auto'  // По умолчанию автоматическое определение
+        menuLanguage: 'auto',
+        panelDensity: 'normal',
+        quickProfiles: {},  // Быстрые профили настроек
+        pageTheme: 'dark',
+        pageGrain: 'off',
+        pageThemeEnabled: true,
+        pageLiveBackground: false
+    };
+
+    const createSearchStyle = (rules, extraCss = '') => {
+        const base = Object.entries(rules)
+            .map(([prop, value]) => `${prop}:${value}!important;`)
+            .join('');
+        return `.RNNXgb{${base}}${extraCss}`;
     };
 
     const SEARCH_STYLES = {
         'google-default': {
             key: 'google',
-            css: `.RNNXgb{border-radius:24px!important;background-color:transparent!important;border:1px solid #5f6368!important;box-shadow:none!important;}`
+            css: createSearchStyle({
+                'border-radius': '24px',
+                'background-color': 'transparent',
+                border: '1px solid #5f6368',
+                'box-shadow': 'none'
+            })
         },
         'elgoogle-classic': {
             key: 'elgoogle',
-            css: `.RNNXgb{border-radius:34px 14px!important;background-color:#121212!important;border:3px solid #1c1d1d!important;box-shadow:0 2px 8px rgba(0,0,0,0.3)!important;}`
+            css: createSearchStyle({
+                'border-radius': '34px 14px',
+                'background-color': '#121212',
+                border: '3px solid #1c1d1d',
+                'box-shadow': '0 2px 8px rgba(0,0,0,0.3)'
+            })
         },
         'minimal-dark': {
             key: 'minimaldark',
-            css: `.RNNXgb{border-radius:12px!important;background-color:#0a0a0a!important;border:1px solid #2a2a2a!important;box-shadow:0 1px 3px rgba(0,0,0,0.2)!important;}`
+            css: createSearchStyle({
+                'border-radius': '12px',
+                'background-color': 'rgba(15,20,28,0.92)',
+                border: '1px solid rgba(130,145,170,0.35)',
+                'box-shadow': '0 2px 10px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.03)'
+            })
         },
         'glass-frosted': {
             key: 'glassfrosted',
-            css: `.RNNXgb{border-radius:20px!important;background:linear-gradient(135deg,rgba(25,25,25,0.85)0%,rgba(35,35,35,0.8)100%),${NOISE_TEXTURE}!important;backdrop-filter:blur(12px) saturate(2)!important;-webkit-backdrop-filter:blur(12px) saturate(2)!important;border:1px solid rgba(255,255,255,0.2)!important;box-shadow:0 4px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.15),inset 0 -1px 0 rgba(0,0,0,0.6)!important;}.RNNXgb::before{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:${NOISE_TEXTURE}!important;opacity:0.2!important;pointer-events:none!important;border-radius:inherit!important;mix-blend-mode:overlay!important;}`
+            css: createSearchStyle({
+                'border-radius': '20px',
+                background: `linear-gradient(135deg,rgba(25,25,25,0.85)0%,rgba(35,35,35,0.8)100%),${NOISE_TEXTURE}`,
+                'backdrop-filter': 'blur(10px) saturate(1.25)',
+                '-webkit-backdrop-filter': 'blur(10px) saturate(1.25)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                'box-shadow': '0 4px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.15),inset 0 -1px 0 rgba(0,0,0,0.6)'
+            }, `.RNNXgb::before{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:${NOISE_TEXTURE}!important;opacity:0.2!important;pointer-events:none!important;border-radius:inherit!important;mix-blend-mode:overlay!important;}`)
         },
         'rounded-soft': {
             key: 'roundedsoft',
-            css: `.RNNXgb{border-radius:28px!important;background:linear-gradient(135deg,#121212 0%,#1a1a1a 100%)!important;border:2px solid #2d2d2d!important;box-shadow:0 6px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05)!important;}`
+            css: createSearchStyle({
+                'border-radius': '28px',
+                background: 'linear-gradient(135deg,rgba(21,27,37,0.92) 0%,rgba(27,35,48,0.92) 100%)',
+                border: '1px solid rgba(120,140,170,0.35)',
+                'box-shadow': '0 6px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05)'
+            })
         },
         'shadow-blur-white': {
             key: 'shadowblurwhite',
-            css: `.RNNXgb{
-                border-radius: 20px!important;
-                background-color: rgba(18, 18, 18, 0.95)!important;
-                border: 1px solid rgba(255, 255, 255, 0.15)!important;
-                box-shadow:
-                    0 0 32px 8px rgba(255, 255, 255, 0.25)!important;
-                backdrop-filter: blur(10px)!important;
-                -webkit-backdrop-filter: blur(10px)!important;
-                position: relative!important;
-                overflow: hidden!important;
-            }
-            .RNNXgb::before{
-                content: ''!important;
-                position: absolute!important;
-                top: -8px!important;
-                left: -8px!important;
-                right: -8px!important;
-                bottom: -8px!important;
-                background: radial-gradient(
-                    circle at center,
-                    rgba(255, 255, 255, 0.15) 0%,
-                    rgba(255, 255, 255, 0.05) 40%,
-                    transparent 70%
-                )!important;
-                border-radius: 28px!important;
-                z-index: -1!important;
-                pointer-events: none!important;
-                filter: blur(16px)!important;
-            }
-            .RNNXgb::after{
-                content: ''!important;
-                position: absolute!important;
-                top: 0!important;
-                left: 0!important;
-                right: 0!important;
-                bottom: 0!important;
-                border-radius: 20px!important;
-                border: 1px solid rgba(255, 255, 255, 0.1)!important;
-                pointer-events: none!important;
-                box-shadow:
-                    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.2)!important;
-            }`
+            css: createSearchStyle({
+                'border-radius': '20px',
+                'background-color': 'rgba(18, 18, 18, 0.95)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                'box-shadow': '0 0 32px 8px rgba(255, 255, 255, 0.25)',
+                'backdrop-filter': 'blur(10px)',
+                '-webkit-backdrop-filter': 'blur(10px)',
+                position: 'relative',
+                overflow: 'hidden'
+            }, `.RNNXgb::before{content:''!important;position:absolute!important;top:-8px!important;left:-8px!important;right:-8px!important;bottom:-8px!important;background:radial-gradient(circle at center,rgba(255,255,255,0.15) 0%,rgba(255,255,255,0.05) 40%,transparent 70%)!important;border-radius:28px!important;z-index:-1!important;pointer-events:none!important;filter:blur(16px)!important;}.RNNXgb::after{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;border-radius:20px!important;border:1px solid rgba(255,255,255,0.1)!important;pointer-events:none!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05),inset 0 -1px 0 rgba(0,0,0,0.2)!important;}`)
         },
         'glass-morph': {
             key: 'glassmorph',
-            css: `.RNNXgb{
-                background: rgba(255, 255, 255, 0.04)!important;
-                border-radius: 16px!important;
-                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1)!important;
-                backdrop-filter: blur(5.9px)!important;
-                -webkit-backdrop-filter: blur(5.9px)!important;
-                border: 1px solid rgba(255, 255, 255, 0.02)!important;
-            }`
+            css: createSearchStyle({
+                background: 'rgba(255, 255, 255, 0.04)',
+                'border-radius': '16px',
+                'box-shadow': '0 4px 30px rgba(0, 0, 0, 0.1)',
+                'backdrop-filter': 'blur(5.9px)',
+                '-webkit-backdrop-filter': 'blur(5.9px)',
+                border: '1px solid rgba(255, 255, 255, 0.02)'
+            })
         },
         'liquid-metal': {
             key: 'liquidmetal',
-            css: `.RNNXgb{
-                border-radius: 16px!important;
-                background:
-                    linear-gradient(135deg,
-                        #1a1a1a 0%,
-                        #2a2a2a 50%,
-                        #1a1a1a 100%
-                    )!important;
-                border: 2px solid transparent!important;
-                box-shadow:
-                    inset 0 2px 10px rgba(255, 255, 255, 0.1),
-                    inset 0 -2px 10px rgba(0, 0, 0, 0.5),
-                    0 5px 30px rgba(0, 0, 0, 0.6)!important;
-                position: relative!important;
-                overflow: hidden!important;
-            }
-            .RNNXgb::before{
-                content: ''!important;
-                position: absolute!important;
-                top: 0!important;
-                left: 0!important;
-                right: 0!important;
-                bottom: 0!important;
-                background: linear-gradient(
-                    90deg,
-                    transparent 0%,
-                    rgba(255, 255, 255, 0.05) 50%,
-                    transparent 100%
-                )!important;
-                border-radius: 16px!important;
-                animation: metal-shine 4s ease-in-out infinite alternate!important;
-                z-index: 1!important;
-                pointer-events: none!important;
-            }
-            .RNNXgb::after{
-                content: ''!important;
-                position: absolute!important;
-                top: 2px!important;
-                left: 2px!important;
-                right: 2px!important;
-                bottom: 2px!important;
-                background:
-                    radial-gradient(
-                        circle at 30% 30%,
-                        rgba(200, 200, 200, 0.1) 0%,
-                        transparent 50%
-                    ),
-                    radial-gradient(
-                        circle at 70% 70%,
-                        rgba(150, 150, 150, 0.08) 0%,
-                        transparent 50%
-                    )!important;
-                border-radius: 14px!important;
-                border: 1px solid rgba(255, 255, 255, 0.08)!important;
-                box-shadow:
-                    inset 0 1px 0 rgba(255, 255, 255, 0.15),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.3)!important;
-                pointer-events: none!important;
-            }
-            /* Эффект металлической текстуры */
-            .RNNXgb > div {
-                position: relative!important;
-                z-index: 2!important;
-                background:
-                    repeating-linear-gradient(
-                        45deg,
-                        transparent,
-                        transparent 1px,
-                        rgba(255, 255, 255, 0.01) 1px,
-                        rgba(255, 255, 255, 0.01) 2px
-                    )!important;
-                border-radius: 14px!important;
-            }
-            @keyframes metal-shine {
-                0% {
-                    transform: translateX(-100%) rotate(45deg);
-                    opacity: 0.3;
-                }
-                50% {
-                    opacity: 0.6;
-                }
-                100% {
-                    transform: translateX(100%) rotate(45deg);
-                    opacity: 0.3;
-                }
-            }
-            /* Стиль для текста */
-            .RNNXgb input {
-                color: #e0e0e0!important;
-                text-shadow:
-                    0 1px 0 rgba(0, 0, 0, 0.5),
-                    0 -1px 0 rgba(255, 255, 255, 0.1)!important;
-                background: transparent!important;
-                font-weight: 500!important;
-            }`
+            css: createSearchStyle({
+                'border-radius': '16px',
+                background: 'linear-gradient(135deg,#1a1a1a 0%,#2a2a2a 50%,#1a1a1a 100%)',
+                border: '2px solid transparent',
+                'box-shadow': 'inset 0 2px 10px rgba(255,255,255,0.1),inset 0 -2px 10px rgba(0,0,0,0.5),0 5px 30px rgba(0,0,0,0.6)',
+                position: 'relative',
+                overflow: 'hidden'
+            }, `.RNNXgb::before{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.05) 50%,transparent 100%)!important;border-radius:16px!important;animation:metal-shine 4s ease-in-out infinite alternate!important;z-index:1!important;pointer-events:none!important;}.RNNXgb::after{content:''!important;position:absolute!important;top:2px!important;left:2px!important;right:2px!important;bottom:2px!important;background:radial-gradient(circle at 30% 30%,rgba(200,200,200,0.1) 0%,transparent 50%),radial-gradient(circle at 70% 70%,rgba(150,150,150,0.08) 0%,transparent 50%)!important;border-radius:14px!important;border:1px solid rgba(255,255,255,0.08)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.15),inset 0 -1px 0 rgba(0,0,0,0.3)!important;pointer-events:none!important;}.RNNXgb > div{position:relative!important;z-index:2!important;background:repeating-linear-gradient(45deg,transparent,transparent 1px,rgba(255,255,255,0.01) 1px,rgba(255,255,255,0.01) 2px)!important;border-radius:14px!important;}@keyframes metal-shine{0%{transform:translateX(-100%) rotate(45deg);opacity:0.3;}50%{opacity:0.6;}100%{transform:translateX(100%) rotate(45deg);opacity:0.3;}}.RNNXgb input{color:#e0e0e0!important;text-shadow:0 1px 0 rgba(0,0,0,0.5),0 -1px 0 rgba(255,255,255,0.1)!important;background:transparent!important;font-weight:500!important;}`)
         },
         'monochrome-crt': {
             key: 'monochromecrt',
-            css: `.RNNXgb{
-                border-radius: 4px!important;
-                background:
-                    radial-gradient(
-                        ellipse at center,
-                        rgba(200, 200, 200, 0.1) 0%,
-                        rgba(0, 0, 0, 0.95) 100%
-                    )!important;
-                border: 4px solid #b0b0b0!important;
-                box-shadow:
-                    inset 0 0 60px rgba(255, 255, 255, 0.2),
-                    0 0 40px rgba(255, 255, 255, 0.3),
-                    0 0 0 3px rgba(200, 200, 200, 0.4),
-                    inset 0 0 100px rgba(0, 0, 0, 0.8)!important;
-                position: relative!important;
-                overflow: hidden!important;
-                font-family: 'Courier New', monospace!important;
-            }
-            .RNNXgb::before{
-                content: ''!important;
-                position: absolute!important;
-                top: 0!important;
-                left: 0!important;
-                right: 0!important;
-                bottom: 0!important;
-                background: repeating-linear-gradient(
-                    0deg,
-                    rgba(255, 255, 255, 0.08) 0px,
-                    rgba(255, 255, 255, 0.08) 1px,
-                    transparent 1px,
-                    transparent 2px
-                ),
-                repeating-linear-gradient(
-                    90deg,
-                    rgba(255, 255, 255, 0.03) 0px,
-                    rgba(255, 255, 255, 0.03) 1px,
-                    transparent 1px,
-                    transparent 3px
-                )!important;
-                border-radius: 4px!important;
-                pointer-events: none!important;
-                animation: scanlines 0.08s linear infinite!important;
-                z-index: 1!important;
-                background-size: 100% 3px, 4px 100%!important;
-            }
-            .RNNXgb::after{
-                content: ''!important;
-                position: absolute!important;
-                top: 0!important;
-                left: 0!important;
-                right: 0!important;
-                bottom: 0!important;
-                background:
-                    radial-gradient(
-                        circle at 50% 0%,
-                        rgba(255, 255, 255, 0.25) 0%,
-                        transparent 60%
-                    ),
-                    radial-gradient(
-                        circle at 50% 100%,
-                        rgba(255, 255, 255, 0.15) 0%,
-                        transparent 60%
-                    ),
-                    radial-gradient(
-                        circle at 30% 50%,
-                        rgba(255, 255, 255, 0.1) 0%,
-                        transparent 50%
-                    ),
-                    radial-gradient(
-                        circle at 70% 50%,
-                        rgba(255, 255, 255, 0.1) 0%,
-                        transparent 50%
-                    )!important;
-                border-radius: 4px!important;
-                pointer-events: none!important;
-                animation: crt-flicker 5s infinite!important;
-                z-index: 0!important;
-            }
-            /* Эффект рельефной рамки */
-            .RNNXgb {
-                border-style: outset!important;
-                border-color: #808080 #404040 #404040 #808080!important;
-                border-width: 4px!important;
-            }
-            @keyframes scanlines {
-                0% { transform: translateY(0); }
-                100% { transform: translateY(3px); }
-            }
-            @keyframes crt-flicker {
-                0%, 100% { opacity: 1; }
-                1% { opacity: 0.97; }
-                2% { opacity: 1; }
-                10% { opacity: 0.99; }
-                11% { opacity: 1; }
-                20% { opacity: 0.98; }
-                21% { opacity: 1; }
-                30% { opacity: 0.99; }
-                31% { opacity: 1; }
-                40% { opacity: 0.97; }
-                41% { opacity: 1; }
-                50% { opacity: 0.99; }
-                51% { opacity: 1; }
-                60% { opacity: 0.98; }
-                61% { opacity: 1; }
-                70% { opacity: 0.99; }
-                71% { opacity: 1; }
-                80% { opacity: 0.97; }
-                81% { opacity: 1; }
-                90% { opacity: 0.99; }
-                91% { opacity: 1; }
-            }
-            /* Эффект текста CRT */
-            .RNNXgb input {
-                text-shadow:
-                    0 0 8px rgba(255, 255, 255, 0.9),
-                    0 0 15px rgba(255, 255, 255, 0.6),
-                    0 0 25px rgba(255, 255, 255, 0.3)!important;
-                color: #ffffff!important;
-                font-weight: bold!important;
-                letter-spacing: 1px!important;
-            }
-            /* Эффект зернистости */
-            .RNNXgb {
-                background-image:
-                    radial-gradient(circle at 20% 30%, rgba(255,255,255,0.05) 1px, transparent 2px),
-                    radial-gradient(circle at 80% 70%, rgba(255,255,255,0.05) 1px, transparent 2px),
-                    radial-gradient(circle at 40% 60%, rgba(255,255,255,0.05) 1px, transparent 2px)!important;
-                background-size: 200px 200px, 150px 150px, 180px 180px!important;
-            }`
+            css: createSearchStyle({
+                'border-radius': '4px',
+                background: 'radial-gradient(ellipse at center,rgba(180,200,240,0.07) 0%,rgba(8,12,20,0.93) 100%)',
+                border: '3px solid #8fa0bd',
+                'box-shadow': 'inset 0 0 60px rgba(255,255,255,0.2),0 0 40px rgba(255,255,255,0.3),0 0 0 3px rgba(200,200,200,0.4),inset 0 0 100px rgba(0,0,0,0.8)',
+                position: 'relative',
+                overflow: 'hidden',
+                'font-family': "'Courier New', monospace"
+            }, `.RNNXgb::before{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:repeating-linear-gradient(0deg,rgba(255,255,255,0.08) 0px,rgba(255,255,255,0.08) 1px,transparent 1px,transparent 2px),repeating-linear-gradient(90deg,rgba(255,255,255,0.03) 0px,rgba(255,255,255,0.03) 1px,transparent 1px,transparent 3px)!important;border-radius:4px!important;pointer-events:none!important;animation:scanlines 0.08s linear infinite!important;z-index:1!important;background-size:100% 3px,4px 100%!important;}.RNNXgb::after{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:radial-gradient(circle at 50% 0%,rgba(255,255,255,0.25) 0%,transparent 60%),radial-gradient(circle at 50% 100%,rgba(255,255,255,0.15) 0%,transparent 60%),radial-gradient(circle at 30% 50%,rgba(255,255,255,0.1) 0%,transparent 50%),radial-gradient(circle at 70% 50%,rgba(255,255,255,0.1) 0%,transparent 50%)!important;border-radius:4px!important;pointer-events:none!important;animation:crt-flicker 5s infinite!important;z-index:0!important;}.RNNXgb{border-style:outset!important;border-color:#808080 #404040 #404040 #808080!important;border-width:4px!important;}@keyframes scanlines{0%{transform:translateY(0);}100%{transform:translateY(3px);}}@keyframes crt-flicker{0%,100%{opacity:1;}1%{opacity:0.97;}2%{opacity:1;}10%{opacity:0.99;}11%{opacity:1;}20%{opacity:0.98;}21%{opacity:1;}30%{opacity:0.99;}31%{opacity:1;}40%{opacity:0.97;}41%{opacity:1;}50%{opacity:0.99;}51%{opacity:1;}60%{opacity:0.98;}61%{opacity:1;}70%{opacity:0.99;}71%{opacity:1;}80%{opacity:0.97;}81%{opacity:1;}90%{opacity:0.99;}91%{opacity:1;}}.RNNXgb input{text-shadow:0 0 8px rgba(255,255,255,0.9),0 0 15px rgba(255,255,255,0.6),0 0 25px rgba(255,255,255,0.3)!important;color:#ffffff!important;font-weight:bold!important;letter-spacing:1px!important;}.RNNXgb{background-image:radial-gradient(circle at 20% 30%,rgba(255,255,255,0.05) 1px,transparent 2px),radial-gradient(circle at 80% 70%,rgba(255,255,255,0.05) 1px,transparent 2px),radial-gradient(circle at 40% 60%,rgba(255,255,255,0.05) 1px,transparent 2px)!important;background-size:200px 200px,150px 150px,180px 180px!important;}`)
         },
         'cyberpunk-neon': {
             key: 'cyberpunkneon',
-            css: `.RNNXgb{
-                border-radius: 18px!important;
-                background: linear-gradient(135deg, #0a0a0a 0%, #151515 100%)!important;
-                border: 1px solid transparent!important;
-                box-shadow:
-                    0 4px 25px rgba(0, 0, 0, 0.7)!important;
-                position: relative!important;
-                overflow: hidden!important;
-                isolation: isolate!important;
-            }
-            .RNNXgb::before{
-                content: ''!important;
-                position: absolute!important;
-                top: -4px!important;
-                left: -4px!important;
-                right: -4px!important;
-                bottom: -4px!important;
-                background: linear-gradient(
-                    45deg,
-                    #eb08da 0%,
-                    #5fa5fb 25%,
-                    #08ffa2 50%,
-                    #e0fe4e 75%,
-                    #eb08da 100%
-                )!important;
-                border-radius: 22px!important;
-                z-index: -1!important;
-                animation: cyber-glow-4colors 3s linear infinite!important;
-                background-size: 300% 300%!important;
-                filter: blur(12px)!important;
-                opacity: 0.85!important;
-            }
-            .RNNXgb::after{
-                content: ''!important;
-                position: absolute!important;
-                top: 0!important;
-                left: 0!important;
-                right: 0!important;
-                bottom: 0!important;
-                background:
-                    linear-gradient(
-                        90deg,
-                        rgba(235, 8, 218, 0.1) 0%,
-                        rgba(95, 165, 251, 0.08) 25%,
-                        rgba(8, 255, 162, 0.06) 50%,
-                        rgba(224, 254, 78, 0.04) 75%,
-                        rgba(235, 8, 218, 0.02) 100%
-                    ),
-                    radial-gradient(
-                        circle at 80% 20%,
-                        rgba(235, 8, 218, 0.15) 0%,
-                        transparent 60%
-                    ),
-                    radial-gradient(
-                        circle at 20% 80%,
-                        rgba(8, 255, 162, 0.15) 0%,
-                        transparent 60%
-                    )!important;
-                border-radius: 18px!important;
-                pointer-events: none!important;
-                animation: gradient-shift 8s ease-in-out infinite alternate!important;
-                mix-blend-mode: screen!important;
-            }
-            @keyframes cyber-glow-4colors {
-                0% {
-                    background-position: 0% 50%;
-                    opacity: 0.7;
-                }
-                25% {
-                    background-position: 50% 100%;
-                    opacity: 0.9;
-                }
-                50% {
-                    background-position: 100% 50%;
-                    opacity: 0.7;
-                }
-                75% {
-                    background-position: 50% 0%;
-                    opacity: 0.9;
-                }
-                100% {
-                    background-position: 0% 50%;
-                    opacity: 0.7;
-                }
-            }
-            @keyframes gradient-shift {
-                0% {
-                    background-position: 0% 0%, 80% 20%, 20% 80%;
-                    opacity: 0.8;
-                }
-                33% {
-                    background-position: 100% 100%, 60% 40%, 40% 60%;
-                    opacity: 0.9;
-                }
-                66% {
-                    background-position: 0% 100%, 90% 30%, 10% 70%;
-                    opacity: 0.85;
-                }
-                100% {
-                    background-position: 100% 0%, 70% 10%, 30% 90%;
-                    opacity: 0.8;
-                }
-            }
-            /* Эффект для текста */
-            .RNNXgb input {
-                color: #ffffff!important;
-                text-shadow:
-                    0 0 10px rgba(235, 8, 218, 0.5),
-                    0 0 20px rgba(95, 165, 251, 0.3),
-                    0 0 30px rgba(8, 255, 162, 0.2)!important;
-                background: transparent!important;
-            }`
+            css: createSearchStyle({
+                'border-radius': '18px',
+                background: 'linear-gradient(135deg,rgba(11,14,18,0.92) 0%,rgba(18,24,36,0.92) 100%)',
+                border: '1px solid transparent',
+                'box-shadow': '0 4px 25px rgba(0,0,0,0.7)',
+                position: 'relative',
+                overflow: 'hidden',
+                isolation: 'isolate'
+            }, `.RNNXgb::before{content:''!important;position:absolute!important;top:-4px!important;left:-4px!important;right:-4px!important;bottom:-4px!important;background:linear-gradient(45deg,#eb08da 0%,#5fa5fb 25%,#08ffa2 50%,#e0fe4e 75%,#eb08da 100%)!important;border-radius:22px!important;z-index:-1!important;animation:cyber-glow-4colors 3s linear infinite!important;background-size:300% 300%!important;filter:blur(12px)!important;opacity:0.85!important;}.RNNXgb::after{content:''!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:linear-gradient(90deg,rgba(235,8,218,0.1) 0%,rgba(95,165,251,0.08) 25%,rgba(8,255,162,0.06) 50%,rgba(224,254,78,0.04) 75%,rgba(235,8,218,0.02) 100%),radial-gradient(circle at 80% 20%,rgba(235,8,218,0.15) 0%,transparent 60%),radial-gradient(circle at 20% 80%,rgba(8,255,162,0.15) 0%,transparent 60%)!important;border-radius:18px!important;pointer-events:none!important;animation:gradient-shift 8s ease-in-out infinite alternate!important;mix-blend-mode:screen!important;}@keyframes cyber-glow-4colors{0%{background-position:0% 50%;opacity:0.7;}25%{background-position:50% 100%;opacity:0.9;}50%{background-position:100% 50%;opacity:0.7;}75%{background-position:50% 0%;opacity:0.9;}100%{background-position:0% 50%;opacity:0.7;}}@keyframes gradient-shift{0%{background-position:0% 0%,80% 20%,20% 80%;opacity:0.8;}33%{background-position:100% 100%,60% 40%,40% 60%;opacity:0.9;}66%{background-position:0% 100%,90% 30%,10% 70%;opacity:0.85;}100%{background-position:100% 0%,70% 10%,30% 90%;opacity:0.8;}}.RNNXgb input{color:#ffffff!important;text-shadow:0 0 10px rgba(235,8,218,0.5),0 0 20px rgba(95,165,251,0.3),0 0 30px rgba(8,255,162,0.2)!important;background:transparent!important;}`)
+        },
+        'aurora-soft': {
+            key: 'aurorasoft',
+            css: createSearchStyle({
+                'border-radius': '22px',
+                background: 'linear-gradient(120deg,rgba(22,28,38,0.94),rgba(28,36,52,0.9))',
+                border: '1px solid rgba(120,170,255,0.35)',
+                'box-shadow': '0 8px 28px rgba(40,90,180,0.25), inset 0 1px 0 rgba(255,255,255,0.08)',
+                'backdrop-filter': 'blur(8px)',
+                '-webkit-backdrop-filter': 'blur(8px)'
+            })
+        },
+        'graphite-outline': {
+            key: 'graphiteoutline',
+            css: createSearchStyle({
+                'border-radius': '18px',
+                background: 'rgba(17,20,26,0.9)',
+                border: '1px solid rgba(140,150,170,0.45)',
+                'box-shadow': '0 0 0 1px rgba(70,80,100,0.35), 0 6px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04)'
+            })
         }
+    };
+
+
+    const GM_API = {
+        getValue: (typeof GM !== 'undefined' && typeof GM.getValue === 'function') ? GM.getValue.bind(GM) : null,
+        setValue: (typeof GM !== 'undefined' && typeof GM.setValue === 'function') ? GM.setValue.bind(GM) : null,
+        registerMenuCommand:
+            (typeof GM !== 'undefined' && typeof GM.registerMenuCommand === 'function')
+                ? GM.registerMenuCommand.bind(GM)
+                : (typeof GM_registerMenuCommand === 'function' ? GM_registerMenuCommand : null),
+        xmlHttpRequest: (typeof GM !== 'undefined' && typeof GM.xmlHttpRequest === 'function') ? GM.xmlHttpRequest.bind(GM) : null
     };
 
     const PRESETS = {
@@ -754,11 +571,27 @@
     // ================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==================
 
     let CONFIG = { ...DEFAULT_CONFIG };
-    let panel = null;
-    let activeTab = 'general';
-    let lastReleaseInfo = null;
-    let isCheckingUpdate = false;
-    let logoApplied = false;
+    const state = {
+        panel: null,
+        activeTab: 'general',
+        lastReleaseInfo: null,
+        isCheckingUpdate: false,
+        logoApplied: false,
+        tabCacheKeys: {}
+    };
+
+
+    function makeSafeTranslations(langPack) {
+        const fallback = LANGUAGES.en || {};
+        return new Proxy(langPack || {}, {
+            get(target, prop) {
+                if (typeof prop !== 'string') return target[prop];
+                if (target[prop] !== undefined) return target[prop];
+                if (fallback[prop] !== undefined) return fallback[prop];
+                return prop;
+            }
+        });
+    }
 
     // ================== ИНИЦИАЛИЗАЦИЯ ==================
 
@@ -773,7 +606,7 @@
 
         injectSVGSprite();
         applyAll();
-        createControlPanel();
+        if (CONFIG.panelVisible) createControlPanel();
         setupMutationObserver();
         setupHotkeys();
         setupUserScriptMenu();
@@ -793,13 +626,16 @@
         }
 
         // Устанавливаем переводы
-        t = LANGUAGES[currentLang];
-        window.t = t;
+        t = LANGUAGES[currentLang] || LANGUAGES.en;
+        tt = makeSafeTranslations(t);
+        t = tt;
+        window.t = tt;
     }
 
     async function loadConfig() {
         try {
-            const saved = await GM.getValue('elGoogle_config');
+            if (!GM_API.getValue) throw new Error('GM.getValue недоступен');
+            const saved = await GM_API.getValue('elGoogle_config');
             if (saved) {
                 CONFIG = { ...DEFAULT_CONFIG, ...saved };
                 if (!PRESETS[CONFIG.preset]) {
@@ -813,7 +649,8 @@
 
     async function saveConfig() {
         try {
-            await GM.setValue('elGoogle_config', CONFIG);
+            if (!GM_API.setValue) throw new Error('GM.setValue недоступен');
+            await GM_API.setValue('elGoogle_config', CONFIG);
         } catch (e) {
             console.warn('[elGoogle] Ошибка сохранения настроек:', e);
         }
@@ -822,37 +659,24 @@
     // ================== ОПРЕДЕЛЕНИЕ ПРЕСЕТА ==================
 
     function updatePresetType() {
-        const currentSettings = {
+        const currentStr = JSON.stringify({
             darkMode: CONFIG.darkMode,
             customLogo: CONFIG.customLogo,
             removeAI: CONFIG.removeAI,
             removeIcons: CONFIG.removeIcons,
             removeImages: CONFIG.removeImages,
             removeMail: CONFIG.removeMail
-        };
-
-        let matchedPreset = 'custom';
+        });
 
         for (const [presetKey, preset] of Object.entries(PRESETS)) {
-            if (presetKey === 'custom') continue;
-
-            const presetValues = preset.values;
-            let isMatch = true;
-
-            for (const key in presetValues) {
-                if (currentSettings[key] !== presetValues[key]) {
-                    isMatch = false;
-                    break;
-                }
-            }
-
-            if (isMatch) {
-                matchedPreset = presetKey;
-                break;
+            if (!preset?.values) continue;
+            if (JSON.stringify(preset.values) === currentStr) {
+                CONFIG.preset = presetKey;
+                return;
             }
         }
 
-        CONFIG.preset = matchedPreset;
+        CONFIG.preset = 'custom';
     }
 
     function checkIfSettingsChanged() {
@@ -864,6 +688,7 @@
 
     function applyAll() {
         applyDarkTheme();
+        applyPageTheme();
         applyLogo();
         applySearchStyles();
         applyPanelStyles();
@@ -871,6 +696,7 @@
         applyMenuGlass();
         applyCompactMode();
         updateRemovedElements();
+        applySearchIconReplacement();
     }
 
     // ================== ФУНКЦИИ ПРИМЕНЕНИЯ НАСТРОЕК ==================
@@ -886,8 +712,95 @@
         }
     }
 
+
+    function applyPageTheme() {
+        const themes = {
+            off: '',
+            dark: 'radial-gradient(circle at 20% 20%, #1f2937 0%, #111827 45%, #0a0f1a 100%)',
+            carbon: 'linear-gradient(140deg, #101215 0%, #171b21 45%, #0d1014 100%)',
+            aurora: 'radial-gradient(circle at 15% 20%, rgba(88,132,255,0.28) 0%, transparent 35%), radial-gradient(circle at 80% 25%, rgba(120,255,214,0.22) 0%, transparent 35%), linear-gradient(140deg, #111827 0%, #1b2940 45%, #101827 100%)',
+            dusk: 'radial-gradient(circle at 20% 20%, rgba(255,170,120,0.25) 0%, transparent 35%), radial-gradient(circle at 80% 10%, rgba(196,133,255,0.2) 0%, transparent 30%), linear-gradient(140deg, #201526 0%, #2a1f38 45%, #1a2234 100%)',
+            forest: 'radial-gradient(circle at 15% 30%, rgba(123,211,137,0.2) 0%, transparent 35%), radial-gradient(circle at 80% 15%, rgba(111,173,252,0.16) 0%, transparent 30%), linear-gradient(140deg, #0f1a16 0%, #13291f 45%, #102028 100%)',
+            slate: 'linear-gradient(145deg, #1b202a 0%, #232b3a 50%, #1a2230 100%)',
+            ocean: 'radial-gradient(circle at 70% 15%, rgba(75,145,255,0.22) 0%, transparent 35%), linear-gradient(150deg, #0f172a 0%, #13243c 45%, #10283a 100%)',
+            rose: 'radial-gradient(circle at 20% 20%, rgba(255,144,180,0.2) 0%, transparent 35%), linear-gradient(150deg, #231526 0%, #30203a 45%, #1e2437 100%)'
+        };
+        const grainMap = { off: '0', small: '0.05', medium: '0.09', large: '0.13' };
+        const enabled = CONFIG.pageThemeEnabled !== false;
+        const bg = enabled ? (themes[CONFIG.pageTheme] || themes.dark) : '';
+        const grain = enabled ? (grainMap[CONFIG.pageGrain] || '0') : '0';
+        const anim = CONFIG.pageLiveBackground ? 'animation: elgoogleBgShift 34s ease-in-out infinite alternate !important;' : '';
+        StyleManager.apply('elgoogle-page-theme', `
+            body {
+                ${bg ? `background: ${bg} !important;` : 'background: initial !important;'}
+                background-size: 200% 200% !important;
+                background-attachment: fixed !important;
+                ${anim}
+            }
+            body::before {
+                content: '';
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                background-image: ${NOISE_TEXTURE};
+                opacity: ${grain};
+                z-index: 0;
+            }
+            #gb, .o3j99 { background: transparent !important; }
+            @keyframes elgoogleBgShift {
+                0% { background-position: 0% 30%; }
+                50% { background-position: 100% 70%; }
+                100% { background-position: 20% 40%; }
+            }
+        `);
+    }
+
+    function findSearchIconButtons() {
+        const buttons = Array.from(document.querySelectorAll('button[aria-label], div[role="button"][aria-label]'));
+        const byLabel = (parts) => buttons.filter(el => {
+            const label = (el.getAttribute('aria-label') || '').toLowerCase();
+            return parts.some(p => label.includes(p));
+        });
+        return {
+            voice: byLabel(['voice', 'голос']),
+            image: byLabel(['image', 'картин', 'объектив']),
+            keyboard: byLabel(['keyboard', 'клавиат'])
+        };
+    }
+
+    function updateSearchIconVisibility() {
+        const icons = findSearchIconButtons();
+        const hideAll = CONFIG.removeIcons;
+        const hideVoice = hideAll || CONFIG.removeVoiceIcon;
+        const hideImage = hideAll || CONFIG.removeImageIcon;
+        const hideKeyboard = hideAll || CONFIG.removeKeyboardIcon;
+        icons.voice.forEach(el => el.style.display = hideVoice ? 'none' : '');
+        icons.image.forEach(el => el.style.display = hideImage ? 'none' : '');
+        icons.keyboard.forEach(el => el.style.display = hideKeyboard ? 'none' : '');
+    }
+
+    function applySearchIconReplacement() {
+        const icons = findSearchIconButtons();
+        const map = {
+            voice: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>',
+            image: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>',
+            keyboard: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h8M16 14h2"/></svg>'
+        };
+
+        for (const [type, list] of Object.entries(icons)) {
+            list.forEach(el => {
+                if (!el.dataset.egOriginalHtml) el.dataset.egOriginalHtml = el.innerHTML;
+                if (CONFIG.replaceSearchIcons && el.style.display !== 'none') {
+                    el.innerHTML = map[type];
+                } else if (el.dataset.egOriginalHtml) {
+                    el.innerHTML = el.dataset.egOriginalHtml;
+                }
+            });
+        }
+    }
+
     function applyLogo() {
-        if (logoApplied && CONFIG.customLogo) return;
+        if (state.logoApplied && CONFIG.customLogo) return;
 
         StyleManager.remove('elgoogle-logo-style');
         const originalLogo = document.querySelector('.lnXdpd');
@@ -948,11 +861,11 @@
                     logoContainer.appendChild(customLogo);
                     logoElement.parentNode.insertBefore(logoContainer, logoElement);
 
-                    logoApplied = true;
+                    state.logoApplied = true;
                 }
             }, 150);
         } else {
-            logoApplied = false;
+            state.logoApplied = false;
             if (originalLogo) {
                 originalLogo.style.display = '';
                 originalLogo.style.visibility = '';
@@ -974,27 +887,29 @@
     }
 
     function applyMenuTheme() {
-        if (panel) {
-            panel.classList.remove('theme-dark', 'theme-light');
-            panel.classList.add(`theme-${CONFIG.menuTheme}`);
+        if (state.panel) {
+            state.panel.classList.remove('theme-dark', 'theme-light', 'theme-blue', 'theme-olive', 'theme-brown', 'theme-indigo');
+            state.panel.classList.add(`theme-${CONFIG.menuTheme}`);
         }
     }
 
     function applyMenuGlass() {
-        if (panel) {
+        if (state.panel) {
             if (CONFIG.glassEffect) {
-                panel.classList.add('glass');
-                panel.classList.remove('no-glass');
+                state.panel.classList.add('glass');
+                state.panel.classList.remove('no-glass');
             } else {
-                panel.classList.add('no-glass');
-                panel.classList.remove('glass');
+                state.panel.classList.add('no-glass');
+                state.panel.classList.remove('glass');
             }
         }
     }
 
     function applyCompactMode() {
-        if (panel) {
-            panel.classList.toggle('compact', CONFIG.compactMode);
+        if (state.panel) {
+            const density = CONFIG.panelDensity || (CONFIG.compactMode ? 'compact' : 'normal');
+            state.panel.classList.toggle('compact', density === 'compact');
+            state.panel.classList.toggle('dense', density === 'dense');
         }
     }
 
@@ -1002,9 +917,7 @@
         const aiButton = document.querySelector('button[jsname="B6rgad"]');
         if (aiButton) aiButton.style.display = CONFIG.removeAI ? 'none' : '';
 
-        document.querySelectorAll('div[jsname="UdfVXc"].WC2Die').forEach(el => {
-            el.style.display = CONFIG.removeIcons ? 'none' : '';
-        });
+        updateSearchIconVisibility();
 
         const imagesLink = document.querySelector('a.gb_Z[data-pid="2"], a[aria-label*="картинк" i], a[href*="imghp"]');
         if (imagesLink) {
@@ -1244,92 +1157,122 @@
     // ================== ПАНЕЛЬ УПРАВЛЕНИЯ ==================
 
     function createControlPanel() {
-        if (panel) panel.remove();
+        if (state.panel) state.panel.remove();
 
-        panel = document.createElement('div');
-        panel.className = `elgoogle-panel ${CONFIG.panelVisible ? '' : 'hidden'}`;
-        panel.style.top = CONFIG.panelTop;
-        panel.style.left = CONFIG.panelLeft;
+        state.panel = document.createElement('div');
+        state.panel.className = `elgoogle-panel ${CONFIG.panelVisible ? '' : 'hidden'}`;
+        state.panel.style.top = CONFIG.panelTop;
+        state.panel.style.left = CONFIG.panelLeft;
 
-        panel.innerHTML = `
-            <div class="panel-header" id="elgoogle-drag-handle">
-                <div class="panel-title">
+        state.panel.innerHTML = `
+            <div class="u-flex u-justify-between u-items-center u-px-5 u-py-4 u-border-b u-border-white-10 u-cursor-move u-shell-header" id="elgoogle-drag-handle">
+                <div class="u-flex u-items-center u-gap-2-5">
                     <div class="logo-icon"></div>
-                    <div class="title-text">
-                        <span class="title-main">elGoogle</span>
-                        <span class="title-version">v${SCRIPT_VERSION}</span>
+                    <div class="u-flex u-items-baseline u-gap-1-5">
+                        <span class="title-main u-font-semibold u-text-lg">elGoogle</span>
+                        <span class="title-version u-text-xs u-opacity-60 u-font-normal u-tight">v${SCRIPT_VERSION}</span>
                     </div>
                 </div>
-                <button class="panel-close" title="Закрыть (Esc)">
+                <button class="panel-close u-btn-icon u-rounded-full u-bg-white-10 hover:u-bg-white-20" title="Закрыть (Esc)">
                     <svg class="el-icon"><use href="#i-close"></use></svg>
                 </button>
             </div>
 
-            <div class="tabs">
-                <button class="tab ${activeTab === 'general' ? 'active' : ''}" data-tab="general">
+            <div class="u-flex u-px-4 u-border-b u-border-white-10 u-bg-black-15 u-shell-tabs">
+                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${state.activeTab === 'general' ? 'is-active' : ''}" data-tab="general">
                     <svg class="el-icon"><use href="#i-sliders"></use></svg>
-                    ${t.general}
+                    ${tt.general}
                 </button>
-                <button class="tab ${activeTab === 'search' ? 'active' : ''}" data-tab="search">
+                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${state.activeTab === 'search' ? 'is-active' : ''}" data-tab="search">
                     <svg class="el-icon"><use href="#i-search"></use></svg>
-                    ${t.search}
+                    ${tt.search}
                 </button>
-                <button class="tab ${activeTab === 'menu' ? 'active' : ''}" data-tab="menu">
+                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${state.activeTab === 'menu' ? 'is-active' : ''}" data-tab="menu">
                     <svg class="el-icon"><use href="#i-menu"></use></svg>
-                    ${t.menu}
+                    ${tt.menu}
                 </button>
-                <button class="tab ${activeTab === 'about' ? 'active' : ''}" data-tab="about">
+                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${state.activeTab === 'page' ? 'is-active' : ''}" data-tab="page">
+                    <svg class="el-icon"><use href="#i-layout-list"></use></svg>
+                    ${tt.page}
+                </button>
+                <button class="u-tab-btn u-flex-1 u-flex u-items-center u-justify-center u-gap-2 u-px-4 u-py-3 ${state.activeTab === 'about' ? 'is-active' : ''}" data-tab="about">
                     <svg class="el-icon"><use href="#i-info"></use></svg>
-                    <span class="tab-text">${t.about}</span>
+                    <span class="tab-text">${tt.about}</span>
                 </button>
             </div>
 
             <div class="tab-content" id="tabContent"></div>
 
-            <div class="panel-footer">
-                <button class="footer-btn" id="exportBtn" title="${t.exportSettings}">
+            <div class="u-flex u-items-center u-px-5 u-py-3 u-border-t u-border-white-10 u-bg-black-10 u-shell-footer">
+                <button class="u-btn-icon u-rounded-md u-bg-white-10 hover:u-bg-white-20 u-mr-2 u-footer-btn" id="exportBtn" title="${tt.exportSettings}">
                     <svg class="el-icon"><use href="#i-export"></use></svg>
                 </button>
-                <button class="footer-btn" id="importBtn" title="${t.importSettings}">
+                <button class="u-btn-icon u-rounded-md u-bg-white-10 hover:u-bg-white-20 u-mr-2 u-footer-btn" id="importBtn" title="${tt.importSettings}">
                     <svg class="el-icon"><use href="#i-import"></use></svg>
                 </button>
-                <button class="footer-btn" id="resetBtn" title="${t.resetSettings}">
+                <button class="u-btn-icon u-rounded-md u-bg-white-10 hover:u-bg-white-20 u-mr-2 u-footer-btn" id="resetBtn" title="${tt.resetSettings}">
                     <svg class="el-icon"><use href="#i-list-restart"></use></svg>
                 </button>
-                <div class="footer-status">
-                    ${isCheckingUpdate ? t.checkingUpdates : t.f2Menu}
+                <div class="u-flex-1 u-text-right u-text-2xs u-opacity-70 u-footer-status">
+                    ${state.isCheckingUpdate ? t.checkingUpdates : t.f2Menu}
                 </div>
             </div>
         `;
 
-        document.body.appendChild(panel);
+        document.body.appendChild(state.panel);
         renderActiveTab();
         setupPanelEvents();
         makePanelDraggable();
         applyAll();
     }
 
-    function renderActiveTab() {
+    function getTabCacheKey(tabName) {
+        const base = `${tabName}|${currentLang}|${CONFIG.preset}|${CONFIG.menuTheme}|${CONFIG.panelDensity}|${CONFIG.compactMode}|${CONFIG.glassEffect}`;
+        if (tabName === 'general') {
+            return `${base}|${CONFIG.darkMode}|${CONFIG.customLogo}|${CONFIG.removeAI}|${CONFIG.removeIcons}|${CONFIG.removeImages}|${CONFIG.removeMail}`;
+        }
+        if (tabName === 'search') {
+            return `${base}|${CONFIG.searchStyleEnabled}|${CONFIG.searchStyle}`;
+        }
+        if (tabName === 'menu') {
+            return `${base}|${CONFIG.menuLanguage}|${JSON.stringify(CONFIG.quickProfiles || {})}`;
+        }
+        if (tabName === 'page') {
+            return `${base}|${CONFIG.removeIcons}|${CONFIG.removeVoiceIcon}|${CONFIG.removeImageIcon}|${CONFIG.removeKeyboardIcon}|${CONFIG.replaceSearchIcons}|${CONFIG.pageTheme}|${CONFIG.pageGrain}|${CONFIG.pageThemeEnabled}|${CONFIG.pageLiveBackground}`;
+        }
+        if (tabName === 'about') {
+            return `${base}|${state.isCheckingUpdate}|${state.lastReleaseInfo?.version || ''}`;
+        }
+        return base;
+    }
+
+    function renderActiveTab(force = false) {
         const content = document.getElementById('tabContent');
         if (!content) return;
+
+        const tabName = state.activeTab;
+        const nextKey = getTabCacheKey(tabName);
+        if (!force && state.tabCacheKeys[tabName] === nextKey) return;
 
         const renderers = {
             general: renderGeneralTab,
             search: renderSearchTab,
             menu: renderMenuTab,
+            page: renderPageTab,
             about: renderAboutTab
         };
 
-        renderers[activeTab]?.(content);
+        renderers[tabName]?.(content);
+        state.tabCacheKeys[tabName] = nextKey;
     }
 
     function renderGeneralTab(container) {
         container.innerHTML = `
             <div class="tab-section">
-                <h3><svg class="el-icon section-icon"><use href="#i-settings-2"></use></svg>${t.general}</h3>
+                <h3><svg class="el-icon section-icon"><use href="#i-settings-2"></use></svg>${tt.general}</h3>
 
                 <div class="control-group">
-                    <div class="control-row ${CONFIG.darkMode ? 'active' : ''}" data-action="toggleDark">
+                    <div class="u-control-row ${CONFIG.darkMode ? 'active' : ''}" data-action="toggleDark">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-theme"></use></svg>
                             <div>
@@ -1343,7 +1286,7 @@
                         </label>
                     </div>
 
-                    <div class="control-row ${CONFIG.customLogo ? 'active' : ''}" data-action="toggleLogo">
+                    <div class="u-control-row ${CONFIG.customLogo ? 'active' : ''}" data-action="toggleLogo">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-wrench"></use></svg>
                             <div>
@@ -1361,7 +1304,7 @@
                 <div class="control-group">
                     <h4><svg class="el-icon section-icon"><use href="#i-ai"></use></svg>${t.cleaninginterface}</h4>
 
-                    <div class="control-row ${CONFIG.removeAI ? 'active' : ''}" data-action="toggleAI">
+                    <div class="u-control-row ${CONFIG.removeAI ? 'active' : ''}" data-action="toggleAI">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-ai"></use></svg>
                             <div>
@@ -1375,7 +1318,7 @@
                         </label>
                     </div>
 
-                    <div class="control-row ${CONFIG.removeIcons ? 'active' : ''}" data-action="toggleIcons">
+                    <div class="u-control-row ${CONFIG.removeIcons ? 'active' : ''}" data-action="toggleIcons">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-icon"></use></svg>
                             <div>
@@ -1389,7 +1332,7 @@
                         </label>
                     </div>
 
-                    <div class="control-row ${CONFIG.removeImages ? 'active' : ''}" data-action="toggleImages">
+                    <div class="u-control-row ${CONFIG.removeImages ? 'active' : ''}" data-action="toggleImages">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-image-off"></use></svg>
                             <div>
@@ -1403,7 +1346,7 @@
                         </label>
                     </div>
 
-                    <div class="control-row ${CONFIG.removeMail ? 'active' : ''}" data-action="toggleMail">
+                    <div class="u-control-row ${CONFIG.removeMail ? 'active' : ''}" data-action="toggleMail">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-mail-x"></use></svg>
                             <div>
@@ -1440,6 +1383,16 @@
                     </div>
                     <div class="preset-description">${getPresetDescription(CONFIG.preset)}</div>
                 </div>
+
+                <div class="control-group">
+                    <button id="showHiddenBtn" class="preset-btn custom-preset" type="button">${tt.showHiddenNow}</button>
+                    <div class="hidden-elements-summary">${tt.hiddenElementsNow} ${[
+                        CONFIG.removeAI ? t.removeAI : null,
+                        CONFIG.removeIcons ? t.removeIcons : null,
+                        CONFIG.removeImages ? t.removeImages : null,
+                        CONFIG.removeMail ? t.removeMail : null
+                    ].filter(Boolean).join(', ') || '— ничего —'}</div>
+                </div>
             </div>
         `;
 
@@ -1452,7 +1405,7 @@
                 <h3><svg class="el-icon section-icon"><use href="#i-search"></use></svg>${t.searchStyle}</h3>
 
                 <div class="control-group">
-                    <div class="control-row ${CONFIG.searchStyleEnabled ? 'active' : ''}" data-action="toggleSearchStyle">
+                    <div class="u-control-row ${CONFIG.searchStyleEnabled ? 'active' : ''}" data-action="toggleSearchStyle">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-check"></use></svg>
                             <div>
@@ -1491,33 +1444,49 @@
 
         container.innerHTML = `
             <div class="tab-section">
-                <h3><svg class="el-icon section-icon"><use href="#i-menu"></use></svg>${t.panelSettings}</h3>
+                <h3><svg class="el-icon section-icon"><use href="#i-menu"></use></svg>${tt.panelSettings}</h3>
 
                 <div class="control-group">
-                    <h4><svg class="el-icon section-icon"><use href="#i-theme"></use></svg>${t.theme}</h4>
+                    <h4><svg class="el-icon section-icon"><use href="#i-theme"></use></svg>${tt.theme}</h4>
                     <div class="theme-buttons">
                         <button class="theme-btn ${CONFIG.menuTheme === 'dark' ? 'active' : ''}" data-theme="dark">
                             <div class="theme-preview dark"></div>
-                            ${t.dark}
+                            ${tt.dark}
                         </button>
                         <button class="theme-btn ${CONFIG.menuTheme === 'light' ? 'active' : ''}" data-theme="light">
                             <div class="theme-preview light"></div>
-                            ${t.light}
+                            ${tt.light}
+                        </button>
+                        <button class="theme-btn ${CONFIG.menuTheme === 'blue' ? 'active' : ''}" data-theme="blue">
+                            <div class="theme-preview blue"></div>
+                            ${tt.themeBlue}
+                        </button>
+                        <button class="theme-btn ${CONFIG.menuTheme === 'indigo' ? 'active' : ''}" data-theme="indigo">
+                            <div class="theme-preview indigo"></div>
+                            ${tt.themeIndigo}
+                        </button>
+                        <button class="theme-btn ${CONFIG.menuTheme === 'olive' ? 'active' : ''}" data-theme="olive">
+                            <div class="theme-preview olive"></div>
+                            ${tt.themeOlive}
+                        </button>
+                        <button class="theme-btn ${CONFIG.menuTheme === 'brown' ? 'active' : ''}" data-theme="brown">
+                            <div class="theme-preview brown"></div>
+                            ${tt.themeBrown}
                         </button>
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <h4><svg class="el-icon section-icon"><use href="#i-languages"></use></svg>${t.menuLanguage}</h4>
+                    <h4><svg class="el-icon section-icon"><use href="#i-languages"></use></svg>${tt.menuLanguage}</h4>
                     <div class="language-buttons">
                         <button class="language-btn ${isAuto ? 'active' : ''}" data-language="auto">
-                            ${t.auto}
+                            ${tt.auto}
                         </button>
                         <button class="language-btn ${isRu ? 'active' : ''}" data-language="ru">
-                            ${t.russian}
+                            ${tt.russian}
                         </button>
                         <button class="language-btn ${isEn ? 'active' : ''}" data-language="en">
-                            ${t.english}
+                            ${tt.english}
                         </button>
                     </div>
                     <div class="language-description">
@@ -1525,13 +1494,33 @@
                     </div>
                 </div>
 
+
                 <div class="control-group">
-                    <div class="control-row ${CONFIG.compactMode ? 'active' : ''}" data-action="toggleCompact">
+                    <h4><svg class="el-icon section-icon"><use href="#i-settings"></use></svg>${tt.interfaceDensity}</h4>
+                    <div class="density-buttons">
+                        <button class="density-btn ${CONFIG.panelDensity === 'normal' ? 'active' : ''}" data-density="normal">${tt.densityNormal}</button>
+                        <button class="density-btn ${CONFIG.panelDensity === 'compact' ? 'active' : ''}" data-density="compact">${tt.densityCompact}</button>
+                        <button class="density-btn ${CONFIG.panelDensity === 'dense' ? 'active' : ''}" data-density="dense">${tt.densityDense}</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><svg class="el-icon section-icon"><use href="#i-settings-2"></use></svg>${tt.quickProfiles}</h4>
+                    <div class="profile-grid">
+                        ${[1,2,3].map(slot => `
+                            <button class="profile-btn" data-profile="save-${slot}">${CONFIG.quickProfiles?.[slot] ? `${tt.profileLabel} ${slot}` : `${tt.saveProfile} ${slot}`}</button>
+                            <button class="profile-btn" data-profile="load-${slot}">${tt.loadProfile} ${slot}</button>
+                            <button class="profile-del-btn" data-profile-delete="${slot}" title="${tt.deleteProfile}">🗑</button>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="u-control-row ${CONFIG.compactMode ? 'active' : ''}" data-action="toggleCompact">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-check"></use></svg>
                             <div>
-                                <div class="control-title">${t.compactMode}</div>
-                                <div class="control-description">${t.compactModeDesc}</div>
+                                <div class="control-title">${tt.compactMode}</div>
+                                <div class="control-description">${tt.compactModeDesc}</div>
                             </div>
                         </div>
                         <label class="switch">
@@ -1540,12 +1529,12 @@
                         </label>
                     </div>
 
-                    <div class="control-row ${CONFIG.glassEffect ? 'active' : ''}" data-action="toggleGlass">
+                    <div class="u-control-row ${CONFIG.glassEffect ? 'active' : ''}" data-action="toggleGlass">
                         <div class="control-label">
                             <svg class="el-icon"><use href="#i-check"></use></svg>
                             <div>
-                                <div class="control-title">${t.glassEffect}</div>
-                                <div class="control-description">${t.glassEffectDesc}</div>
+                                <div class="control-title">${tt.glassEffect}</div>
+                                <div class="control-description">${tt.glassEffectDesc}</div>
                             </div>
                         </div>
                         <label class="switch">
@@ -1560,13 +1549,85 @@
         setupControlHandlers(container);
     }
 
+
+    function renderPageTab(container) {
+        const themes = [
+            ['off', tt.pageThemeOff],
+            ['dark', tt.pageThemeDark],
+            ['carbon', tt.pageThemeCarbon],
+            ['aurora', tt.pageThemeAurora],
+            ['dusk', tt.pageThemeDusk],
+            ['forest', tt.pageThemeForest],
+            ['slate', tt.pageThemeSlate],
+            ['ocean', tt.pageThemeOcean],
+            ['rose', tt.pageThemeRose]
+        ];
+
+        container.innerHTML = `
+            <div class="tab-section">
+                <h3><svg class="el-icon section-icon"><use href="#i-layout-list"></use></svg>${tt.pageAppearance}</h3>
+
+                <div class="control-group">
+                    <h4><svg class="el-icon section-icon"><use href="#i-search"></use></svg>${tt.removeIconsDetailed}</h4>
+                    <div class="u-control-row ${CONFIG.removeIcons ? 'active' : ''}" data-action="toggleIcons">
+                        <div class="control-label"><svg class="el-icon"><use href="#i-check"></use></svg><div><div class="control-title">${tt.removeAllSearchIcons}</div></div></div>
+                        <label class="switch"><input type="checkbox" ${CONFIG.removeIcons ? 'checked' : ''}><span class="slider"></span></label>
+                    </div>
+                    <div class="u-control-row ${CONFIG.removeVoiceIcon ? 'active' : ''}" data-action="toggleVoiceIcon">
+                        <div class="control-label"><svg class="el-icon"><use href="#i-check"></use></svg><div><div class="control-title">${tt.removeVoiceIcon}</div></div></div>
+                        <label class="switch"><input type="checkbox" ${CONFIG.removeVoiceIcon ? 'checked' : ''}><span class="slider"></span></label>
+                    </div>
+                    <div class="u-control-row ${CONFIG.removeImageIcon ? 'active' : ''}" data-action="toggleImageIcon">
+                        <div class="control-label"><svg class="el-icon"><use href="#i-check"></use></svg><div><div class="control-title">${tt.removeImageIcon}</div></div></div>
+                        <label class="switch"><input type="checkbox" ${CONFIG.removeImageIcon ? 'checked' : ''}><span class="slider"></span></label>
+                    </div>
+                    <div class="u-control-row ${CONFIG.removeKeyboardIcon ? 'active' : ''}" data-action="toggleKeyboardIcon">
+                        <div class="control-label"><svg class="el-icon"><use href="#i-check"></use></svg><div><div class="control-title">${tt.removeKeyboardIcon}</div></div></div>
+                        <label class="switch"><input type="checkbox" ${CONFIG.removeKeyboardIcon ? 'checked' : ''}><span class="slider"></span></label>
+                    </div>
+                    <div class="u-control-row ${CONFIG.replaceSearchIcons ? 'active' : ''}" data-action="toggleReplaceSearchIcons">
+                        <div class="control-label"><svg class="el-icon"><use href="#i-check"></use></svg><div><div class="control-title">${tt.replaceIconsLucide}</div></div></div>
+                        <label class="switch"><input type="checkbox" ${CONFIG.replaceSearchIcons ? 'checked' : ''}><span class="slider"></span></label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="u-control-row ${CONFIG.pageThemeEnabled !== false ? 'active' : ''}" data-action="togglePageThemeEnabled">
+                        <div class="control-label"><svg class="el-icon"><use href="#i-check"></use></svg><div><div class="control-title">${tt.pageTheme}</div></div></div>
+                        <label class="switch"><input type="checkbox" ${CONFIG.pageThemeEnabled !== false ? 'checked' : ''}><span class="slider"></span></label>
+                    </div>
+                    <div class="u-control-row ${CONFIG.pageLiveBackground ? 'active' : ''}" data-action="togglePageLiveBackground">
+                        <div class="control-label"><svg class="el-icon"><use href="#i-check"></use></svg><div><div class="control-title">${tt.liveBackground}</div></div></div>
+                        <label class="switch"><input type="checkbox" ${CONFIG.pageLiveBackground ? 'checked' : ''}><span class="slider"></span></label>
+                    </div>
+                    <h4><svg class="el-icon section-icon"><use href="#i-theme"></use></svg>${tt.pageTheme}</h4>
+                    <div class="theme-buttons page-theme-buttons">
+                        ${themes.map(([k,name]) => `<button class="theme-btn ${CONFIG.pageTheme === k ? 'active' : ''}" data-page-theme="${k}">${name}</button>`).join('')}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><svg class="el-icon section-icon"><use href="#i-settings"></use></svg>${tt.pageGrain}</h4>
+                    <div class="density-buttons">
+                        <button class="density-btn ${CONFIG.pageGrain === 'off' ? 'active' : ''}" data-grain="off">${tt.grainOff}</button>
+                        <button class="density-btn ${CONFIG.pageGrain === 'small' ? 'active' : ''}" data-grain="small">${tt.grainSmall}</button>
+                        <button class="density-btn ${CONFIG.pageGrain === 'medium' ? 'active' : ''}" data-grain="medium">${tt.grainMedium}</button>
+                        <button class="density-btn ${CONFIG.pageGrain === 'large' ? 'active' : ''}" data-grain="large">${tt.grainLarge}</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        setupControlHandlers(container);
+    }
+
     function renderAboutTab(container) {
         let versionStatus = '';
-        if (lastReleaseInfo) {
-            if (compareVersions(SCRIPT_VERSION, lastReleaseInfo.version) >= 0) {
+        if (state.lastReleaseInfo) {
+            if (compareVersions(SCRIPT_VERSION, state.lastReleaseInfo.version) >= 0) {
                 versionStatus = `<span class="status-good">${t.upToDate}</span>`;
             } else {
-                versionStatus = `<span class="status-warning">${t.updateAvailable} ${lastReleaseInfo.version}</span>`;
+                versionStatus = `<span class="status-warning">${t.updateAvailable} ${state.lastReleaseInfo.version}</span>`;
             }
         } else {
             versionStatus = `<span class="status-neutral">${t.checkFailed}</span>`;
@@ -1574,16 +1635,16 @@
 
         container.innerHTML = `
             <div class="tab-section">
-                <h3><svg class="el-icon section-icon"><use href="#i-info"></use></svg>${t.about}</h3>
+                <h3><svg class="el-icon section-icon"><use href="#i-info"></use></svg>${tt.about}</h3>
 
                 <div class="about-info">
                     <div class="info-item">
                         <strong>${t.currentVersion}</strong> ${SCRIPT_VERSION}
                     </div>
                     <div class="info-item">
-                        <strong>${t.latestVersion}</strong> ${lastReleaseInfo ? lastReleaseInfo.version : '...'}
-                        <button class="check-update-btn" id="checkUpdateBtn" ${isCheckingUpdate ? 'disabled' : ''}>
-                            ${isCheckingUpdate ? t.checking : t.checkNow}
+                        <strong>${t.latestVersion}</strong> ${state.lastReleaseInfo ? state.lastReleaseInfo.version : '...'}
+                        <button class="check-update-btn" id="checkUpdateBtn" ${state.isCheckingUpdate ? 'disabled' : ''}>
+                            ${state.isCheckingUpdate ? t.checking : t.checkNow}
                         </button>
                     </div>
                     <div class="info-item">
@@ -1616,6 +1677,10 @@
                             <a href="https://simpleicons.org" target="_blank" class="tech-card" title="Simple Icons">
                                 <svg class="tech-icon"><use href="#i-simpleicons"></use></svg>
                                 <span class="tech-name">Simple Icons</span>
+                            </a>
+                            <a href="https://unocss.dev" target="_blank" class="tech-card" title="UnoCSS">
+                                <svg class="tech-icon"><use href="#i-simpleicons"></use></svg>
+                                <span class="tech-name">UnoCSS</span>
                             </a>
                         </div>
                     </div>
@@ -1675,183 +1740,307 @@
             'glass-morph': 'background:rgba(255,255,255,0.04);border-radius:16px;border:1px solid rgba(255,255,255,0.02);backdrop-filter:blur(5.9px);',
             'liquid-metal': 'border-radius:16px;background:linear-gradient(135deg,#1a1a1a 0%,#2a2a2a 50%,#1a1a1a 100%);border:2px solid transparent;box-shadow:inset 0 2px 10px rgba(255,255,255,0.1),inset 0 -2px 10px rgba(0,0,0,0.5),0 5px 30px rgba(0,0,0,0.6);',
             'monochrome-crt': 'border-radius:4px;background:radial-gradient(ellipse at center,rgba(200,200,200,0.1)0%,rgba(0,0,0,0.95)100%);border:4px solid #b0b0b0;box-shadow:inset 0 0 60px rgba(255,255,255,0.2),0 0 40px rgba(255,255,255,0.3),0 0 0 3px rgba(200,200,200,0.4),inset 0 0 100px rgba(0,0,0,0.8);',
-            'cyberpunk-neon': 'border-radius:18px;background:linear-gradient(135deg,#0a0a0a 0%,#151515 100%);border:1px solid transparent;box-shadow:0 4px 25px rgba(0,0,0,0.7);position:relative;'
+            'cyberpunk-neon': 'border-radius:18px;background:linear-gradient(135deg,#0b0e12 0%,#121824 100%);border:1px solid transparent;box-shadow:0 4px 25px rgba(0,0,0,0.7);position:relative;',
+            'aurora-soft': 'border-radius:22px;background:linear-gradient(120deg,rgba(22,28,38,0.94),rgba(28,36,52,0.9));border:1px solid rgba(120,170,255,0.35);box-shadow:0 8px 28px rgba(40,90,180,0.25);',
+            'graphite-outline': 'border-radius:18px;background:rgba(17,20,26,0.9);border:1px solid rgba(140,150,170,0.45);box-shadow:0 0 0 1px rgba(70,80,100,0.35),0 6px 20px rgba(0,0,0,0.35);'
         };
         return styles[styleKey] || '';
     }
 
     function setupControlHandlers(container) {
-        container.querySelectorAll('.control-row[data-action]').forEach(row => {
-            const action = row.dataset.action;
-            const checkbox = row.querySelector('input[type="checkbox"]');
+        const actions = {
+            toggleDark: (value) => { CONFIG.darkMode = value; },
+            toggleLogo: (value) => {
+                CONFIG.customLogo = value;
+                state.logoApplied = false;
+            },
+            toggleAI: (value) => { CONFIG.removeAI = value; },
+            toggleIcons: (value) => { CONFIG.removeIcons = value; },
+            toggleVoiceIcon: (value) => { CONFIG.removeVoiceIcon = value; },
+            toggleImageIcon: (value) => { CONFIG.removeImageIcon = value; },
+            toggleKeyboardIcon: (value) => { CONFIG.removeKeyboardIcon = value; },
+            toggleReplaceSearchIcons: (value) => { CONFIG.replaceSearchIcons = value; },
+            toggleImages: (value) => { CONFIG.removeImages = value; },
+            toggleMail: (value) => { CONFIG.removeMail = value; },
+            toggleSearchStyle: (value) => { CONFIG.searchStyleEnabled = value; },
+            toggleCompact: (value) => { CONFIG.compactMode = value; CONFIG.panelDensity = value ? 'compact' : 'normal'; },
+            toggleGlass: (value) => { CONFIG.glassEffect = value; },
+            togglePageThemeEnabled: (value) => { CONFIG.pageThemeEnabled = value; },
+            togglePageLiveBackground: (value) => { CONFIG.pageLiveBackground = value; }
+        };
 
-            checkbox?.addEventListener('change', async (e) => {
-                const value = e.target.checked;
+        container.onchange = async (e) => {
+            const checkbox = e.target.closest('[data-action] input[type="checkbox"]');
+            if (!checkbox) return;
 
-                switch (action) {
-                    case 'toggleDark': CONFIG.darkMode = value; break;
-                    case 'toggleLogo':
-                        CONFIG.customLogo = value;
-                        logoApplied = false;
-                        break;
-                    case 'toggleAI': CONFIG.removeAI = value; break;
-                    case 'toggleIcons': CONFIG.removeIcons = value; break;
-                    case 'toggleImages': CONFIG.removeImages = value; break;
-                    case 'toggleMail': CONFIG.removeMail = value; break;
-                    case 'toggleSearchStyle': CONFIG.searchStyleEnabled = value; break;
-                    case 'toggleCompact': CONFIG.compactMode = value; break;
-                    case 'toggleGlass': CONFIG.glassEffect = value; break;
-                }
+            const row = checkbox.closest('[data-action]');
+            const action = row?.dataset.action;
+            actions[action]?.(checkbox.checked);
 
-                await saveConfig();
-                checkIfSettingsChanged();
-                applyAll();
-                renderActiveTab();
-            });
-        });
+            await saveConfig();
+            checkIfSettingsChanged();
+            applyAll();
+            renderActiveTab(true);
+        };
 
-        container.querySelectorAll('.preset-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                const preset = btn.dataset.preset;
+        container.onclick = async (e) => {
+            const presetBtn = e.target.closest('.preset-btn[data-preset]');
+            if (presetBtn) {
+                const preset = presetBtn.dataset.preset;
                 CONFIG.preset = preset;
-
-                if (preset !== 'custom') {
-                    Object.assign(CONFIG, PRESETS[preset].values);
-                }
-
+                if (preset !== 'custom') Object.assign(CONFIG, PRESETS[preset].values);
                 await saveConfig();
                 applyAll();
-                renderActiveTab();
-            });
-        });
+                renderActiveTab(true);
+                return;
+            }
 
-        container.querySelectorAll('.style-preview').forEach(preview => {
-            preview.addEventListener('click', async () => {
-                CONFIG.searchStyle = preview.dataset.style;
+            const stylePreview = e.target.closest('.style-preview[data-style]');
+            if (stylePreview) {
+                CONFIG.searchStyle = stylePreview.dataset.style;
                 await saveConfig();
                 applySearchStyles();
-                renderActiveTab();
-            });
-        });
+                renderActiveTab(true);
+                return;
+            }
 
-        container.querySelectorAll('.theme-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                CONFIG.menuTheme = btn.dataset.theme;
+            const themeBtn = e.target.closest('.theme-btn[data-theme]');
+            if (themeBtn) {
+                CONFIG.menuTheme = themeBtn.dataset.theme;
                 await saveConfig();
                 applyMenuTheme();
-                renderActiveTab();
-            });
-        });
+                renderActiveTab(true);
+                return;
+            }
 
-        // Обработчики для кнопок выбора языка
-        container.querySelectorAll('.language-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                const lang = btn.dataset.language;
+            const densityBtn = e.target.closest('.density-btn[data-density]');
+            if (densityBtn) {
+                CONFIG.panelDensity = densityBtn.dataset.density;
+                CONFIG.compactMode = CONFIG.panelDensity !== 'normal';
+                await saveConfig();
+                applyCompactMode();
+                renderActiveTab(true);
+                return;
+            }
+
+            const profileBtn = e.target.closest('.profile-btn[data-profile]');
+            if (profileBtn) {
+                const [mode, slot] = profileBtn.dataset.profile.split('-');
+                CONFIG.quickProfiles = CONFIG.quickProfiles || {};
+
+                if (mode === 'save') {
+                    CONFIG.quickProfiles[slot] = {
+                        darkMode: CONFIG.darkMode,
+                        customLogo: CONFIG.customLogo,
+                        removeAI: CONFIG.removeAI,
+                        removeIcons: CONFIG.removeIcons,
+                        removeVoiceIcon: CONFIG.removeVoiceIcon,
+                        removeImageIcon: CONFIG.removeImageIcon,
+                        removeKeyboardIcon: CONFIG.removeKeyboardIcon,
+                        replaceSearchIcons: CONFIG.replaceSearchIcons,
+                        removeImages: CONFIG.removeImages,
+                        removeMail: CONFIG.removeMail,
+                        searchStyleEnabled: CONFIG.searchStyleEnabled,
+                        searchStyle: CONFIG.searchStyle,
+                        menuTheme: CONFIG.menuTheme,
+                        panelDensity: CONFIG.panelDensity,
+                        glassEffect: CONFIG.glassEffect,
+                        pageTheme: CONFIG.pageTheme,
+                        pageGrain: CONFIG.pageGrain
+                    };
+                    await saveConfig();
+                } else {
+                    const profile = CONFIG.quickProfiles?.[slot];
+                    if (!profile) {
+                        alert(`Профиль ${slot} пуст`);
+                        return;
+                    }
+                    Object.assign(CONFIG, profile);
+                    await saveConfig();
+                    applyAll();
+                }
+                renderActiveTab(true);
+                return;
+            }
+
+            const profileDeleteBtn = e.target.closest('.profile-del-btn[data-profile-delete]');
+            if (profileDeleteBtn) {
+                const slot = profileDeleteBtn.dataset.profileDelete;
+                if (CONFIG.quickProfiles?.[slot]) {
+                    delete CONFIG.quickProfiles[slot];
+                    await saveConfig();
+                    renderActiveTab(true);
+                }
+                return;
+            }
+
+            const pageThemeBtn = e.target.closest('.theme-btn[data-page-theme]');
+            if (pageThemeBtn) {
+                CONFIG.pageTheme = pageThemeBtn.dataset.pageTheme;
+                await saveConfig();
+                applyPageTheme();
+                renderActiveTab(true);
+                return;
+            }
+
+            const grainBtn = e.target.closest('[data-grain]');
+            if (grainBtn) {
+                CONFIG.pageGrain = grainBtn.dataset.grain;
+                await saveConfig();
+                applyPageTheme();
+                renderActiveTab(true);
+                return;
+            }
+
+            const hiddenBtn = e.target.closest('#showHiddenBtn');
+            if (hiddenBtn) {
+                const hidden = [];
+                if (CONFIG.removeAI) hidden.push(t.removeAI);
+                if (CONFIG.removeIcons) hidden.push(t.removeIcons);
+                if (CONFIG.removeImages) hidden.push(t.removeImages);
+                if (CONFIG.removeMail) hidden.push(t.removeMail);
+                alert(`${tt.hiddenElementsNow}\n• ${hidden.length ? hidden.join('\n• ') : '— ничего —'}`);
+                return;
+            }
+
+            const languageBtn = e.target.closest('.language-btn[data-language]');
+            if (languageBtn) {
+                const lang = languageBtn.dataset.language;
                 if (CONFIG.menuLanguage !== lang) {
                     CONFIG.menuLanguage = lang;
                     await saveConfig();
-
-                    // Обновляем активный язык и перерисовываем панель
                     updateActiveLanguage();
                     updatePresetNames();
-                    renderActiveTab();
-
-                    // Обновляем заголовки вкладок
-                    panel.querySelectorAll('.tab').forEach(tab => {
-                        const tabName = tab.dataset.tab;
-                        if (tabName === 'general') {
-                            tab.innerHTML = `<svg class="el-icon"><use href="#i-sliders"></use></svg>${t.general}`;
-                        } else if (tabName === 'search') {
-                            tab.innerHTML = `<svg class="el-icon"><use href="#i-search"></use></svg>${t.search}`;
-                        } else if (tabName === 'menu') {
-                            tab.innerHTML = `<svg class="el-icon"><use href="#i-menu"></use></svg>${t.menu}`;
-                        } else if (tabName === 'about') {
-                            tab.innerHTML = `<svg class="el-icon"><use href="#i-info"></use></svg><span class="tab-text">${t.about}</span>`;
-                        }
-                    });
-
-                    // Обновляем footer
-                    panel.querySelector('.footer-status').textContent = isCheckingUpdate ? t.checkingUpdates : t.f2Menu;
-
-                    // Обновляем кнопки в footer
-                    panel.querySelector('#exportBtn').title = t.exportSettings;
-                    panel.querySelector('#importBtn').title = t.importSettings;
-                    panel.querySelector('#resetBtn').title = t.resetSettings;
+                    renderActiveTab(true);
+                    updateUILanguage();
                 }
-            });
+            }
+        };
+    }
+
+    function updateUILanguage() {
+
+        if (!state.panel) return;
+
+        state.panel.querySelectorAll('[data-tab]').forEach(tab => {
+            const tabName = tab.dataset.tab;
+            if (tabName === 'general') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-sliders"></use></svg>${tt.general}`;
+            } else if (tabName === 'search') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-search"></use></svg>${tt.search}`;
+            } else if (tabName === 'menu') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-menu"></use></svg>${tt.menu}`;
+            } else if (tabName === 'page') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-layout-list"></use></svg>${tt.page}`;
+            } else if (tabName === 'about') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-info"></use></svg><span class="tab-text">${tt.about}</span>`;
+            }
         });
+
+        const status = state.panel.querySelector('.u-footer-status');
+        if (status) status.textContent = state.isCheckingUpdate ? tt.checkingUpdates : tt.f2Menu;
+
+        const exportBtn = state.panel.querySelector('#exportBtn');
+        const importBtn = state.panel.querySelector('#importBtn');
+        const resetBtn = state.panel.querySelector('#resetBtn');
+        if (exportBtn) exportBtn.title = tt.exportSettings;
+        if (importBtn) importBtn.title = tt.importSettings;
+        if (resetBtn) resetBtn.title = tt.resetSettings;
     }
 
     // ================== СОБЫТИЯ ПАНЕЛИ ==================
 
     function setupPanelEvents() {
-        panel.querySelector('.panel-close').addEventListener('click', togglePanel);
+        state.panel.querySelector('.panel-close').addEventListener('click', togglePanel);
 
-        panel.querySelectorAll('.tab').forEach(tab => {
+        state.panel.querySelectorAll('[data-tab]').forEach(tab => {
             tab.addEventListener('click', () => {
-                activeTab = tab.dataset.tab;
-                panel.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                renderActiveTab();
+                state.activeTab = tab.dataset.tab;
+                state.panel.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('is-active'));
+                tab.classList.add('is-active');
+
+                const content = document.getElementById('tabContent');
+                if (!content) {
+                    renderActiveTab(true);
+                    return;
+                }
+
+                content.classList.add('fade-out');
+                setTimeout(() => {
+                    renderActiveTab(true);
+                    content.classList.remove('fade-out');
+                }, 170);
             });
         });
 
-        panel.querySelector('#exportBtn').addEventListener('click', exportSettings);
-        panel.querySelector('#importBtn').addEventListener('click', importSettings);
-        panel.querySelector('#resetBtn').addEventListener('click', resetSettings);
+        state.panel.querySelector('#exportBtn').addEventListener('click', exportSettings);
+        state.panel.querySelector('#importBtn').addEventListener('click', importSettings);
+        state.panel.querySelector('#resetBtn').addEventListener('click', resetSettings);
 
         document.addEventListener('keydown', e => {
-            if (e.key === 'Escape' && !panel.classList.contains('hidden')) {
+            if (e.key === 'Escape' && !state.panel.classList.contains('hidden')) {
                 togglePanel();
             }
         });
     }
 
     function makePanelDraggable() {
-        const dragHandle = panel.querySelector('#elgoogle-drag-handle');
+        const dragHandle = state.panel.querySelector('#elgoogle-drag-handle');
         let isDragging = false;
         let offsetX, offsetY;
+        let rafId = null;
 
         dragHandle.addEventListener('mousedown', startDrag);
 
         function startDrag(e) {
             if (e.target.closest('button')) return;
             isDragging = true;
-            const rect = panel.getBoundingClientRect();
+            const rect = state.panel.getBoundingClientRect();
             offsetX = e.clientX - rect.left;
             offsetY = e.clientY - rect.top;
             document.addEventListener('mousemove', onDrag);
             document.addEventListener('mouseup', stopDrag);
-            panel.style.transition = 'none';
+            state.panel.style.transition = 'none';
             e.preventDefault();
         }
 
         function onDrag(e) {
             if (!isDragging) return;
-            const x = e.clientX - offsetX;
-            const y = e.clientY - offsetY;
-            const maxX = window.innerWidth - panel.offsetWidth;
-            const maxY = window.innerHeight - panel.offsetHeight;
-            panel.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
-            panel.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+            if (rafId) cancelAnimationFrame(rafId);
+            rafId = requestAnimationFrame(() => {
+                const x = e.clientX - offsetX;
+                const y = e.clientY - offsetY;
+                const maxX = window.innerWidth - state.panel.offsetWidth;
+                const maxY = window.innerHeight - state.panel.offsetHeight;
+                state.panel.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
+                state.panel.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+                rafId = null;
+            });
         }
 
         function stopDrag() {
             if (!isDragging) return;
             isDragging = false;
-            panel.style.transition = '';
-            CONFIG.panelTop = panel.style.top;
-            CONFIG.panelLeft = panel.style.left;
+            state.panel.style.transition = '';
+            CONFIG.panelTop = state.panel.style.top;
+            CONFIG.panelLeft = state.panel.style.left;
             saveConfig();
+            if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
             document.removeEventListener('mousemove', onDrag);
             document.removeEventListener('mouseup', stopDrag);
         }
     }
 
     function togglePanel() {
-        if (!panel) return;
-        const isHidden = panel.classList.contains('hidden');
-        panel.classList.toggle('hidden', !isHidden);
+        if (!state.panel) {
+            CONFIG.panelVisible = true;
+            createControlPanel();
+            saveConfig();
+            return;
+        }
+
+        const isHidden = state.panel.classList.contains('hidden');
+        state.panel.classList.toggle('hidden', !isHidden);
         CONFIG.panelVisible = isHidden;
         saveConfig();
     }
@@ -1919,35 +2108,69 @@
             clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
                 updateRemovedElements();
-                if (CONFIG.customLogo && !logoApplied) {
+        applySearchIconReplacement();
+                if (CONFIG.customLogo && !state.logoApplied) {
                     applyLogo();
                 }
             }, 300);
         });
-        observer.observe(document.body, { childList: true, subtree: true });
+        observer.observe(document.body, { childList: true, subtree: true, attributes: false, characterData: false });
         setTimeout(updateRemovedElements, 2000);
     }
 
     function setupHotkeys() {
-        document.addEventListener('keydown', e => {
+        document.addEventListener('keydown', async e => {
+            const key = e.key.toLowerCase();
+
             if (e.key === 'F2' && !e.ctrlKey && !e.altKey && !e.metaKey) {
                 e.preventDefault();
                 togglePanel();
+                return;
             }
-            if (e.ctrlKey && e.altKey && e.key === 'r') {
+
+            if (e.ctrlKey && e.altKey && key === 'r') {
                 e.preventDefault();
                 location.reload();
+                return;
+            }
+
+            if (e.ctrlKey && e.shiftKey && !e.altKey && !e.metaKey) {
+                if (key === 'd') {
+                    e.preventDefault();
+                    CONFIG.darkMode = !CONFIG.darkMode;
+                    await saveConfig();
+                    applyAll();
+                    if (state.panel && !state.panel.classList.contains('hidden')) renderActiveTab();
+                    return;
+                }
+
+                if (key === 'l') {
+                    e.preventDefault();
+                    CONFIG.customLogo = !CONFIG.customLogo;
+                    await saveConfig();
+                    applyAll();
+                    if (state.panel && !state.panel.classList.contains('hidden')) renderActiveTab();
+                    return;
+                }
+
+                if (key === 'r') {
+                    e.preventDefault();
+                    resetSettings();
+                }
             }
         });
     }
 
     function setupUserScriptMenu() {
-        if (typeof GM_registerMenuCommand === 'undefined') return;
+        if (!GM_API.registerMenuCommand) {
+            console.warn('[elGoogle] GM.registerMenuCommand недоступен, меню скрипта отключено');
+            return;
+        }
         try {
-            GM_registerMenuCommand('🎨 Открыть панель elGoogle', togglePanel, 'f2');
-            GM_registerMenuCommand('🔄 Проверить обновления', () => checkForUpdates());
-            GM_registerMenuCommand('📋 Экспорт настроек', exportSettings);
-            GM_registerMenuCommand('🗑️ Сбросить все настройки', resetSettings);
+            GM_API.registerMenuCommand('🎨 Открыть панель elGoogle', togglePanel, 'f2');
+            GM_API.registerMenuCommand('🔄 Проверить обновления', () => checkForUpdates());
+            GM_API.registerMenuCommand('📋 Экспорт настроек', exportSettings);
+            GM_API.registerMenuCommand('🗑️ Сбросить все настройки', resetSettings);
         } catch (e) {
             console.warn('[elGoogle] Ошибка создания меню:', e);
         }
@@ -1956,7 +2179,7 @@
     // ================== ПРОВЕРКА ОБНОВЛЕНИЙ ==================
 
     async function checkForUpdates(silent = false) {
-        if (isCheckingUpdate) return;
+        if (state.isCheckingUpdate) return;
 
         const now = Date.now();
         const oneDay = 24 * 60 * 60 * 1000;
@@ -1966,11 +2189,11 @@
             return;
         }
 
-        isCheckingUpdate = true;
+        state.isCheckingUpdate = true;
 
         try {
             const latestRelease = await getLatestRelease();
-            lastReleaseInfo = latestRelease;
+            state.lastReleaseInfo = latestRelease;
             CONFIG.lastVersionCheck = now;
             await saveConfig();
 
@@ -1979,13 +2202,18 @@
             console.warn('[elGoogle] Ошибка проверки обновлений:', error);
             if (!silent) alert('Не удалось проверить обновления. Попробуйте позже.');
         } finally {
-            isCheckingUpdate = false;
+            state.isCheckingUpdate = false;
         }
     }
 
     function getLatestRelease() {
         return new Promise((resolve, reject) => {
-            GM.xmlHttpRequest({
+            if (!GM_API.xmlHttpRequest) {
+                reject(new Error('GM.xmlHttpRequest недоступен в этом окружении'));
+                return;
+            }
+
+            GM_API.xmlHttpRequest({
                 method: 'GET',
                 url: 'https://api.github.com/repos/ellatuk/elGoogle/releases/latest',
                 headers: { 'Accept': 'application/vnd.github.v3+json' },
@@ -2024,15 +2252,79 @@
 
     // ================== СТИЛИ ПАНЕЛИ ==================
 
-    function getPanelStyles() {
+    function getUtilityStyles() {
+        const spacing = { 2: '8px', 3: '12px', 4: '16px', 5: '20px' };
+        const spacingCss = Object.entries(spacing).map(([k, v]) => `
+            .u-px-${k} { padding-left: ${v}; padding-right: ${v}; }
+            .u-py-${k} { padding-top: ${v}; padding-bottom: ${v}; }
+        `).join('');
+
+        return `
+            .u-flex { display: flex; }
+            .u-flex-1 { flex: 1; }
+            .u-items-center { align-items: center; }
+            .u-items-baseline { align-items: baseline; }
+            .u-justify-between { justify-content: space-between; }
+            .u-justify-center { justify-content: center; }
+            .u-gap-2 { gap: 8px; }
+            .u-gap-2-5 { gap: 10px; }
+            .u-gap-1-5 { gap: 6px; }
+            ${spacingCss}
+            .u-border-b { border-bottom-width: 1px; border-bottom-style: solid; }
+            .u-border-t { border-top-width: 1px; border-top-style: solid; }
+            .u-border-white-10 { border-color: rgba(255, 255, 255, 0.1); }
+            .u-cursor-move { cursor: move; }
+            .u-font-semibold { font-weight: 600; }
+            .u-font-normal { font-weight: 400; }
+            .u-text-lg { font-size: 18px; }
+            .u-text-xs { font-size: 13px; }
+            .u-text-2xs { font-size: 12px; }
+            .u-text-right { text-align: right; }
+            .u-opacity-60 { opacity: 0.6; }
+            .u-opacity-70 { opacity: 0.7; }
+            .u-tight { letter-spacing: -0.2px; }
+            .u-rounded-full { border-radius: 50%; }
+            .u-rounded-md { border-radius: var(--radius-sm, 6px); }
+            .u-bg-white-10 { background: rgba(255, 255, 255, 0.1); }
+            .u-bg-black-15 { background: rgba(0, 0, 0, 0.15); }
+            .u-bg-black-10 { background: rgba(0, 0, 0, 0.1); }
+            .u-mr-2 { margin-right: 8px; }
+            .u-btn-icon {
+                border: none;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .hover\:u-bg-white-20:hover { background: rgba(255, 255, 255, 0.2); }
+        `;
+    }
+
+    function getThemeStyles() {
         return `
             .elgoogle-panel {
+                --panel-bg: rgba(25, 25, 25, 0.95);
+                --panel-text: #ffffff;
+                --panel-border: rgba(255, 255, 255, 0.1);
+                --panel-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                --accent-color: #3b82f6;
+                --radius-lg: 16px;
+                --radius-sm: 8px;
+                --space-md: 20px;
+
                 position: fixed; z-index: 999999;
                 min-width: 400px; max-width: 500px;
                 font-family: 'Segoe UI', system-ui, sans-serif;
-                user-select: none; border-radius: 16px;
+                user-select: none; border-radius: var(--radius-lg);
                 transition: opacity 0.3s ease, transform 0.3s ease;
                 overflow: hidden;
+                background: var(--panel-bg);
+                color: var(--panel-text);
+                border: 1px solid var(--panel-border);
+                box-shadow: var(--panel-shadow);
             }
 
             .elgoogle-panel.hidden {
@@ -2041,25 +2333,61 @@
             }
 
             .elgoogle-panel.theme-dark {
-                background: rgba(25, 25, 25, 0.95);
-                color: #fff; border: 1px solid rgba(255, 255, 255, 0.1);
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                --panel-bg: rgba(25, 25, 25, 0.95);
+                --panel-text: #ffffff;
+                --panel-border: rgba(255, 255, 255, 0.1);
+                --panel-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                --accent-color: #3b82f6;
             }
 
             .elgoogle-panel.theme-light {
-                background: rgba(255, 255, 255, 0.95);
-                color: #333; border: 1px solid rgba(0, 0, 0, 0.1);
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+                --panel-bg: rgba(248, 250, 255, 0.96);
+                --panel-text: #111827;
+                --panel-border: rgba(0, 0, 0, 0.08);
+                --panel-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+                --accent-color: #2563eb;
+            }
+
+            .elgoogle-panel.theme-blue {
+                --panel-bg: linear-gradient(145deg, #1a2a4a, #0f1a2f);
+                --panel-text: #e0f0ff;
+                --panel-border: rgba(100, 180, 255, 0.3);
+                --panel-shadow: 0 10px 40px rgba(0, 40, 80, 0.4);
+                --accent-color: #3b82f6;
+            }
+
+            .elgoogle-panel.theme-indigo {
+                --panel-bg: linear-gradient(145deg, #2b1f5a, #1a1440);
+                --panel-text: #ece8ff;
+                --panel-border: rgba(167, 139, 250, 0.35);
+                --panel-shadow: 0 10px 40px rgba(34, 20, 80, 0.45);
+                --accent-color: #a78bfa;
+            }
+
+            .elgoogle-panel.theme-olive {
+                --panel-bg: linear-gradient(145deg, #2d3e2d, #1e2a1e);
+                --panel-text: #f0f5e0;
+                --panel-border: rgba(180, 200, 100, 0.3);
+                --panel-shadow: 0 10px 40px rgba(40, 60, 0, 0.4);
+                --accent-color: #84cc16;
+            }
+
+            .elgoogle-panel.theme-brown {
+                --panel-bg: linear-gradient(145deg, #3e2e1e, #2a1e12);
+                --panel-text: #f5e8d0;
+                --panel-border: rgba(200, 150, 100, 0.3);
+                --panel-shadow: 0 10px 40px rgba(80, 40, 0, 0.4);
+                --accent-color: #d97706;
             }
 
             .elgoogle-panel.glass {
-                background: rgba(30, 30, 30, 0.65) !important;
-                backdrop-filter: blur(25px) saturate(2) !important;
-                -webkit-backdrop-filter: blur(25px) saturate(2) !important;
-                border: 1px solid rgba(255, 255, 255, 0.2) !important;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
-                           inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                           inset 0 -1px 0 rgba(0, 0, 0, 0.2) !important;
+                background: color-mix(in srgb, var(--panel-bg) 72%, transparent) !important;
+                backdrop-filter: blur(14px) saturate(1.08) contrast(0.97) !important;
+                -webkit-backdrop-filter: blur(14px) saturate(1.08) contrast(0.97) !important;
+                border-color: color-mix(in srgb, var(--panel-border) 65%, white 18%) !important;
+                box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45),
+                           inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                           inset 0 -1px 0 rgba(0, 0, 0, 0.25) !important;
             }
 
             .elgoogle-panel.theme-dark.glass::before {
@@ -2069,13 +2397,7 @@
             }
 
             .elgoogle-panel.theme-light.glass {
-                background: rgba(255, 255, 255, 0.75) !important;
-                backdrop-filter: blur(25px) saturate(1.8) !important;
-                -webkit-backdrop-filter: blur(25px) saturate(1.8) !important;
-                border: 1px solid rgba(255, 255, 255, 0.3) !important;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
-                           inset 0 1px 0 rgba(255, 255, 255, 0.3),
-                           inset 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
+                border-color: rgba(255, 255, 255, 0.35) !important;
             }
 
             .elgoogle-panel.theme-light.glass::before {
@@ -2094,36 +2416,18 @@
                 min-width: 320px; max-width: 380px;
             }
 
-            .elgoogle-panel.compact .panel-header { padding: 12px 16px; }
-            .elgoogle-panel.compact .tabs { padding: 0 12px; }
-            .elgoogle-panel.compact .tab { padding: 8px 12px; font-size: 13px; }
+            .elgoogle-panel.compact .u-px-5 { padding-left: 16px; padding-right: 16px; }
+            .elgoogle-panel.compact .u-px-4 { padding-left: 12px; padding-right: 12px; }
+            .elgoogle-panel.compact .u-tab-btn { padding: 8px 12px; font-size: 13px; }
             .elgoogle-panel.compact .tab-content { padding: 16px; }
+            .elgoogle-panel.dense { min-width: 300px; max-width: 340px; }
+            .elgoogle-panel.dense .u-px-5 { padding-left: 10px; padding-right: 10px; }
+            .elgoogle-panel.dense .u-px-4 { padding-left: 8px; padding-right: 8px; }
+            .elgoogle-panel.dense .u-tab-btn { padding: 7px 8px; font-size: 12px; }
+            .elgoogle-panel.dense .tab-content { padding: 12px; max-height: 52vh; }
 
-            .panel-header {
-                display: flex; justify-content: space-between;
-                align-items: center; padding: 16px 20px;
-                cursor: move; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-
-            .theme-light .panel-header {
+            .theme-light .u-shell-header {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            }
-
-            .panel-title {
-                display: flex; align-items: center; gap: 10px;
-            }
-
-            .title-text {
-                display: flex; align-items: baseline; gap: 6px;
-            }
-
-            .title-main {
-                font-weight: 600; font-size: 18px;
-            }
-
-            .title-version {
-                font-size: 13px; opacity: 0.6; font-weight: 400;
-                letter-spacing: -0.2px;
             }
 
             .logo-icon {
@@ -2135,7 +2439,7 @@
                 transition: transform 0.3s ease, filter 0.3s ease;
             }
 
-            .panel-header:hover .logo-icon {
+            .u-shell-header:hover .logo-icon {
                 transform: scale(1.1);
                 filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
             }
@@ -2144,37 +2448,23 @@
                 filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
             }
 
-            .panel-close {
-                background: rgba(255, 255, 255, 0.1); border: none;
-                border-radius: 50%; width: 32px; height: 32px;
-                display: flex; align-items: center; justify-content: center;
-                cursor: pointer; transition: background 0.2s, transform 0.2s;
-            }
-
             .theme-light .panel-close { background: rgba(0, 0, 0, 0.1); }
             .panel-close:hover {
-                background: rgba(255, 255, 255, 0.2);
                 transform: scale(1.05);
             }
             .theme-light .panel-close:hover { background: rgba(0, 0, 0, 0.2); }
 
-            .tabs {
-                display: flex; padding: 0 16px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                background: rgba(0, 0, 0, 0.15);
-                border-radius: 16px 16px 0 0;
-            }
+            .u-shell-tabs { border-radius: 16px 16px 0 0; padding-left: 6px; padding-right: 6px; gap: 4px; }
 
-            .theme-light .tabs {
+            .theme-light .u-shell-tabs {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
                 background: rgba(0, 0, 0, 0.05);
             }
 
-            .tab {
-                flex: 1; display: flex; align-items: center;
-                justify-content: center; gap: 8px; padding: 12px 16px;
+            .u-tab-btn {
                 background: none; border: none; color: inherit;
-                cursor: pointer; font-size: 14px; transition: all 0.2s;
+                cursor: pointer; font-size: 14px;
+                min-width: 0; transition: all 0.2s;
                 border-bottom: 2px solid transparent; opacity: 0.7;
                 white-space: nowrap;
             }
@@ -2183,20 +2473,25 @@
                 display: inline-block;
             }
 
-            .tab:hover {
+            .u-tab-btn:hover {
                 opacity: 1; background: rgba(255, 255, 255, 0.08);
                 transform: translateY(-1px);
             }
 
-            .theme-light .tab:hover { background: rgba(0, 0, 0, 0.08); }
+            .theme-light .u-tab-btn:hover { background: rgba(0, 0, 0, 0.08); }
 
-            .tab.active {
-                opacity: 1; border-bottom-color: #1a73e8;
-                background: rgba(26, 115, 232, 0.15);
+            .u-tab-btn.is-active {
+                opacity: 1; border-bottom-color: var(--accent-color, #1a73e8);
+                background: color-mix(in srgb, var(--accent-color, #1a73e8) 18%, transparent);
             }
 
             .tab-content {
                 padding: 20px; max-height: 60vh; overflow-y: auto;
+                transition: opacity 0.2s ease, transform 0.2s ease;
+            }
+            .tab-content.fade-out {
+                opacity: 0;
+                transform: translateY(4px);
             }
 
             .tab-section h3 {
@@ -2205,13 +2500,14 @@
             }
 
             .tab-section h4 {
-                margin: 0 0 12px 0; font-size: 14px; opacity: 0.9;
+                margin: 0 0 12px 0; font-size: 14px;
+                min-width: 0; opacity: 0.9;
                 display: flex; align-items: center; gap: 8px;
             }
 
             .control-group { margin-bottom: 24px; }
 
-            .control-row {
+            .u-control-row {
                 display: flex; justify-content: space-between;
                 align-items: center; padding: 12px 0;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -2220,34 +2516,35 @@
                 padding-left: 12px; padding-right: 12px;
             }
 
-            .theme-light .control-row {
+            .theme-light .u-control-row {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             }
 
-            .control-row:hover {
+            .u-control-row:hover {
                 background: rgba(255, 255, 255, 0.08);
                 transform: translateX(2px);
             }
 
-            .theme-light .control-row:hover {
+            .theme-light .u-control-row:hover {
                 background: rgba(0, 0, 0, 0.08);
             }
 
-            .control-row.active {
-                background: color-mix(in srgb, #1a73e8 18%, transparent);
+            .u-control-row.active {
+                background: color-mix(in srgb, var(--accent-color, #1a73e8) 18%, transparent);
             }
 
             .control-label {
-                display: flex; align-items: center; gap: 12px;
+                display: flex; align-items: center; gap: 10px;
                 flex: 1;
             }
 
             .control-title {
-                font-size: 14px; color: inherit;
+                font-size: 14px;
+                min-width: 0; color: inherit;
             }
 
             .control-description {
-                font-size: 12px; opacity: 0.7; margin-top: 2px;
+                font-size: 13px; opacity: 0.75; margin-top: 4px;
             }
 
             .el-icon {
@@ -2259,13 +2556,13 @@
             }
 
             .tech-icon {
-                width: 35px; height: 35px;
+                width: 30px; height: 30px;
                 fill: currentColor;
                 stroke: none;
             }
 
             .tech-name {
-                font-size: 11px;
+                font-size: 10px;
                 text-align: center;
                 white-space: normal;
                 word-break: break-word;
@@ -2313,7 +2610,7 @@
                 transition: transform .2s cubic-bezier(.4,0,.2,1);
             }
 
-            input:checked + .slider { background-color: #1a73e8; }
+            input:checked + .slider { background-color: var(--accent-color, #1a73e8); }
 
             input:checked + .slider:before {
                 transform: translateX(26px);
@@ -2364,10 +2661,10 @@
             }
 
             .preset-btn.active {
-                background: #1a73e8;
-                border-color: #1a73e8;
+                background: var(--accent-color, #1a73e8);
+                border-color: var(--accent-color, #1a73e8);
                 color: white;
-                box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+                box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color, #1a73e8) 45%, transparent);
             }
 
             .preset-description {
@@ -2376,12 +2673,12 @@
                 padding: 8px;
                 background: rgba(255, 255, 255, 0.05);
                 border-radius: 6px;
-                border-left: 3px solid #1a73e8;
+                border-left: 3px solid var(--accent-color, #1a73e8);
             }
 
             .theme-light .preset-description {
                 background: rgba(0, 0, 0, 0.05);
-                border-left: 3px solid rgba(26, 115, 232, 0.5);
+                border-left: 3px solid color-mix(in srgb, var(--accent-color, #1a73e8) 55%, transparent);
             }
 
             .style-preview-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px; }
@@ -2396,8 +2693,8 @@
             }
             .theme-light .style-preview:hover { background: rgba(0, 0, 0, 0.1); }
             .style-preview.active {
-                border-color: #1a73e8; background: rgba(26, 115, 232, 0.1);
-                box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+                border-color: var(--accent-color, #1a73e8); background: color-mix(in srgb, var(--accent-color, #1a73e8) 12%, transparent);
+                box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color, #1a73e8) 35%, transparent);
             }
             .preview-box {
                 width: 100%; height: 40px; border-radius: 8px;
@@ -2409,9 +2706,15 @@
                 opacity: 0.9; font-weight: 500;
             }
 
-            .theme-buttons { display: flex; gap: 12px; margin-top: 12px; }
+            .theme-buttons {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+                margin-top: 12px;
+            }
             .theme-btn {
-                flex: 1; display: flex; flex-direction: column;
+                width: 100%;
+                display: flex; flex-direction: column;
                 align-items: center; gap: 8px; padding: 12px;
                 background: rgba(255, 255, 255, 0.05);
                 border: 2px solid transparent; border-radius: 10px;
@@ -2424,12 +2727,35 @@
             }
             .theme-light .theme-btn:hover { background: rgba(0, 0, 0, 0.1); }
             .theme-btn.active {
-                border-color: #1a73e8; background: rgba(26, 115, 232, 0.1);
-                box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+                border-color: var(--accent-color, #1a73e8); background: color-mix(in srgb, var(--accent-color, #1a73e8) 12%, transparent);
+                box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color, #1a73e8) 35%, transparent);
             }
+            .density-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+            .density-btn, .profile-btn {
+                padding: 8px 10px;
+                border: 1px solid rgba(255,255,255,0.2);
+                background: rgba(255,255,255,0.06);
+                color: inherit;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all .2s;
+                font-size: 12px;
+            }
+            .density-btn.active, .profile-btn:hover {
+                border-color: var(--accent-color, #1a73e8);
+                background: color-mix(in srgb, var(--accent-color, #1a73e8) 14%, transparent);
+            }
+            .profile-grid { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: center; }
+            .profile-del-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: inherit; cursor: pointer; font-size: 13px; }
+            .profile-del-btn:hover { border-color: #ef4444; background: rgba(239,68,68,0.14); }
+            .page-theme-buttons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .theme-preview { width: 60px; height: 40px; border-radius: 6px; }
             .theme-preview.dark { background: #1a1a1a; border: 1px solid #333; }
             .theme-preview.light { background: #f5f5f5; border: 1px solid #ddd; }
+            .theme-preview.blue { background: linear-gradient(145deg, #1a2a4a, #0f1a2f); border: 1px solid rgba(100, 180, 255, 0.35); }
+            .theme-preview.indigo { background: linear-gradient(145deg, #2b1f5a, #1a1440); border: 1px solid rgba(167, 139, 250, 0.4); }
+            .theme-preview.olive { background: linear-gradient(145deg, #2d3e2d, #1e2a1e); border: 1px solid rgba(180, 200, 100, 0.35); }
+            .theme-preview.brown { background: linear-gradient(145deg, #3e2e1e, #2a1e12); border: 1px solid rgba(200, 150, 100, 0.35); }
 
             .language-buttons {
                 display: grid;
@@ -2467,9 +2793,9 @@
             }
 
             .language-btn.active {
-                border-color: #1a73e8;
-                background: rgba(26, 115, 232, 0.1);
-                box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+                border-color: var(--accent-color, #1a73e8);
+                background: color-mix(in srgb, var(--accent-color, #1a73e8) 12%, transparent);
+                box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color, #1a73e8) 35%, transparent);
             }
 
             .language-description {
@@ -2478,13 +2804,13 @@
                 padding: 8px;
                 background: rgba(255, 255, 255, 0.05);
                 border-radius: 6px;
-                border-left: 3px solid #1a73e8;
+                border-left: 3px solid var(--accent-color, #1a73e8);
                 margin-top: 8px;
             }
 
             .theme-light .language-description {
                 background: rgba(0, 0, 0, 0.05);
-                border-left: 3px solid rgba(26, 115, 232, 0.5);
+                border-left: 3px solid color-mix(in srgb, var(--accent-color, #1a73e8) 55%, transparent);
             }
 
             .about-info {
@@ -2523,12 +2849,13 @@
                 display: block;
                 margin-bottom: 12px;
                 font-size: 14px;
+                min-width: 0;
                 opacity: 0.9;
             }
 
             .tech-stack {
                 display: grid;
-                grid-template-columns: repeat(4, minmax(70px, 1fr));
+                grid-template-columns: repeat(5, minmax(0, 1fr));
                 gap: 12px;
                 margin-top: 10px;
             }
@@ -2539,14 +2866,14 @@
                 align-items: center;
                 justify-content: center;
                 gap: 8px;
-                padding: 16px 12px;
+                padding: 12px 8px;
                 background: rgba(255, 255, 255, 0.05);
                 border-radius: 10px;
                 text-decoration: none;
                 color: #fff !important;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 border: 1px solid rgba(255, 255, 255, 0.1);
-                min-height: 90px;
+                min-height: 80px;
                 position: relative;
                 overflow: hidden;
             }
@@ -2617,6 +2944,16 @@
                 background: rgba(0, 0, 0, 0.2);
                 border-color: rgba(0, 0, 0, 0.8);
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            }
+
+            .tech-card:nth-child(5) {
+                border-color: rgba(167, 139, 250, 0.35);
+            }
+
+            .tech-card:nth-child(5):hover {
+                background: rgba(167, 139, 250, 0.2);
+                border-color: rgba(167, 139, 250, 0.8);
+                box-shadow: 0 8px 32px rgba(167, 139, 250, 0.45);
             }
 
             .check-update-btn {
@@ -2733,34 +3070,64 @@
             }
             .theme-light .about-footer { border-top: 1px solid rgba(0, 0, 0, 0.1); }
 
-            .panel-footer {
-                display: flex; align-items: center; padding: 12px 20px;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-                background: rgba(0, 0, 0, 0.1);
-                border-radius: 0 0 16px 16px;
-            }
-            .theme-light .panel-footer {
+            .u-shell-footer { border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+            .theme-light .u-shell-footer {
                 border-top: 1px solid rgba(0, 0, 0, 0.1);
                 background: rgba(0, 0, 0, 0.05);
             }
-
-            .footer-btn {
-                background: rgba(255, 255, 255, 0.1); border: none;
-                border-radius: 6px; width: 32px; height: 32px;
-                display: flex; align-items: center; justify-content: center;
-                cursor: pointer; margin-right: 8px; transition: all 0.2s;
-            }
-            .theme-light .footer-btn { background: rgba(0, 0, 0, 0.1); }
-            .footer-btn:hover {
-                background: rgba(255, 255, 255, 0.2);
+            .theme-light .u-footer-btn { background: rgba(0, 0, 0, 0.1); }
+            .u-footer-btn:hover {
                 transform: scale(1.05);
             }
-            .theme-light .footer-btn:hover { background: rgba(0, 0, 0, 0.2); }
+            .theme-light .u-footer-btn:hover { background: rgba(0, 0, 0, 0.2); }
+        `;
+    }
 
-            .footer-status {
-                flex: 1; text-align: right;
-                font-size: 12px; opacity: 0.7;
+    function getMediaStyles() {
+        return `
+            @media (max-width: 640px) {
+                .elgoogle-panel {
+                    min-width: min(90vw, 360px);
+                    max-width: 90vw;
+                    left: 5vw !important;
+                }
+
+                .tab-content {
+                    max-height: 50vh;
+                }
+
+                .u-tab-btn {
+                    font-size: 12px;
+                    padding: 8px 10px;
+                    gap: 6px;
+                }
             }
+        `;
+    }
+
+    function getComponentStyles() {
+        return `
+            .density-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+            .density-btn, .profile-btn {
+                padding: 8px 10px; border-radius: 8px; border: 1px solid var(--panel-border);
+                background: rgba(255,255,255,0.06); color: var(--panel-text); cursor: pointer;
+                transition: all 0.2s ease; font-size: 12px;
+            }
+            .density-btn.active, .profile-btn:hover {
+                border-color: var(--accent-color);
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-color) 35%, transparent);
+                background: color-mix(in srgb, var(--accent-color) 18%, transparent);
+            }
+            .profile-grid { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: center; }
+            .profile-del-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: inherit; cursor: pointer; font-size: 13px; }
+            .profile-del-btn:hover { border-color: #ef4444; background: rgba(239,68,68,0.14); }
+            .page-theme-buttons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .hidden-elements-summary { margin-top: 10px; font-size: 12px; opacity: 0.85; line-height: 1.4; }
+        `;
+    }
+
+    function getScrollbarStyles() {
+        return `
 
             /* Стили полосы прокрутки */
             .tab-content::-webkit-scrollbar {
@@ -2801,7 +3168,12 @@
             .theme-light .tab-content {
                 scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
             }
+
         `;
+    }
+
+    function getPanelStyles() {
+        return `${getUtilityStyles()}${getThemeStyles()}${getComponentStyles()}${getScrollbarStyles()}${getMediaStyles()}`;
     }
 
     // ================== ЗАПУСК ==================
