@@ -1675,6 +1675,33 @@
         if (resetBtn) resetBtn.title = tt.resetSettings;
     }
 
+    function updateUILanguage() {
+        if (!state.panel) return;
+
+        state.panel.querySelectorAll('[data-tab]').forEach(tab => {
+            const tabName = tab.dataset.tab;
+            if (tabName === 'general') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-sliders"></use></svg>${tt.general}`;
+            } else if (tabName === 'search') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-search"></use></svg>${tt.search}`;
+            } else if (tabName === 'menu') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-menu"></use></svg>${tt.menu}`;
+            } else if (tabName === 'about') {
+                tab.innerHTML = `<svg class="el-icon"><use href="#i-info"></use></svg><span class="tab-text">${tt.about}</span>`;
+            }
+        });
+
+        const status = state.panel.querySelector('.u-footer-status');
+        if (status) status.textContent = state.isCheckingUpdate ? tt.checkingUpdates : tt.f2Menu;
+
+        const exportBtn = state.panel.querySelector('#exportBtn');
+        const importBtn = state.panel.querySelector('#importBtn');
+        const resetBtn = state.panel.querySelector('#resetBtn');
+        if (exportBtn) exportBtn.title = tt.exportSettings;
+        if (importBtn) importBtn.title = tt.importSettings;
+        if (resetBtn) resetBtn.title = tt.resetSettings;
+    }
+
     // ================== СОБЫТИЯ ПАНЕЛИ ==================
 
     function setupPanelEvents() {
@@ -2031,6 +2058,54 @@
 
     function getThemeStyles() {
         return `
+            .u-flex { display: flex; }
+            .u-flex-1 { flex: 1; }
+            .u-items-center { align-items: center; }
+            .u-items-baseline { align-items: baseline; }
+            .u-justify-between { justify-content: space-between; }
+            .u-justify-center { justify-content: center; }
+            .u-gap-2 { gap: 8px; }
+            .u-gap-2-5 { gap: 10px; }
+            .u-gap-1-5 { gap: 6px; }
+            ${spacingCss}
+            .u-border-b { border-bottom-width: 1px; border-bottom-style: solid; }
+            .u-border-t { border-top-width: 1px; border-top-style: solid; }
+            .u-border-white-10 { border-color: rgba(255, 255, 255, 0.1); }
+            .u-cursor-move { cursor: move; }
+            .u-font-semibold { font-weight: 600; }
+            .u-font-normal { font-weight: 400; }
+            .u-text-lg { font-size: 18px; }
+            .u-text-xs { font-size: 13px; }
+            .u-text-2xs { font-size: 12px; }
+            .u-text-right { text-align: right; }
+            .u-opacity-60 { opacity: 0.6; }
+            .u-opacity-70 { opacity: 0.7; }
+            .u-tight { letter-spacing: -0.2px; }
+            .u-rounded-full { border-radius: 50%; }
+            .u-rounded-md { border-radius: 6px; }
+            .u-bg-white-10 { background: rgba(255, 255, 255, 0.1); }
+            .u-bg-black-15 { background: rgba(0, 0, 0, 0.15); }
+            .u-bg-black-10 { background: rgba(0, 0, 0, 0.1); }
+            .u-mr-2 { margin-right: 8px; }
+            .u-btn-icon {
+                border: none;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .hover\:u-bg-white-20:hover { background: rgba(255, 255, 255, 0.2); }
+        `;
+    }
+
+    function getThemeStyles() {
+        return `
+            /* Мини-утилиты в стиле UnoCSS */
+            ${getUtilityStyles()}
+
             .elgoogle-panel {
                 --panel-bg: rgba(25, 25, 25, 0.95);
                 --panel-text: #ffffff;
