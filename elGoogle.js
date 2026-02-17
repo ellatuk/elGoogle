@@ -2305,6 +2305,9 @@
 
     function getThemeStyles() {
         return `
+            /* Мини-утилиты в стиле UnoCSS */
+            ${getUtilityStyles()}
+
             .elgoogle-panel {
                 --panel-bg: rgba(25, 25, 25, 0.95);
                 --panel-text: #ffffff;
