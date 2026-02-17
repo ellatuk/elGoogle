@@ -104,6 +104,8 @@
             quickProfiles: 'Быстрые профили',
             saveProfile: 'Сохранить',
             loadProfile: 'Загрузить',
+            profileLabel: 'Профиль',
+            deleteProfile: 'Удалить профиль',
             showHiddenNow: 'Показать скрытые элементы',
             hiddenElementsNow: 'Сейчас скрыто:',
 
@@ -115,12 +117,17 @@
             removeKeyboardIcon: 'Удалить иконку экранной клавиатуры',
             replaceIconsLucide: 'Заменить иконки на Lucide',
             pageTheme: 'Тема страницы',
+            pageThemeOff: 'Без темы',
             pageThemeDark: 'Тёмная классика',
+            pageThemeCarbon: 'Угольно-графитовая',
             pageThemeAurora: 'Мягкая Аурора',
             pageThemeDusk: 'Пыльный закат',
             pageThemeForest: 'Лесной туман',
             pageThemeSlate: 'Графитовый градиент',
+            pageThemeOcean: 'Ночной океан',
+            pageThemeRose: 'Тихий розовый вечер',
             pageGrain: 'Зерно фона',
+            liveBackground: 'Живой фон',
             grainOff: 'Без зерна',
             grainSmall: 'Мелкое',
             grainMedium: 'Среднее',
@@ -241,6 +248,8 @@
             quickProfiles: 'Quick Profiles',
             saveProfile: 'Save',
             loadProfile: 'Load',
+            profileLabel: 'Profile',
+            deleteProfile: 'Delete profile',
             showHiddenNow: 'Show hidden elements',
             hiddenElementsNow: 'Hidden now:',
 
@@ -252,12 +261,17 @@
             removeKeyboardIcon: 'Hide on-screen keyboard icon',
             replaceIconsLucide: 'Replace icons with Lucide',
             pageTheme: 'Page theme',
+            pageThemeOff: 'No theme',
             pageThemeDark: 'Dark Classic',
+            pageThemeCarbon: 'Carbon Graphite',
             pageThemeAurora: 'Soft Aurora',
             pageThemeDusk: 'Dusty Dusk',
             pageThemeForest: 'Forest Mist',
             pageThemeSlate: 'Slate Gradient',
+            pageThemeOcean: 'Night Ocean',
+            pageThemeRose: 'Calm Rose Dusk',
             pageGrain: 'Background grain',
+            liveBackground: 'Live background',
             grainOff: 'No grain',
             grainSmall: 'Small',
             grainMedium: 'Medium',
@@ -342,7 +356,9 @@
         panelDensity: 'normal',
         quickProfiles: {},  // Быстрые профили настроек
         pageTheme: 'dark',
-        pageGrain: 'off'
+        pageGrain: 'off',
+        pageThemeEnabled: true,
+        pageLiveBackground: false
     };
 
     const createSearchStyle = (rules, extraCss = '') => {
@@ -375,8 +391,8 @@
             key: 'minimaldark',
             css: createSearchStyle({
                 'border-radius': '12px',
-                'background-color': '#0d1016',
-                border: '1px solid #2b3140',
+                'background-color': 'rgba(15,20,28,0.92)',
+                border: '1px solid rgba(130,145,170,0.35)',
                 'box-shadow': '0 2px 10px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.03)'
             })
         },
@@ -395,8 +411,8 @@
             key: 'roundedsoft',
             css: createSearchStyle({
                 'border-radius': '28px',
-                background: 'linear-gradient(135deg,#141820 0%,#1b2432 100%)',
-                border: '1px solid #3a465f',
+                background: 'linear-gradient(135deg,rgba(21,27,37,0.92) 0%,rgba(27,35,48,0.92) 100%)',
+                border: '1px solid rgba(120,140,170,0.35)',
                 'box-shadow': '0 6px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05)'
             })
         },
@@ -439,7 +455,7 @@
             key: 'monochromecrt',
             css: createSearchStyle({
                 'border-radius': '4px',
-                background: 'radial-gradient(ellipse at center,rgba(180,200,240,0.08) 0%,rgba(4,6,10,0.95) 100%)',
+                background: 'radial-gradient(ellipse at center,rgba(180,200,240,0.07) 0%,rgba(8,12,20,0.93) 100%)',
                 border: '3px solid #8fa0bd',
                 'box-shadow': 'inset 0 0 60px rgba(255,255,255,0.2),0 0 40px rgba(255,255,255,0.3),0 0 0 3px rgba(200,200,200,0.4),inset 0 0 100px rgba(0,0,0,0.8)',
                 position: 'relative',
@@ -451,7 +467,7 @@
             key: 'cyberpunkneon',
             css: createSearchStyle({
                 'border-radius': '18px',
-                background: 'linear-gradient(135deg,#0b0e12 0%,#121824 100%)',
+                background: 'linear-gradient(135deg,rgba(11,14,18,0.92) 0%,rgba(18,24,36,0.92) 100%)',
                 border: '1px solid transparent',
                 'box-shadow': '0 4px 25px rgba(0,0,0,0.7)',
                 position: 'relative',
@@ -699,24 +715,27 @@
 
     function applyPageTheme() {
         const themes = {
+            off: '',
             dark: 'radial-gradient(circle at 20% 20%, #1f2937 0%, #111827 45%, #0a0f1a 100%)',
+            carbon: 'linear-gradient(140deg, #101215 0%, #171b21 45%, #0d1014 100%)',
             aurora: 'radial-gradient(circle at 15% 20%, rgba(88,132,255,0.28) 0%, transparent 35%), radial-gradient(circle at 80% 25%, rgba(120,255,214,0.22) 0%, transparent 35%), linear-gradient(140deg, #111827 0%, #1b2940 45%, #101827 100%)',
             dusk: 'radial-gradient(circle at 20% 20%, rgba(255,170,120,0.25) 0%, transparent 35%), radial-gradient(circle at 80% 10%, rgba(196,133,255,0.2) 0%, transparent 30%), linear-gradient(140deg, #201526 0%, #2a1f38 45%, #1a2234 100%)',
             forest: 'radial-gradient(circle at 15% 30%, rgba(123,211,137,0.2) 0%, transparent 35%), radial-gradient(circle at 80% 15%, rgba(111,173,252,0.16) 0%, transparent 30%), linear-gradient(140deg, #0f1a16 0%, #13291f 45%, #102028 100%)',
-            slate: 'linear-gradient(145deg, #1b202a 0%, #232b3a 50%, #1a2230 100%)'
+            slate: 'linear-gradient(145deg, #1b202a 0%, #232b3a 50%, #1a2230 100%)',
+            ocean: 'radial-gradient(circle at 70% 15%, rgba(75,145,255,0.22) 0%, transparent 35%), linear-gradient(150deg, #0f172a 0%, #13243c 45%, #10283a 100%)',
+            rose: 'radial-gradient(circle at 20% 20%, rgba(255,144,180,0.2) 0%, transparent 35%), linear-gradient(150deg, #231526 0%, #30203a 45%, #1e2437 100%)'
         };
-        const grainMap = {
-            off: '0',
-            small: '0.06',
-            medium: '0.1',
-            large: '0.14'
-        };
-        const bg = themes[CONFIG.pageTheme] || themes.dark;
-        const grain = grainMap[CONFIG.pageGrain] || '0';
+        const grainMap = { off: '0', small: '0.05', medium: '0.09', large: '0.13' };
+        const enabled = CONFIG.pageThemeEnabled !== false;
+        const bg = enabled ? (themes[CONFIG.pageTheme] || themes.dark) : '';
+        const grain = enabled ? (grainMap[CONFIG.pageGrain] || '0') : '0';
+        const anim = CONFIG.pageLiveBackground ? 'animation: elgoogleBgShift 34s ease-in-out infinite alternate !important;' : '';
         StyleManager.apply('elgoogle-page-theme', `
             body {
-                background: ${bg} !important;
+                ${bg ? `background: ${bg} !important;` : 'background: initial !important;'}
+                background-size: 200% 200% !important;
                 background-attachment: fixed !important;
+                ${anim}
             }
             body::before {
                 content: '';
@@ -728,6 +747,11 @@
                 z-index: 0;
             }
             #gb, .o3j99 { background: transparent !important; }
+            @keyframes elgoogleBgShift {
+                0% { background-position: 0% 30%; }
+                50% { background-position: 100% 70%; }
+                100% { background-position: 20% 40%; }
+            }
         `);
     }
 
@@ -1214,7 +1238,7 @@
             return `${base}|${CONFIG.menuLanguage}|${JSON.stringify(CONFIG.quickProfiles || {})}`;
         }
         if (tabName === 'page') {
-            return `${base}|${CONFIG.removeIcons}|${CONFIG.removeVoiceIcon}|${CONFIG.removeImageIcon}|${CONFIG.removeKeyboardIcon}|${CONFIG.replaceSearchIcons}|${CONFIG.pageTheme}|${CONFIG.pageGrain}`;
+            return `${base}|${CONFIG.removeIcons}|${CONFIG.removeVoiceIcon}|${CONFIG.removeImageIcon}|${CONFIG.removeKeyboardIcon}|${CONFIG.replaceSearchIcons}|${CONFIG.pageTheme}|${CONFIG.pageGrain}|${CONFIG.pageThemeEnabled}|${CONFIG.pageLiveBackground}`;
         }
         if (tabName === 'about') {
             return `${base}|${state.isCheckingUpdate}|${state.lastReleaseInfo?.version || ''}`;
@@ -1484,8 +1508,9 @@
                     <h4><svg class="el-icon section-icon"><use href="#i-settings-2"></use></svg>${tt.quickProfiles}</h4>
                     <div class="profile-grid">
                         ${[1,2,3].map(slot => `
-                            <button class="profile-btn" data-profile="save-${slot}">${tt.saveProfile} ${slot}</button>
+                            <button class="profile-btn" data-profile="save-${slot}">${CONFIG.quickProfiles?.[slot] ? `${tt.profileLabel} ${slot}` : `${tt.saveProfile} ${slot}`}</button>
                             <button class="profile-btn" data-profile="load-${slot}">${tt.loadProfile} ${slot}</button>
+                            <button class="profile-del-btn" data-profile-delete="${slot}" title="${tt.deleteProfile}">🗑</button>
                         `).join('')}
                     </div>
                 </div>
@@ -1527,11 +1552,15 @@
 
     function renderPageTab(container) {
         const themes = [
+            ['off', tt.pageThemeOff],
             ['dark', tt.pageThemeDark],
+            ['carbon', tt.pageThemeCarbon],
             ['aurora', tt.pageThemeAurora],
             ['dusk', tt.pageThemeDusk],
             ['forest', tt.pageThemeForest],
-            ['slate', tt.pageThemeSlate]
+            ['slate', tt.pageThemeSlate],
+            ['ocean', tt.pageThemeOcean],
+            ['rose', tt.pageThemeRose]
         ];
 
         container.innerHTML = `
@@ -1563,6 +1592,14 @@
                 </div>
 
                 <div class="control-group">
+                    <div class="u-control-row ${CONFIG.pageThemeEnabled !== false ? 'active' : ''}" data-action="togglePageThemeEnabled">
+                        <div class="control-label"><svg class="el-icon"><use href="#i-check"></use></svg><div><div class="control-title">${tt.pageTheme}</div></div></div>
+                        <label class="switch"><input type="checkbox" ${CONFIG.pageThemeEnabled !== false ? 'checked' : ''}><span class="slider"></span></label>
+                    </div>
+                    <div class="u-control-row ${CONFIG.pageLiveBackground ? 'active' : ''}" data-action="togglePageLiveBackground">
+                        <div class="control-label"><svg class="el-icon"><use href="#i-check"></use></svg><div><div class="control-title">${tt.liveBackground}</div></div></div>
+                        <label class="switch"><input type="checkbox" ${CONFIG.pageLiveBackground ? 'checked' : ''}><span class="slider"></span></label>
+                    </div>
                     <h4><svg class="el-icon section-icon"><use href="#i-theme"></use></svg>${tt.pageTheme}</h4>
                     <div class="theme-buttons page-theme-buttons">
                         ${themes.map(([k,name]) => `<button class="theme-btn ${CONFIG.pageTheme === k ? 'active' : ''}" data-page-theme="${k}">${name}</button>`).join('')}
@@ -1727,7 +1764,9 @@
             toggleMail: (value) => { CONFIG.removeMail = value; },
             toggleSearchStyle: (value) => { CONFIG.searchStyleEnabled = value; },
             toggleCompact: (value) => { CONFIG.compactMode = value; CONFIG.panelDensity = value ? 'compact' : 'normal'; },
-            toggleGlass: (value) => { CONFIG.glassEffect = value; }
+            toggleGlass: (value) => { CONFIG.glassEffect = value; },
+            togglePageThemeEnabled: (value) => { CONFIG.pageThemeEnabled = value; },
+            togglePageLiveBackground: (value) => { CONFIG.pageLiveBackground = value; }
         };
 
         container.onchange = async (e) => {
@@ -1821,6 +1860,17 @@
                     applyAll();
                 }
                 renderActiveTab(true);
+                return;
+            }
+
+            const profileDeleteBtn = e.target.closest('.profile-del-btn[data-profile-delete]');
+            if (profileDeleteBtn) {
+                const slot = profileDeleteBtn.dataset.profileDelete;
+                if (CONFIG.quickProfiles?.[slot]) {
+                    delete CONFIG.quickProfiles[slot];
+                    await saveConfig();
+                    renderActiveTab(true);
+                }
                 return;
             }
 
@@ -2407,7 +2457,7 @@
             }
             .theme-light .panel-close:hover { background: rgba(0, 0, 0, 0.2); }
 
-            .u-shell-tabs { border-radius: 16px 16px 0 0; }
+            .u-shell-tabs { border-radius: 16px 16px 0 0; padding-left: 6px; padding-right: 6px; gap: 4px; }
 
             .theme-light .u-shell-tabs {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -2416,7 +2466,8 @@
 
             .u-tab-btn {
                 background: none; border: none; color: inherit;
-                cursor: pointer; font-size: 14px; transition: all 0.2s;
+                cursor: pointer; font-size: 14px;
+                min-width: 0; transition: all 0.2s;
                 border-bottom: 2px solid transparent; opacity: 0.7;
                 white-space: nowrap;
             }
@@ -2452,7 +2503,8 @@
             }
 
             .tab-section h4 {
-                margin: 0 0 12px 0; font-size: 14px; opacity: 0.9;
+                margin: 0 0 12px 0; font-size: 14px;
+                min-width: 0; opacity: 0.9;
                 display: flex; align-items: center; gap: 8px;
             }
 
@@ -2490,7 +2542,8 @@
             }
 
             .control-title {
-                font-size: 14px; color: inherit;
+                font-size: 14px;
+                min-width: 0; color: inherit;
             }
 
             .control-description {
@@ -2695,7 +2748,9 @@
                 border-color: var(--accent-color, #1a73e8);
                 background: color-mix(in srgb, var(--accent-color, #1a73e8) 14%, transparent);
             }
-            .profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+            .profile-grid { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: center; }
+            .profile-del-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: inherit; cursor: pointer; font-size: 13px; }
+            .profile-del-btn:hover { border-color: #ef4444; background: rgba(239,68,68,0.14); }
             .page-theme-buttons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .theme-preview { width: 60px; height: 40px; border-radius: 6px; }
             .theme-preview.dark { background: #1a1a1a; border: 1px solid #333; }
@@ -2797,6 +2852,7 @@
                 display: block;
                 margin-bottom: 12px;
                 font-size: 14px;
+                min-width: 0;
                 opacity: 0.9;
             }
 
@@ -3065,7 +3121,9 @@
                 box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-color) 35%, transparent);
                 background: color-mix(in srgb, var(--accent-color) 18%, transparent);
             }
-            .profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+            .profile-grid { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: center; }
+            .profile-del-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: inherit; cursor: pointer; font-size: 13px; }
+            .profile-del-btn:hover { border-color: #ef4444; background: rgba(239,68,68,0.14); }
             .page-theme-buttons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .hidden-elements-summary { margin-top: 10px; font-size: 12px; opacity: 0.85; line-height: 1.4; }
         `;
